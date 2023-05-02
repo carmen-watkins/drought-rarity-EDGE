@@ -1,68 +1,49 @@
-library(tidyverse)
 
-syn_dat <- read.csv("shape-shifting-subordinates/Synthesis_Master_2019_Grasslands.csv")
+source("data-prep/clean_edge_data.R")
 
-unique(syn_dat$site)
-## overlapping sites: 
-  ## hay, knz, sev
+unique(edge_all$site)
 
-## need to use sites from here to classify species
+## need to classify species at CHY and SGS still as we don't have long term data from these yet.
 
-syndat_filtered <- syn_dat %>%
-  filter(site %in% c("hay", "knz", "sev"))
-
-length(unique(syndat_filtered[syndat_filtered$site == "hay",]$year)) ## 30 years
-length(unique(syndat_filtered[syndat_filtered$site == "knz",]$year)) ## 33 years
-length(unique(syndat_filtered[syndat_filtered$site == "sev",]$year)) ## 16 years
-
-## should consider filtering out uniqueIDs with fewer than a certain number of years. It looks like some are as low as 2 years and this could skew the persist_pct calc
-
-
-ggplot(syndat_filtered, aes(x=abundance)) +
-  geom_histogram()
-
-ggplot(syndat_filtered[syndat_filtered$abundance == 0,], aes(x=abundance)) +
-  geom_histogram()
-## no abundance = 0
+chy_sgs <- edge_all %>%
+  filter(site == "CHY" | site == "SGS") %>%
+  filter(treatment == "C", max.cover > 0) ## filter to keep only controls 
 
 ### Rank Sp by Abundance ####
-datrank = syndat_filtered %>%
-  group_by(site, plot, subplot, uniqueID) %>%
-  mutate(rank = rank(abundance, na.last = NA, ties.method = "average"), percrank = percent_rank(abundance)) 
+datrank_cs = chy_sgs %>%
+  group_by(site, block, plot, subplot) %>%
+  mutate(rank = rank(max.cover, na.last = NA, ties.method = "average"), percrank = percent_rank(max.cover)) 
 ## this is the rank for each species in each subplot
 ## currently rank and percrank are opposing. 1 is the lowest rank, while 1.00 percrank means the highest biomass.
 ## greater rank percentile means that it is more abundant.
 
-# QUESTION ####
-  ## should this be done grouped by each year or NOT? - at this point no- since we're using mutate it ranks every year.
-
 
 ### Calc Mean Rank & Yrs Present ####
 # mean rank percentile, sum number of years present, for each species in each plot.
-categorydat <- datrank %>%
-  group_by(site, plot, subplot, uniqueID, species) %>%
+categorydat_cs <- datrank_cs %>%
+  group_by(site, block, plot, subplot, species) %>%
   summarize(mean_rank = mean(percrank), # mean rank% cover for all years (does not include zeros)
-            yrs_present = length(percrank), # number of years species was present = number of rows for Taxon
+            yrs_present = n(), # number of years species was present = number of rows for Taxon
             # (no zeros in working_coverdat dataset)
             yrs_present_list = paste0("yr", as.character(year), collapse = ", "),
             .groups = "keep")
 
-ggplot(categorydat, aes(x=yrs_present)) +
-  geom_histogram()
+#ggplot(categorydat, aes(x=yrs_present)) +
+  #geom_histogram()
 
 
 # how many years per plot?
-nyearsdat <- datrank %>%
-  group_by(site, plot, subplot, uniqueID) %>%
+nyearsdat_cs <- datrank_cs %>%
+  group_by(site, block, plot, subplot) %>%
   summarize(n_years = length(unique(year)), .groups = "keep")
 
-summary(nyearsdat)
-# 2-33 years
+summary(nyearsdat_cs)
+# 10 years
 
 ### Create Categories ####
 ## Retrying classification at the field level.
-field_catdat <- categorydat %>%
-  merge(y = nyearsdat) %>%
+field_catdat_cs <- categorydat_cs %>%
+  merge(y = nyearsdat_cs) %>%
   mutate(persist_pct = yrs_present / n_years) %>%
   group_by(site, species) %>%
   summarise(mrank = mean(mean_rank), mpersist_pct = mean(persist_pct)) %>%
@@ -77,3 +58,4 @@ field_catdat <- categorydat %>%
                        nickname = c("TransSub", "TransDom", "CoreSub", "CoreDom")) ) %>%
   mutate(nickname = factor(nickname, levels = c("CoreDom", "CoreSub", "TransDom", "TransSub")))
 
+rm(categorydat_cs, chy_sgs, datrank_cs, nyearsdat_cs)
