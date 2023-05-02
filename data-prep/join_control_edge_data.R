@@ -45,6 +45,10 @@ sev_edge_class <- left_join(sev_edge, field_catdat[field_catdat$site == "sev",],
   select(-species.name) %>%
   mutate(site = site.x) %>%
   select(-site.y, -site.x)
+
+tmp <- sev_edge_class %>%
+  filter(nickname == "TransDom", site == "SEV_black")
+unique(tmp$species)
   
 ### KNZ ####
 knz_edge <- edge_all %>%
@@ -80,6 +84,9 @@ hay_edge <- edge_all %>%
 hay_edge_class <- left_join(hay_edge, field_catdat_hay, by = c("spcode", "site")) #%>%
   #mutate(field = NA)
 
+td <- hay_edge_class %>%
+  filter(nickname == "TransDom")
+unique(td$species)
 # CHY & SGS ####
 chy_sgs_class <- left_join(edge_all[edge_all$site == "SGS" | edge_all$site == "CHY", ], field_catdat_cs, by = c("site", "species"))
 

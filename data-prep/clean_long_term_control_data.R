@@ -5,6 +5,7 @@ syn_dat <- read.csv("Synthesis_Master_2019_Grasslands.csv")
 unique(syn_dat$site)
 ## overlapping sites: 
   ## hay, knz, sev
+sort(unique(syn_dat[syn_dat$site == "hay",]$year))
 
 syndat_filtered <- syn_dat %>%
   filter(site %in% c("hay", "knz", "sev"))
