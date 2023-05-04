@@ -171,4 +171,4 @@ sgs <- edge_all %>%
 edge_w_zeros <- do.call("rbind", list(sev_black, sev_blue, hay, knz, chy, sgs))
 
 ## clean up env
-rm(list = c("north_clean", "north_edge", "sev_clean", "sev_edge", "north_spkey", "empty", "none", "unk_all", "unk1", "unk2", "rm_kartez", "rm_sp", "unk", "edge_all"))
+rm(list = c("north_clean", "north_edge", "sev_clean", "sev_edge", "north_spkey", "empty", "none", "unk_all", "unk1", "unk2", "rm_kartez", "rm_sp", "unk"))
