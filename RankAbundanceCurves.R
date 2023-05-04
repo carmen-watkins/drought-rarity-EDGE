@@ -21,7 +21,7 @@ rank_mean_by_year <- control.data %>%
   group_by(site) %>%
   mutate(rank2 = rank(mean.cov, na.last = NA, ties.method = "last"), perc_rank2 = percent_rank(mean.cov))
 # NOTE: rank and perc_rank are on different scales
-# Low rank means that cover is low; high rank means that cover is hgh
+# Low rank means that cover is low; high rank means that cover is high
 # 1.00 perc_rank means the highest cover and most abundant species
 
 #Generate rank abundance curve: 
