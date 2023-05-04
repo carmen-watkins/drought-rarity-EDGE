@@ -3,46 +3,6 @@ source("data-prep/clean_edge_data.R")
 
 library(ggpubr)
 
-# Final Data Cleaning ####
-## Fill 0's ####
-sev_black <- edge_all %>%
-  filter(site == "SEV_black", treatment == "C") %>%
-  select(-spcode, -kartez) %>%
-  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
-  pivot_longer(Bouteloua_eriopoda:Chamaesyce_albomarginata, names_to = "species", values_to = "max.cover")
-  
-sev_blue <- edge_all %>%
-  filter(site == "SEV_blue", treatment == "C") %>%
-  select(-spcode, -kartez) %>%
-  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
-  pivot_longer(Bouteloua_gracilis:Sporobolus_contractus, names_to = "species", values_to = "max.cover")
-
-hay <- edge_all %>%
-  filter(site == "HYS", treatment == "C") %>%
-  select(-spcode, -kartez) %>%
-  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
-  pivot_longer(Achillea_millefolium:Croton_sp., names_to = "species", values_to = "max.cover")
-
-knz <- edge_all %>%
-  filter(site == "KNZ", treatment == "C") %>%
-  select(-spcode, -kartez) %>%
-  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
-  pivot_longer(Ambrosia_psilostachya:Sonchus_asper, names_to = "species", values_to = "max.cover")
-
-chy <- edge_all %>%
-  filter(site == "CHY", treatment == "C") %>%
-  select(-spcode, -kartez) %>%
-  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
-  pivot_longer(Allium_textile:Sporobolus_sp., names_to = "species", values_to = "max.cover")
-
-sgs <- edge_all %>%
-  filter(site == "SGS", treatment == "C") %>%
-  select(-spcode, -kartez) %>%
-  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
-  pivot_longer(Aristida_purpurea:ASOX, names_to = "species", values_to = "max.cover")
-
-edge_w_zeros <- do.call("rbind", list(sev_black, sev_blue, hay, knz, chy, sgs))
-
 # New Calcs ####
 ## Rank ####
 ## take the rank of the mean (NOT the mean of the rank)
