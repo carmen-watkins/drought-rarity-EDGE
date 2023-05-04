@@ -168,7 +168,8 @@ sgs <- edge_all %>%
   pivot_longer(Aristida_purpurea:ASOX, names_to = "species", values_to = "max.cover")
 
 ## merge all together
-edge_w_zeros <- do.call("rbind", list(sev_black, sev_blue, hay, knz, chy, sgs))
+edge_w_zeros <- do.call("rbind", list(sev_black, sev_blue, hay, knz, chy, sgs)) %>%
+  mutate(pres.abs = ifelse(max.cover > 0, 1, 0))
 
 ## clean up env
 rm(list = c("north_clean", "north_edge", "sev_clean", "sev_edge", "north_spkey", "empty", "none", "unk_all", "unk1", "unk2", "rm_kartez", "rm_sp", "unk"))
