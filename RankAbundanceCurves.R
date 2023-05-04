@@ -10,7 +10,7 @@ library(ggplot2)
 source("data-prep/clean_edge_data.R")
 
 #Subset control data
-control.data <- edge_all %>% 
+control.data <- edge_w_zeros %>% 
   filter(treatment == "C")
 
 #calculate rank of the mean
