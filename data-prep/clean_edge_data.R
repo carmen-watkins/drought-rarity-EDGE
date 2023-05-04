@@ -37,7 +37,8 @@ sort(unique(north_edge$Subplot))
 unique(sev_edge$subplot) ## nothing in this one
 unique(sev_edge$quad) ## this seems like it could be equivalent to the northern edge subplots?
 unique(sev_edge$site)
-
+min(sev_edge$cover)
+min(north_edge$max.cover)
 
 sort(unique(sev_edge$date))
 ## based on what I've been hearing both 2012 and 2013 years were pre-treatment but 2012 had a big drought so maybe not the best data to use?
@@ -120,7 +121,7 @@ north_clean <- north_edge %>%
            sapply(tail, 1),
          spepcode = toupper(substr(sp.ep, 1, 3)),
          spcode = paste0(genuscode, spepcode)) %>%
-  filter(treatment != "int", year > 2012, !species %in% unk, max.cover > 0) %>%
+  filter(treatment != "int", year > 2012, !species %in% unk) %>%
   mutate(treatment = ifelse(treatment == "chr", "D", "C")) %>%
   select(year, site, treatment, block, plot, subplot, spcode, species, kartez, max.cover)
 
