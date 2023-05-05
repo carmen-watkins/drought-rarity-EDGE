@@ -84,7 +84,7 @@ s3 <-rank_mean_by_year %>%
   scale_x_reverse() +
   xlab("Rank") +
   ylab("Mean Cover") +
-  annotate("text", x=30, y=45, label= 'italic("KNZ-- species richness = 63")',
+  annotate("text", x=30, y=50, label= 'italic("KNZ-- species richness = 63")',
            col="black", size=5, parse=TRUE)
 s3
 #####################################
