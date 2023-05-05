@@ -57,6 +57,7 @@ figure1 <-block_freq_df %>%
   ylab("species frequency %")
 
 figure1 + facet_grid(~species)
+##This is a terrible figure and says nothing. Need to determine cutoffs for species dominance first 
 
 
 
