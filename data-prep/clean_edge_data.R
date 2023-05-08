@@ -16,14 +16,10 @@ sev_edge <- read.csv("sev298_NPP_edge_biomass.csv")
     ## there is cover data here also
     ## would be good to talk to SEV EDGE expert and confirm a few things about the data here
 
-
 # Explore Data ####
 colnames(north_edge)
 colnames(north_spkey)
 colnames(sev_edge)
-
-
-
 unique(north_edge$Spcode)
 unique(north_edge$Trt)
 ## int = intense drought, chr = chronic drought, con = control 
@@ -37,7 +33,8 @@ sort(unique(north_edge$Subplot))
 unique(sev_edge$subplot) ## nothing in this one
 unique(sev_edge$quad) ## this seems like it could be equivalent to the northern edge subplots?
 unique(sev_edge$site)
-
+min(sev_edge$cover)
+min(north_edge$max.cover)
 
 sort(unique(sev_edge$date))
 ## based on what I've been hearing both 2012 and 2013 years were pre-treatment but 2012 had a big drought so maybe not the best data to use?
@@ -120,11 +117,9 @@ north_clean <- north_edge %>%
            sapply(tail, 1),
          spepcode = toupper(substr(sp.ep, 1, 3)),
          spcode = paste0(genuscode, spepcode)) %>%
-  filter(treatment != "int", year > 2012, !species %in% unk, max.cover > 0) %>%
+  filter(treatment != "int", year > 2012, !species %in% unk) %>%
   mutate(treatment = ifelse(treatment == "chr", "D", "C")) %>%
   select(year, site, treatment, block, plot, subplot, spcode, species, kartez, max.cover)
-
-
 
 ## Merge ####
 colnames(north_clean) 
@@ -135,6 +130,46 @@ unique(edge_all$site)
 
 sort(unique(edge_all$year))
 
+## Fill 0's ####
+sev_black <- edge_all %>%
+  filter(site == "SEV_black", treatment == "C") %>%
+  select(-spcode, -kartez) %>%
+  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
+  pivot_longer(Bouteloua_eriopoda:Chamaesyce_albomarginata, names_to = "species", values_to = "max.cover")
+
+sev_blue <- edge_all %>%
+  filter(site == "SEV_blue", treatment == "C") %>%
+  select(-spcode, -kartez) %>%
+  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
+  pivot_longer(Bouteloua_gracilis:Sporobolus_contractus, names_to = "species", values_to = "max.cover")
+
+hay <- edge_all %>%
+  filter(site == "HYS", treatment == "C") %>%
+  select(-spcode, -kartez) %>%
+  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
+  pivot_longer(Achillea_millefolium:Croton_sp., names_to = "species", values_to = "max.cover")
+
+knz <- edge_all %>%
+  filter(site == "KNZ", treatment == "C") %>%
+  select(-spcode, -kartez) %>%
+  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
+  pivot_longer(Ambrosia_psilostachya:Sonchus_asper, names_to = "species", values_to = "max.cover")
+
+chy <- edge_all %>%
+  filter(site == "CHY", treatment == "C") %>%
+  select(-spcode, -kartez) %>%
+  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
+  pivot_longer(Allium_textile:Sporobolus_sp., names_to = "species", values_to = "max.cover")
+
+sgs <- edge_all %>%
+  filter(site == "SGS", treatment == "C") %>%
+  select(-spcode, -kartez) %>%
+  pivot_wider(names_from = "species", values_from = "max.cover", values_fill = 0) %>%
+  pivot_longer(Aristida_purpurea:ASOX, names_to = "species", values_to = "max.cover")
+
+## merge all together
+edge_w_zeros <- do.call("rbind", list(sev_black, sev_blue, hay, knz, chy, sgs)) %>%
+  mutate(pres.abs = ifelse(max.cover > 0, 1, 0))
 
 ## clean up env
 rm(list = c("north_clean", "north_edge", "sev_clean", "sev_edge", "north_spkey", "empty", "none", "unk_all", "unk1", "unk2", "rm_kartez", "rm_sp", "unk"))
