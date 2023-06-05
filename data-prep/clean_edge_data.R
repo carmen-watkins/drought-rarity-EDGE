@@ -6,14 +6,14 @@ theme_set(theme_bw())
 
 # Read in Data ####
 ## northern edge
-north_edge <- read.csv("spcomp_subplot_names.csv")
+north_edge <- read.csv("data/spcomp_subplot_names.csv")
     ## max cover combines the two seasonal samplings and takes the largest of these, I believe. 
     ## Don't think this has been done with the sev site yet
 
-north_spkey <- read.csv("spnames_code.csv")
+north_spkey <- read.csv("data/spnames_code.csv")
 
 ## sev edge 
-sev_edge <- read.csv("sev298_NPP_edge_biomass.csv")
+sev_edge <- read.csv("data/sev298_NPP_edge_biomass.csv")
     ## there is cover data here also
     ## would be good to talk to SEV EDGE expert and confirm a few things about the data here
 
@@ -58,7 +58,7 @@ min(sev_edge$cover)
 min(north_edge$max.cover)
 
 sort(unique(sev_edge$date))
-## based on what I've been hearing both 2012 and 2013 years were pre-treatment but 2012 had a big drought so maybe not the best data to use?
+## based on what I've been hearing both 2012 and 2013 years were pre-treatment but 2012 had a big drought so maybe not the best data to use? (this is true at Northern sites but not at the SEV)
 
 ## Desired Changes ####
 ## list desired changes
@@ -92,6 +92,9 @@ unk2 <- sev_edge %>%
 rm_kartez <- c("NONE", "EMPTY", "UNKFORB1", "UNKNOWN") ## remove unknowns and empty/none
 
 ### make mods ####
+unique(sev_edge$year)
+## 2012 = pre-treatment year
+## 2013, 2014, 2015, 2016 = drought years
 ## Q HERE ####
 ## do I calculate the max cover by comparing spring and fall of diff or the same years?
 sev_clean <- sev_edge %>%
@@ -101,15 +104,18 @@ sev_clean <- sev_edge %>%
          species = paste0(genus, "_", sp.epithet)) %>%
   mutate(across(c(spcode), toupper), ## capitalize
          kartez = ifelse(species == "Glandularia_bipinnatifida", "GLBI2", kartez)) %>% ## fix a kartez code to prevent row from duplicating
-  filter(year > 2012, treatment != "D", !kartez %in% rm_kartez) %>% ## remove 2012 (drought pre-trt year), monsoon timing treatment, and unknowns/empty species
+  mutate(experiment.year = year - 2012, 
+         treatment.year = ifelse(year == 2012, "pre-treatment", 
+                                 ifelse((2012 < year) & (year < 2017), "drought", "recovery"))) %>%
+  filter(treatment != "D", !kartez %in% rm_kartez) %>% ## remove monsoon timing treatment and unknowns/empty species
   #pivot_wider(names_from = season, values_from = cover, values_fill = 0) %>%
-  group_by(site, treatment, block, plot, subplot, year, species, spcode, kartez) %>% ## grouping by everything except season; this lets us take the maximum value of the season in the same calendar year.
+  group_by(site, treatment, block, plot, subplot, year, experiment.year, treatment.year, species, spcode, kartez) %>% ## grouping by everything except season; this lets us take the maximum value of the season in the same calendar year.
   summarise(max.cover = max(cover)) %>%
   mutate(treatment = ifelse(treatment == "E", "D", treatment)) %>% ## change from E -> D for more intuitive notation
   ungroup() %>%
-  group_by(site, treatment, block, plot, year, species, spcode, kartez) %>%
+  group_by(site, treatment, block, plot, year, experiment.year, treatment.year, species, spcode, kartez) %>%
   summarise(mean.plot.cover = mean(max.cover)) %>% ## take mean cover of all 4 subplots in a plot- subplots are psuedoreplicated
-  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover)
+  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year)
 
 colnames(sev_clean)
 
@@ -162,11 +168,14 @@ north_clean <- north_edge %>%
            sapply(tail, 1),
          spepcode = toupper(substr(sp.ep, 1, 3)),
          spcode = paste0(genuscode, spepcode)) %>%
-  filter(treatment != "int", year > 2012, !species %in% rm) %>%
-  mutate(treatment = ifelse(treatment == "chr", "D", "C")) %>%
-  group_by(site, treatment, block, plot, year, species, spcode, kartez) %>%
+  filter(treatment != "int", year > 2012, !species %in% rm) %>% ## remove 2012 as was drought pre-treat year
+  mutate(treatment = ifelse(treatment == "chr", "D", "C"), 
+         experiment.year = year - 2013, ## 2013 is pre-treat year
+         treatment.year = ifelse(year == 2013, "pre-treatment", 
+                                 ifelse((2013 < year) & (year < 2018), "drought", "recovery"))) %>%
+  group_by(site, treatment, block, plot, year, species, spcode, kartez, experiment.year, treatment.year) %>%
   summarise(mean.plot.cover = mean(max.cover)) %>% ## take mean cover of all 4 subplots in a plot- subplots are psuedoreplicated
-  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover)
+  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year)
 
 ### explore species ####
 summary <- north_clean %>%
@@ -191,7 +200,7 @@ sev_black <- edge_all %>%
   ungroup() %>%
   select(-spcode, -kartez) %>%
   pivot_wider(names_from = "species", values_from = "mean.plot.cover", values_fill = 0) %>%
-  pivot_longer(Bouteloua_eriopoda:Sphaeralcea_hastulata, names_to = "species", values_to = "mean.plot.cover")
+  pivot_longer(Bouteloua_eriopoda:Psilostrophe_tagetina, names_to = "species", values_to = "mean.plot.cover")
 
 sev_blue <- edge_all %>%
   filter(site == "SEV_blue") %>%
