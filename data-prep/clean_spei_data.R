@@ -1,53 +1,48 @@
-# Set up env 
+# Set up env ####
 library(tidyverse)
 theme_set(theme_bw())
 
-source("data-prep/clean_edge_data.R")
-
-## read in data
-spei <- read.csv("data/SPEI_all_EDGE.csv") %>%
+## read in spei data
+spei.dat <- read.csv("data/SPEI_all_EDGE.csv") %>%
   mutate(experiment.years = ifelse(year %in% c(2012:2021), "Y", "N"), 
-         Site = ifelse(Site == "HAYS", "HYS",
+         site = ifelse(Site == "HAYS", "HYS", ## change site names to match cover data
                        ifelse(Site == "SEV_BLACK", "SEV_black", 
-                              ifelse(Site == "SEV_BLUE", "SEV_blue", Site))))
+                              ifelse(Site == "SEV_BLUE", "SEV_blue", Site)))) %>%
+  select(-Site)
 
-## filter to growing season spei
-spei.filt <- spei %>%
-  filter(ifelse(Site == "SEV_black" | Site == "SEV_blue", month == 10, month == 9))
+# Clean ####
+## classify SPEI years 
+spei.filt.record <- spei.dat %>%
+  filter(ifelse(site == "SEV_black" | site == "SEV_blue", month == 10, month == 9)) %>% ## filter to growing season spei
+  group_by(site) %>%
+  mutate(spei.class = ifelse(spei <= quantile(spei.dat$spei, probs = 0.25, na.rm = T), 1, 
+                             ifelse(spei > quantile(spei.dat$spei, probs = 0.25, na.rm = T)
+                                    & spei <= quantile(spei.dat$spei, probs = 0.5, na.rm = T), 2,
+                                    ifelse(spei > quantile(spei.dat$spei, probs = 0.5, na.rm = T) & spei <= quantile(spei.dat$spei, probs = 0.75, na.rm = T), 3,
+                                           ifelse(spei > quantile(spei.dat$spei, probs = 0.75, na.rm = T) & spei <= quantile(spei.dat$spei, probs = 1, na.rm = T), 4, "other")))))
 
 ## reorder sites to match ppt gradient
-spei.filt$Site <- as.factor(spei.filt$Site)
-spei.filt <- spei.filt %>%
+spei.filt.record$site <- as.factor(spei.filt.record$site)
+spei.filt.record <- spei.filt.record %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black"))
-
-
-## classify SPEI years ##
-spei.filt.record <- spei.filt %>%
-  group_by(Site) %>%
-  mutate(spei.class = ifelse(spei <= quantile(spei.filt$spei, probs = 0.25, na.rm = T), 1, 
-                             ifelse(spei > quantile(spei.filt$spei, probs = 0.25, na.rm = T)
-                                    & spei <= quantile(spei.filt$spei, probs = 0.5, na.rm = T), 2,
-                                    ifelse(spei > quantile(spei.filt$spei, probs = 0.5, na.rm = T) & spei <= quantile(spei.filt$spei, probs = 0.75, na.rm = T), 3,
-                                           ifelse(spei > quantile(spei.filt$spei, probs = 0.75, na.rm = T) & spei <= quantile(spei.filt$spei, probs = 1, na.rm = T), 4, "other")))))
-
-
-ggplot(spei.filt.record, aes(x=spei, y=spei.class)) +
-  geom_point() +
-  facet_wrap(~Site)
 
 ## create spei df for experiment years only
 spei.exp <- spei.filt.record %>%
-  filter(experiment.years == "Y") %>%
-  #filter(ifelse(Site %in% c("CHY", "HYS", "KNZ", "SGS"), month == 9, month == 10)) %>%
-  mutate(site = Site) 
+  filter(experiment.years == "Y")
 
+## reorder sites to match ppt gradient
 spei.exp$site <- as.factor(spei.exp$site)
 spei.exp <- spei.exp %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black"))
 
-## merge spei with edge data
-edge_w_spei <- left_join(edge_all, spei.exp, by = c("site", "year")) %>%
-  filter(treatment == "C")
+# Visualize ####
+## check whether spei classification was successful
+ggplot(spei.filt.record, aes(x=spei, y=spei.class, color = experiment.years)) +
+  geom_point() +
+  facet_wrap(~site) +
+  scale_color_manual(values = c("lightgrey", "black"))
+
+#ggsave("preliminary_figs/spei_class_by_site.png", height = 4, width = 6)
 
 ## Plot SPEI by year for each site
 ggplot(spei.exp, aes(x=year, y=spei)) +
@@ -58,12 +53,14 @@ ggplot(spei.exp, aes(x=year, y=spei)) +
 #ggsave("preliminary_figs/spei_exp_years_by_site.png", height = 4, width = 6)
 
 ## explore distrib of SPEI over all years
-ggplot(spei.filt, aes(x=spei)) +
+ggplot(spei.filt.record, aes(x=spei)) +
   geom_density() +
-  facet_wrap(~Site) +
+  facet_wrap(~site) +
   geom_point(aes(x=spei, y=0.1, color = experiment.years)) +
   scale_color_manual(values = c("lightgrey", "black")) +
   xlab("monthly spei") +
   ylab("frequency")
 
 #ggsave("preliminary_figs/spei_historical.png", height = 4, width = 6)
+
+rm(spei.dat, spei.filt.record)
