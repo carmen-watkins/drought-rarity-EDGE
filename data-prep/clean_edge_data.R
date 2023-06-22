@@ -97,6 +97,7 @@ unique(sev_edge$year)
 ## 2013, 2014, 2015, 2016 = drought years
 ## Q HERE ####
 ## do I calculate the max cover by comparing spring and fall of diff or the same years?
+## from readings, seems like growing season is ~Apr - Oct so it should be same year 
 sev_clean <- sev_edge %>%
   mutate(site = ifelse(site == "EDGE_black", "SEV_black", "SEV_blue"), ## fix site code
          subplot = quad, ## rename quad as subplot to match north sites
@@ -115,7 +116,11 @@ sev_clean <- sev_edge %>%
   ungroup() %>%
   group_by(site, treatment, block, plot, year, experiment.year, treatment.year, species, spcode, kartez) %>%
   summarise(mean.plot.cover = mean(max.cover)) %>% ## take mean cover of all 4 subplots in a plot- subplots are psuedoreplicated
-  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year)
+  ungroup() %>%
+  group_by(site, treatment, block, plot, year, experiment.year, treatment.year) %>%
+  mutate(total.plot.cover = sum(mean.plot.cover),
+         relative.sp.cover = mean.plot.cover/total.plot.cover) %>%
+  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year, relative.sp.cover, total.plot.cover)
 
 colnames(sev_clean)
 
@@ -175,7 +180,11 @@ north_clean <- north_edge %>%
                                  ifelse((2013 < year) & (year < 2018), "drought", "recovery"))) %>%
   group_by(site, treatment, block, plot, year, species, spcode, kartez, experiment.year, treatment.year) %>%
   summarise(mean.plot.cover = mean(max.cover)) %>% ## take mean cover of all 4 subplots in a plot- subplots are psuedoreplicated
-  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year)
+  ungroup() %>%
+  group_by(site, treatment, block, plot, year, experiment.year, treatment.year) %>%
+  mutate(total.plot.cover = sum(mean.plot.cover),
+         relative.sp.cover = mean.plot.cover/total.plot.cover) %>%
+  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year, relative.sp.cover, total.plot.cover)
 
 ### explore species ####
 summary <- north_clean %>%
