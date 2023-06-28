@@ -1,5 +1,15 @@
-## categorize species by LT control data OR by the EDGE control data only
-source("data-prep/clean_edge_data.R")
+# Header #### 
+## Script name: Classify Rank, Persistence
+##
+## Purpose of script: Classify each species at each site by its rank and persistence at the site using data from control plots in the EDGE experiment.
+##
+## Author: Carmen Watkins
+##
+## Email: cebel2@uoregon.edu
+
+# Set up env ####
+## read in cleaned cover data
+source("data-prep/clean_edge_data.R") 
 
 library(ggpubr)
 
@@ -9,6 +19,8 @@ calcSE<-function(x){
   sd(x2)/sqrt(length(x2))
 }
 
+## filter data to include control plots only
+## use edge data with zeros for accurate calculations
 controls <- edge_w_zeros %>%
   filter(treatment == "C")
 
@@ -24,29 +36,30 @@ rank_mean <- controls %>%
   group_by(site) %>%
   mutate(percrank = percent_rank(mean.cov)) ## take the percent rank
 
-rank_mean2 <- edge_all %>%
-  filter(treatment == "C") %>%
-  group_by(site, species) %>% ## take the mean of a species at a site right away
-  summarise(mean.cov = mean(mean.plot.cover)) %>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(percrank = percent_rank(mean.cov))
+#rank_mean2 <- edge_all %>%
+ # filter(treatment == "C") %>%
+  #group_by(site, species) %>% ## take the mean of a species at a site right away
+  #summarise(mean.cov = mean(mean.plot.cover)) %>%
+  #ungroup() %>%
+  #group_by(site) %>%
+  #mutate(percrank = percent_rank(mean.cov))
 
 ## compare visually
-withzeros <- ggplot(rank_mean, aes(x=-percrank, y=mean.cov)) +
-  geom_point() +
-  facet_wrap(~site) +
-  ggtitle("With Zeros")
-nozeros <- ggplot(rank_mean2, aes(x=-percrank, y=mean.cov)) +
-  geom_point() +
-  facet_wrap(~site) +
-  ggtitle("No Zeros")
+#withzeros <- ggplot(rank_mean, aes(x=-percrank, y=mean.cov)) +
+ # geom_point() +
+  #facet_wrap(~site) +
+  #ggtitle("With Zeros")
+#nozeros <- ggplot(rank_mean2, aes(x=-percrank, y=mean.cov)) +
+ # geom_point() +
+  #facet_wrap(~site) +
+  #ggtitle("No Zeros")
 
-ggarrange(withzeros, nozeros)
+#ggarrange(withzeros, nozeros)
 #ggsave("preliminary_figs/compare_RAC_w_zeros.png", width = 8, height = 4)
 
 ## Persistence ####
 ### plot ####
+## decided not to use plot level persistence to keep scale consistent b/w rank & persistence
 persist_plot <- controls %>%
   group_by(site, block, plot, species) %>% ## do I need to group by year at all first? no
   summarise(persistence.plot = sum(pres.abs)/n())
@@ -101,7 +114,7 @@ ggplot(persist_sum, aes(x=site, y=mean.persist.overall, color = spatial.scale)) 
 rank_persist <- left_join(persist_all, rank_mean, by = c("site", "species"))
 
 # Clean Env ####
-rm(controls, nozeros, persist_all, persist_plot, persist_site, persist_sum, rank_mean, rank_mean2, withzeros)
+rm(controls, persist_all, persist_plot, persist_site, persist_sum, rank_mean)
 
 # Old Notes ####
 ## calculate the mean cover of a species across years first before ranking

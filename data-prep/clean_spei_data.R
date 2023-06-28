@@ -1,3 +1,12 @@
+# Header #### 
+## Script name: Clean SPEI data
+##
+## Purpose of script: Clean & explore SPEI data for each site to prep for use in analyses. Specifically need to filter to the correct years and to growing season months.
+##
+## Author: Carmen Watkins
+##
+## Email: cebel2@uoregon.edu
+
 # Set up env ####
 library(tidyverse)
 theme_set(theme_bw())

@@ -1,10 +1,18 @@
-## Clean & Combine all EDGE sites
+# Header #### 
+## Script name: Clean EDGE Data
+##
+## Purpose of script: Clean & standardize cover data at each EDGE site so that it's ready for analyses and sites can be combined into one dataframe.
+##
+## Author: Carmen Watkins
+##
+## Email: cebel2@uoregon.edu
 
+# Set up Env ####
 ## load packages
 library(tidyverse)
 theme_set(theme_bw())
 
-# Read in Data ####
+## Read in Data ####
 ## northern edge
 north_edge <- read.csv("data/spcomp_subplot_names.csv")
     ## max cover combines the two seasonal samplings and takes the largest of these, I believe. 
