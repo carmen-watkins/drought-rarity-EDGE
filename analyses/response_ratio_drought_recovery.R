@@ -29,27 +29,28 @@ ggplot(edge_w_predictors.site, aes(x=percrank, y=persistence.site)) +
 # Final Figures ####
 ## Fig 1 ####
 rank.drought <- ggplot(edge_w_predictors.site, aes(x=percrank, y=resp.ratio.site)) +
-  geom_point(aes(color = site)) +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1) +
-  geom_smooth(method = "lm", alpha = 0.05, color = "black") +
+  geom_point(aes(color = site), alpha = 0.9, size = 0.9) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0, linewidth = 0.8) +
+  geom_smooth(method = "lm", alpha = 0, color = "black", linewidth = 1.5) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = c("#008080", "#70a494", "#b4c8a8", "#edbb8a","#de8a5a", "#ca562c")) +
   xlab("Rank") +
-  ylab("Drought Response Ratio")
+  ylab("Drought Response Ratio") +
+  guides(color=guide_legend(nrow=1,byrow=TRUE))
 
 per.drought <- ggplot(edge_w_predictors.site, aes(x=persistence.site, y=resp.ratio.site)) +
-  geom_point(aes(color = site)) +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1) +
-  geom_smooth(method = "lm", alpha = 0.05, color = "black") +
+  geom_point(aes(color = site), alpha = 0.9, size = 0.9) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0, size = 0.8) +
+  geom_smooth(method = "lm", alpha = 0.05, color = "black", size = 1.5) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = c("#008080", "#70a494", "#b4c8a8", "#edbb8a","#de8a5a", "#ca562c")) +
   xlab("Persistence") +
   ylab("")
 
 rank.recov <- ggplot(edge_w_predictors.site.recov, aes(x=percrank, y=resp.ratio.site)) +
-  geom_point(aes(color = site)) +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1) +
-  geom_smooth(method = "lm", alpha = 0.05, color = "black") +  #facet_wrap(~site, scales ="free") +
+  geom_point(aes(color = site), alpha = 0.9, size = 0.9) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0, size = 0.8) +
+  geom_smooth(method = "lm", alpha = 0.05, color = "black", size = 1.5) +  #facet_wrap(~site, scales ="free") +
   #geom_smooth(method = "lm", alpha = 0.25) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = c("#008080", "#70a494", "#b4c8a8", "#edbb8a","#de8a5a", "#ca562c")) +
@@ -57,9 +58,9 @@ rank.recov <- ggplot(edge_w_predictors.site.recov, aes(x=percrank, y=resp.ratio.
   ylab("Recovery Response Ratio")
 
 per.recov <- ggplot(edge_w_predictors.site.recov, aes(x=persistence.site, y=resp.ratio.site)) +
-  geom_point(aes(color = site)) +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1) +
-  geom_smooth(method = "lm", alpha = 0.05, color = "black") +
+  geom_point(aes(color = site), alpha = 0.9, size = 0.9) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0, size = 0.8) +
+  geom_smooth(method = "lm", alpha = 0.05, color = "black", size = 1.5) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = c("#008080", "#70a494", "#b4c8a8", "#edbb8a","#de8a5a", "#ca562c")) +
   xlab("Persistence") +
@@ -67,7 +68,7 @@ per.recov <- ggplot(edge_w_predictors.site.recov, aes(x=persistence.site, y=resp
 
 ggarrange(rank.drought, per.drought, rank.recov, per.recov, labels = "AUTO", common.legend = T, legend = "bottom")
 
-ggsave("preliminary_figs/resp_ratio_rank_persistence/Fig1_RR_drought_recov.png", width = 6.5, height = 6.5)
+ggsave("preliminary_figs/resp_ratio_rank_persistence/Fig1_RR_drought_recov2.png", width = 6.5, height = 6.5)
 
 # Exploratory Figures ####
 ## Drought v Recovery RR ####
