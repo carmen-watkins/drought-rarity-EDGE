@@ -70,8 +70,8 @@ ggarrange(rank.drought, per.drought, rank.recov, per.recov, labels = "AUTO", com
 
 ggsave("preliminary_figs/resp_ratio_rank_persistence/Fig1_RR_drought_recov2.png", width = 6.5, height = 6.5)
 
-# Exploratory Figures ####
-## Drought v Recovery RR ####
+## Fig 2 ####
+## Drought v Recovery RR
 ## fix column names before merging
 drought.RR <- edge_w_predictors.site %>%
   mutate(resp.ratio.drought = resp.ratio.site,
@@ -87,19 +87,20 @@ recov.RR <- edge_w_predictors.site.recov %>%
 response.ratio.tog <- left_join(drought.RR, recov.RR, by = c("site", "species"))
 
 ## visualize
-ggplot(response.ratio.tog, aes(x=resp.ratio.drought, resp.ratio.recov)) +
+ggplot(response.ratio.tog, aes(x=resp.ratio.drought, resp.ratio.recov, color = percrank)) +
   geom_hline(yintercept = 0, color = "grey", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "grey", linewidth = 0.25) +
-  geom_point() +
+  geom_point(shape = 20, size = 2) +
   facet_wrap(~site) +
-  geom_smooth(method = "lm", alpha = 0.25) +
+  geom_smooth(method = "lm", alpha = 0.10, color = "black", linewidth = 0.75) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
   xlab("Drought Response Ratio") +
   ylab("Recovery Response Ratio")
-  
-#ggsave("preliminary_figs/resp_ratio_rank_persistence/DRR_v_RRR.png", width = 6, height = 4)
+
+ggsave("preliminary_figs/resp_ratio_rank_persistence/DRR_v_RRR.png", width = 6, height = 4)
 
 
+# Exploratory Figures ####
 ## RR Slope v. MAP ####
 ### Calc Slope ####
 ## use response.ratio.tog dataframe 
