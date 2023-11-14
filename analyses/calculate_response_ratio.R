@@ -16,7 +16,7 @@ source("data-prep/clean_edge_data.R")
 ## During Drought ####
 ## (drought - control)/control + drought
 
-### Block Level ####
+### Block Level ##
 ## NOT using block level anymore
 #resp.ratio.block <- edge_all %>%
  # filter(experiment.year %in% c(1:4)) %>% ## 0 is pre-treat year; drought was years 1-4
@@ -96,3 +96,6 @@ edge_yearly_w_predictors <- edge_yearly_w_predictors %>%
 year.key <- edge_all %>%
   group_by(site, experiment.year, treatment.year, year) %>%
   summarise(year2 = unique(year)) 
+
+# Clean up ####
+rm(edge_all, edge_w_zeros, rank_persist, resp.ratio.site, resp.ratio.site.recov, resp.ratio.yearly)
