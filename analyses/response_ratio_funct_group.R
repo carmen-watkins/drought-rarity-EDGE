@@ -106,6 +106,7 @@ sumRR.ppt <- response.ratio.tog %>%
   mutate(overall.tot= sum(quad.tot),
          percent.quad = quad.tot/overall.tot)
 
+sumRR1$quad <- factor(sumRR1$quad, levels = c("Q1", "Q2", "Q3", "Q4", "lost", "recovered", "no effect"))
 
 ggplot(sumRR, aes(x=quad, y=percent.quad)) +
   geom_bar(stat = 'identity') +
