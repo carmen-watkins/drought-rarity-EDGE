@@ -7,13 +7,15 @@ theme_set(theme_classic())
 # Join FG Data ####
 edge_temp <- edge_w_predictors.site %>%
   mutate(genus = tolower(strsplit(species, "_")%>%
-                           sapply(head, 1)))
+                           sapply(head, 1))) %>%
+  replace(is.na(.), 0) 
 
 edge_FG <- left_join(edge_temp, FG, by = "species")
 
 edge_temp2 <- edge_w_predictors.site.recov %>%
   mutate(genus = tolower(strsplit(species, "_")%>%
-                           sapply(head, 1)))
+                           sapply(head, 1))) %>%
+  replace(is.na(.), 0) 
 
 edge_FG_recov <- left_join(edge_temp2, FG, by = "species")
 
@@ -104,6 +106,7 @@ sumRR.ppt <- response.ratio.tog %>%
   mutate(overall.tot= sum(quad.tot),
          percent.quad = quad.tot/overall.tot)
 
+sumRR1$quad <- factor(sumRR1$quad, levels = c("Q1", "Q2", "Q3", "Q4", "lost", "recovered", "no effect"))
 
 ggplot(sumRR, aes(x=quad, y=percent.quad)) +
   geom_bar(stat = 'identity') +
