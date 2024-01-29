@@ -34,6 +34,13 @@ response.ratio.tog <- left_join(drought.RR, recov.RR, by = c("site", "species", 
   mutate(precip.bin = ifelse(site %in% c("KNZ", "HYS"), "high",
                              ifelse(site %in% c("CHY", "SGS"), "med", "low")))
 
+## make sure NAs are zeroes -- sorry this is in ugly base R
+response.ratio.tog1$resp.ratio.recov[is.na(response.ratio.tog1$resp.ratio.recov)] <- 0
+response.ratio.tog1$mean.cov.recov[is.na(response.ratio.tog1$mean.cov.recov)] <- 0
+
+response.ratio.tog1$resp.ratio.drought[is.na(response.ratio.tog1$resp.ratio.drought)] <- 0
+response.ratio.tog1$mean.cov.drought[is.na(response.ratio.tog1$mean.cov.drought)] <- 0
+
 response.ratio.tog$precip.bin <- as.factor(response.ratio.tog$precip.bin)
 
 response.ratio.tog <- response.ratio.tog %>%
@@ -74,7 +81,10 @@ sumRR <- response.ratio.tog %>%
   mutate(quad = ifelse(resp.ratio.drought > 0 & resp.ratio.recov > 0, "Q2",
                           ifelse(resp.ratio.drought > 0 & resp.ratio.recov < 0, "Q4",
                                  ifelse(resp.ratio.drought < 0 & resp.ratio.recov < 0, "Q3",
-                                        ifelse(resp.ratio.drought < 0 & resp.ratio.recov > 0,"Q1", NA))))) %>%
+                                        ifelse(resp.ratio.drought < 0 & resp.ratio.recov > 0,"Q1", 
+                                               ifelse(resp.ratio.drought == 0 & resp.ratio.recov != 0, "recovered",
+                                                      ifelse(resp.ratio.drought != 0 & resp.ratio.recov == 0, "lost", 
+                                                             ifelse(resp.ratio.drought == 0 & resp.ratio.recov == 0, "no effect", NA)))))))) %>%
   group_by(site, quad) %>%
   summarise(quad.tot = n()) %>%
   ungroup() %>%
