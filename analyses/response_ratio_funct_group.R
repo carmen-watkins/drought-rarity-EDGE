@@ -35,11 +35,11 @@ response.ratio.tog <- left_join(drought.RR, recov.RR, by = c("site", "species", 
                              ifelse(site %in% c("CHY", "SGS"), "med", "low")))
 
 ## make sure NAs are zeroes -- sorry this is in ugly base R
-response.ratio.tog1$resp.ratio.recov[is.na(response.ratio.tog1$resp.ratio.recov)] <- 0
-response.ratio.tog1$mean.cov.recov[is.na(response.ratio.tog1$mean.cov.recov)] <- 0
+response.ratio.tog$resp.ratio.recov[is.na(response.ratio.tog$resp.ratio.recov)] <- 0
+response.ratio.tog$mean.cov.recov[is.na(response.ratio.tog$mean.cov.recov)] <- 0
 
-response.ratio.tog1$resp.ratio.drought[is.na(response.ratio.tog1$resp.ratio.drought)] <- 0
-response.ratio.tog1$mean.cov.drought[is.na(response.ratio.tog1$mean.cov.drought)] <- 0
+response.ratio.tog$resp.ratio.drought[is.na(response.ratio.tog$resp.ratio.drought)] <- 0
+response.ratio.tog$mean.cov.drought[is.na(response.ratio.tog$mean.cov.drought)] <- 0
 
 response.ratio.tog$precip.bin <- as.factor(response.ratio.tog$precip.bin)
 
