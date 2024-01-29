@@ -41,6 +41,7 @@ resp.ratio.site <- edge_all %>%
   group_by(site, treatment, species) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
   pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
   ungroup() %>%
   group_by(site, species) %>%
   mutate(resp.ratio.site = (D-C)/(C+D)) 
@@ -60,6 +61,7 @@ resp.ratio.site.recov <- edge_all %>%
   group_by(site, treatment, species) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
   pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
   ungroup() %>%
   group_by(site, species) %>%
   mutate(resp.ratio.site = (D-C)/(C+D))
