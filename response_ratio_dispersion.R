@@ -88,24 +88,53 @@ response.ratio.tog %>%
 ggerrorplot(response.ratio.tog,
             x= "FunctionalGroup",
             y= "dispersion",
-            facet.by = "site")
+            facet.by = "site")+ 
+  geom_point(shape = 1, position = "jitter", alpha = 0.2)
 
-## by strategy and site 
+
+## add by strategy  
 ggerrorplot(response.ratio.tog,
             x= "strategy",
             y= "dispersion",
+            color = "FunctionalGroup",
             facet.by = "site")+ rotate_x_text(45)
 
 ## by rank and functional group and site
 ggplot(response.ratio.tog, aes(x=percrank, y=dispersion, color = FunctionalGroup)) +
   geom_point(shape = 20, size = 2) +
+  geom_smooth(aes(color = FunctionalGroup), method = "lm", alpha = 0, linewidth = 0.8) +
   facet_wrap(~site, nrow = 3, ncol = 2) +
   xlab("Rank") +
   ylab("Dispersion from 1:1 response line") 
 
+
 ## by persistence and functional group and site
 ggplot(response.ratio.tog, aes(x=persistence.site, y=dispersion, color = FunctionalGroup)) +
   geom_point(shape = 20, size = 2) +
+  geom_smooth(aes(color = FunctionalGroup), method = "lm", alpha = 0, linewidth = 0.8) +
   facet_wrap(~site, nrow = 3, ncol = 2) +
   xlab("Persistence") +
   ylab("Dispersion from 1:1 response line") 
+
+# Investigating which species are having interesting responses---------
+
+## Make a table of species occurrences to see which species occur across sites
+spp_table <- response.ratio.tog %>%
+  select(species) %>%
+  group_by(species) %>%
+  summarize(n=n())%>%
+  arrange(desc(n))
+#Bouteloua gracilis (blue grama) and Lepidium densiflorum (pepperweed) occur all 6 sites
+
+## Visualize common species
+ggplot(response.ratio.tog, aes(x=resp.ratio.drought, resp.ratio.recov, color = FunctionalGroup)) +
+  geom_hline(yintercept = 0, color = "grey", linewidth = 0.25) +
+  geom_vline(xintercept = 0, color = "grey", linewidth = 0.25) +
+  geom_point(shape = 20, size = 2) +
+  facet_wrap(~site, nrow = 3, ncol = 2) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  xlab("Drought Response Ratio") +
+  ylab("Recovery Response Ratio") +
+  scale_color_manual(values = c("#CC61B0", "#99C945","#5D69B1", "#E58606"))+
+  geom_point(data=subset(response.ratio.tog,species=="Bouteloua_gracilis"), 
+             aes(x=resp.ratio.drought, y=resp.ratio.recov, shape=as.factor(percrank)), size=3)
