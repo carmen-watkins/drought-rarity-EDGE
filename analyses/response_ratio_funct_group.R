@@ -208,7 +208,7 @@ ggplot(edge_FG, aes(x=persistence.site, y=recovery.RR)) +
   #guides(color=guide_legend(nrow=1,byrow=TRUE))
   facet_wrap(~site)
 
-ggsave("preliminary_figs/resp_ratio_rank_persistence/RP_FG_by_site.png", width = 7, height = 3.5)
+ggsave("preliminary_figs/meeting_jan_2024/RP_FG_by_site.png", width = 7, height = 3.5)
 
 
 ## Facet by FG #####
