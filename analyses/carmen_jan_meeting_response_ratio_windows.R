@@ -20,6 +20,7 @@ resp.ratio.site.2yr <- edge_all %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
   pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
   ungroup() %>%
+  replace(is.na(.), 0) %>%
   group_by(site, species) %>%
   mutate(resp.ratio.site = (D-C)/(C+D)) 
 
@@ -37,6 +38,7 @@ resp.ratio.site.recov.2yr <- edge_all %>%
   group_by(site, treatment, species) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
   pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
   ungroup() %>%
   group_by(site, species) %>%
   mutate(resp.ratio.site = (D-C)/(C+D))
@@ -83,6 +85,17 @@ response.ratio.tog.2yr$precip.bin <- as.factor(response.ratio.tog.2yr$precip.bin
 response.ratio.tog.2yr <- response.ratio.tog.2yr %>%
   mutate(precip.bin = fct_relevel(precip.bin, "high", "med", "low"))
 
+## make sure NAs are zeroes -- sorry this is in ugly base R
+response.ratio.tog.2yr$resp.ratio.recov[is.na(response.ratio.tog.2yr$resp.ratio.recov)] <- 0
+response.ratio.tog.2yr$mean.cov.recov[is.na(response.ratio.tog.2yr$mean.cov.recov)] <- 0
+
+response.ratio.tog.2yr$resp.ratio.drought[is.na(response.ratio.tog.2yr$resp.ratio.drought)] <- 0
+response.ratio.tog.2yr$mean.cov.drought[is.na(response.ratio.tog.2yr$mean.cov.drought)] <- 0
+
+response.ratio.tog$precip.bin <- as.factor(response.ratio.tog.2yr$precip.bin)
+
+#response.ratio.tog.2yr <- response.ratio.tog.2yr %>%
+ # mutate(precip.bin = fct_relevel(precip.bin, "high", "med", "low"))
 
 ## 3 Year ####
 ### Drought ####
@@ -91,6 +104,7 @@ resp.ratio.site.3yr <- edge_all %>%
   group_by(site, treatment, species) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
   pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
   ungroup() %>%
   group_by(site, species) %>%
   mutate(resp.ratio.site = (D-C)/(C+D)) 
@@ -109,6 +123,7 @@ resp.ratio.site.recov.3yr <- edge_all %>%
   group_by(site, treatment, species) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
   pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
   ungroup() %>%
   group_by(site, species) %>%
   mutate(resp.ratio.site = (D-C)/(C+D))
@@ -155,6 +170,13 @@ response.ratio.tog.3yr$precip.bin <- as.factor(response.ratio.tog.3yr$precip.bin
 response.ratio.tog.3yr <- response.ratio.tog.3yr %>%
   mutate(precip.bin = fct_relevel(precip.bin, "high", "med", "low"))
 
+
+## make sure NAs are zeroes -- sorry this is in ugly base R
+response.ratio.tog.3yr$resp.ratio.recov[is.na(response.ratio.tog.3yr$resp.ratio.recov)] <- 0
+response.ratio.tog.3yr$mean.cov.recov[is.na(response.ratio.tog.3yr$mean.cov.recov)] <- 0
+
+response.ratio.tog.3yr$resp.ratio.drought[is.na(response.ratio.tog.3yr$resp.ratio.drought)] <- 0
+response.ratio.tog.3yr$mean.cov.drought[is.na(response.ratio.tog.3yr$mean.cov.drought)] <- 0
 
 # Visualize ####
 ## 2 Year ####
@@ -221,5 +243,90 @@ ggplot(response.ratio.tog.3yr, aes(x=resp.ratio.drought, resp.ratio.recov, color
 
 ggsave("preliminary_figs/resp_ratio_rank_persistence/DRR_v_RRR_3yr_window_ppt_bins.png", width = 7.5, height = 3)
 
+# Diff recovery timescales ####
+resp.ratio.site.recov.first2 <- edge_all %>%
+  filter(experiment.year %in% c(5:7)) %>% 
+  group_by(site, treatment, species) %>%
+  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
+  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
+  ungroup() %>%
+  group_by(site, species) %>%
+  mutate(resp.ratio.site = (D-C)/(C+D))
+
+edge_temp2 <- resp.ratio.site.recov.first2 %>%
+  mutate(genus = tolower(strsplit(species, "_")%>%
+                           sapply(head, 1)))
+
+edge_FG_recov.first2 <- left_join(edge_temp2, FG, by = "species")
+
+edge_FG_recov.first2$resp.ratio.site[is.na(edge_FG_recov.first2$resp.ratio.site)] <- 0
+
+#response.ratio.tog$precip.bin <- as.factor(response.ratio.tog.2yr$precip.bin)
+first <- ggplot(edge_FG_recov.first2, aes(x=resp.ratio.site)) +
+  geom_histogram() +
+  geom_vline(xintercept = 0, color = "red", linetype = "dashed") +
+  ggtitle("Initial Recov: Years 5-7") +
+  coord_cartesian(ylim = c(0,30)) +
+  facet_wrap(~site)
 
 
+resp.ratio.site.recov.middle <- edge_all %>%
+  filter(experiment.year %in% c(6:8)) %>% 
+  group_by(site, treatment, species) %>%
+  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
+  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
+  ungroup() %>%
+  group_by(site, species) %>%
+  mutate(resp.ratio.site = (D-C)/(C+D))
+
+edge_temp2 <- resp.ratio.site.recov.middle %>%
+  mutate(genus = tolower(strsplit(species, "_")%>%
+                           sapply(head, 1)))
+
+edge_FG_recov.middle <- left_join(edge_temp2, FG, by = "species")
+
+edge_FG_recov.middle$resp.ratio.site[is.na(edge_FG_recov.middle$resp.ratio.site)] <- 0
+
+#response.ratio.tog$precip.bin <- as.factor(response.ratio.tog.2yr$precip.bin)
+mid <- ggplot(edge_FG_recov.middle, aes(x=resp.ratio.site)) +
+  geom_histogram() +
+  geom_vline(xintercept = 0, color = "red", linetype = "dashed") +
+  ggtitle("Middle Recov: Years 6-8") +
+  coord_cartesian(ylim = c(0,30)) +
+  facet_wrap(~site)
+
+
+
+
+resp.ratio.site.recov.lastyrs <- edge_all %>%
+  filter(experiment.year %in% c(7:9)) %>% 
+  group_by(site, treatment, species) %>%
+  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
+  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
+  ungroup() %>%
+  group_by(site, species) %>%
+  mutate(resp.ratio.site = (D-C)/(C+D))
+
+edge_temp2 <- resp.ratio.site.recov.lastyrs %>%
+  mutate(genus = tolower(strsplit(species, "_")%>%
+                           sapply(head, 1)))
+
+edge_FG_recov.lastyrs <- left_join(edge_temp2, FG, by = "species")
+
+edge_FG_recov.lastyrs$resp.ratio.site[is.na(edge_FG_recov.lastyrs$resp.ratio.site)] <- 0
+
+response.ratio.tog$precip.bin <- as.factor(response.ratio.tog.2yr$precip.bin)
+
+last <- ggplot(edge_FG_recov.lastyrs, aes(x=resp.ratio.site)) +
+  geom_histogram() +
+  geom_vline(xintercept = 0, color = "red", linetype = "dashed") +
+  ggtitle("Final Recov: Years 7-9") +
+  coord_cartesian(ylim = c(0,30)) +
+  facet_wrap(~site)
+
+
+ggarrange(first, mid, last, ncol = 3)
+ggsave("preliminary_figs/recov_years_RR.png", width = 12, height = 5)
