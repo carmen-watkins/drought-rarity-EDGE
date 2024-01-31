@@ -32,6 +32,8 @@ ggplot(edge_meancov, aes(x=year, y=mean.cov, color = treatment)) +
   labs(color = "Treatment") +
   geom_errorbar(aes(ymin = mean.cov - se.cov, ymax = mean.cov + se.cov), width = 0.25)
 
+ggsave("preliminary_figs/meeting_jan_2024/total_cov_timeseries.png", width = 5, height = 4.5)
+
 #008080,#70a494,#b4c8a8,#f6edbd,#edbb8a,#de8a5a,#ca562c
 
 
