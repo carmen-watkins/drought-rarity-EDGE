@@ -1,6 +1,6 @@
 source("data-prep/clean_edge_data.R")
+source("data-prep/classify_rank_persistence.R")
 theme_set(theme_classic())
-
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -8,6 +8,68 @@ calcSE<-function(x){
   sd(x2)/sqrt(length(x2))
 }
 
+
+## merge with rank and persistence values for each species
+edge_rarity <- left_join(edge_all, rank_persist, by = c("site", "species"))
+
+edge_rarity$species <- as.factor(edge_rarity$species)
+
+edge_sum <- edge_rarity %>%
+  group_by(site, treatment, species, year, percrank, persistence.site) %>%
+  summarise(mean.cov = mean(mean.plot.cover),
+            se.cov = calcSE(mean.plot.cover))
+  #ungroup() %>%
+  #group_by(site) %>%
+  #factor(species,levels=edge_sum$percrank,ordered=TRUE)
+
+edge_rare <- edge_sum %>%
+  mutate(rarity = ifelse(percrank > 0.98, "dom", "rare")) %>%
+  ungroup() %>%
+  group_by(site, treatment, rarity, year) %>%
+  summarise(mean.cover = mean(mean.cov), 
+            sp = list(species))
+
+edge_rare$site <- factor(edge_rare$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black"))
+
+ggplot(edge_rare, aes(x=year, y=mean.cover, color = treatment, shape = rarity)) +
+  geom_point(size = 2) +
+  geom_line() +
+  facet_wrap(~site) +
+  scale_color_manual(values = c("#008080", "#ca562c")) +
+  scale_shape_manual(values = c(15, 20)) +
+  ylab("Mean Cover") +
+  xlab("Year") +
+  labs(color = "Treatment", shape = "Rarity")
+
+edge_rare[edge_rare$site == "KNZ" & edge_rare$rarity == "dom",]$sp
+edge_rare[edge_rare$site == "CHY" & edge_rare$rarity == "dom",]$sp
+edge_rare[edge_rare$site == "HYS" & edge_rare$rarity == "dom",]$sp
+edge_rare[edge_rare$site == "SGS" & edge_rare$rarity == "dom",]$sp
+edge_rare[edge_rare$site == "SEV_black" & edge_rare$rarity == "dom",]$sp
+edge_rare[edge_rare$site == "SEV_blue" & edge_rare$rarity == "dom",]$sp
+
+
+#edge_sum$species<-factor(edge_sum$species,levels=edge_sum$percrank,ordered=TRUE)
+
+
+
+
+ggplot(edge_sum[edge_sum$site == "KNZ" & edge_sum$percrank < 0.7,], aes(x=year, y=mean.cov, color = treatment)) +
+  facet_wrap(~species, scales = "free", ncol = 6) +
+  geom_point() +
+  geom_line() +
+  scale_color_manual(values = c("#008080", "#ca562c"))
+
+ggplot(edge_sum[edge_sum$site == "HYS",], aes(x=year, y=mean.cov, color = treatment)) +
+  facet_wrap(~species, scales = "free") +
+  geom_point() +
+  geom_line() +
+  scale_color_manual(values = c("#008080", "#ca562c"))
+
+
+
+
+# Total cover ####
 ggplot(edge_all, aes(x=year, y=total.plot.cover, color = treatment)) +
   geom_point() +
   geom_line() +
@@ -35,5 +97,20 @@ ggplot(edge_meancov, aes(x=year, y=mean.cov, color = treatment)) +
 ggsave("preliminary_figs/meeting_jan_2024/total_cov_timeseries.png", width = 5, height = 4.5)
 
 #008080,#70a494,#b4c8a8,#f6edbd,#edbb8a,#de8a5a,#ca562c
+
+# Indiv species cover ####
+ggplot(edge_all[edge_all$site == "KNZ",], aes(x=year, y=mean.plot.cover, color = as.factor(plot), shape = treatment)) +
+  facet_wrap(~species, scales = "free") +
+  geom_point() +
+  geom_line() +
+  scale_shape_manual(values = c(19, 1))
+
+
+
+
+
+
+
+
 
 

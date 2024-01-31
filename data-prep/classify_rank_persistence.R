@@ -31,10 +31,10 @@ controls <- edge_w_zeros %>%
 ## keep the 0's
 rank_mean <- controls %>%
   group_by(site, species) %>% ## take the mean of a species at a site right away
-  summarise(mean.cov = mean(mean.plot.cover)) %>%
+  summarise(mean.ctrl.cov = mean(mean.plot.cover)) %>%
   ungroup() %>%
   group_by(site) %>%
-  mutate(percrank = percent_rank(mean.cov)) ## take the percent rank
+  mutate(percrank = percent_rank(mean.ctrl.cov)) ## take the percent rank
 
 #rank_mean2 <- edge_all %>%
  # filter(treatment == "C") %>%
