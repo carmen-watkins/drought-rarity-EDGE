@@ -8,6 +8,8 @@
 ## Email: yyachung@uga.edu
 
 # Set up env------------------------------------
+library(car)
+library(emmeans)
 
 # Calculate the response ratios from other script
 source("analyses/calculate_response_ratio.R")
@@ -104,6 +106,24 @@ ggplot(edge_FG, aes(x=persistence.site, y=dispersion, color = FunctionalGroup)) 
 
 ggsave("preliminary_figs/meeting_jan_2024/dispersion_persist_FG.png", width = 5.5, height = 4)
 
+# Do some stats on dispersion -----------
 
+## Does dispersion depend on site and/or functional group and persistence?
+m1 <- lm(dispersion~persistence.site*site*FunctionalGroup, data=edge_FG)
+qqPlot(m1) #pretty good
+plot(m1) #really heteroscedastic residuals...
+hist(m1$residuals)
+Anova(m1) 
+### Persistence (P<0.001) and site (P=0.017) are significant
+### Functional Group is p=0.08
+### No significant interactions
 
-
+## Does dispersion depend on site and/or functional group and rank?
+m2 <- lm(dispersion~percrank*site*FunctionalGroup, data=edge_FG)
+qqPlot(m2) #pretty good
+plot(m2) #really heteroscedastic residuals...
+hist(m2$residuals)
+Anova(m2) 
+### Rank (P<0.001) and site (P<0.001) are significant
+### Functional Group is also significant (P=0.002)
+### Rank:Site P=0.07
