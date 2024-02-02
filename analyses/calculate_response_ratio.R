@@ -83,6 +83,7 @@ resp.ratio.yearly <- edge_all %>%
   group_by(site, treatment, species, experiment.year, treatment.year) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% 
   pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
   ungroup() %>%
   group_by(site, species, experiment.year, treatment.year) %>%
   mutate(resp.ratio.site = (D-C)/(C+D))

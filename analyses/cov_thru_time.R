@@ -2,11 +2,55 @@ source("data-prep/clean_edge_data.R")
 source("data-prep/classify_rank_persistence.R")
 theme_set(theme_classic())
 
+
+source("data-prep/clean_ppt_data.R")
+
+## do a dominance metric on sites? 
+
 ## create a function to calculate standard error
 calcSE<-function(x){
   x2<-na.omit(x)
   sd(x2)/sqrt(length(x2))
 }
+
+## precip & cov
+
+ppt <- growing.season.tot %>%
+  mutate(year = Year) %>%
+  ungroup() %>%
+  select(-Year, -Site)
+
+northern <- edge_all %>%
+  filter(site %in% c("KNZ", "HYS", "CHY", "SGS"),
+         treatment == "C")
+
+test <- left_join(northern, growing.season.tot, by = c("site", "year"))
+
+test2 <- left_join(test, rank_persist, by = c("site", "species")) %>%
+  group_by(site, treatment, species, year, percrank, persistence.site) %>%
+  summarise(mean.cov = mean(mean.plot.cover),
+            se.cov = calcSE(mean.plot.cover), 
+            mean.precip = mean(tot.precip))
+
+test3 <- test2 %>%
+  mutate(rarity = ifelse(percrank > 0.98, "dom", "rare")) %>%
+  ungroup() %>%
+  group_by(site, treatment, rarity, year, mean.precip) %>%
+  summarise(mean.cover = mean(mean.cov), 
+            sp = list(species))
+
+
+ggplot(test3, aes(x=mean.precip, y=mean.cover, color = treatment)) +
+  geom_point() +
+  facet_wrap(~site*rarity, scale = "free") #+
+  #geom_smooth()
+  #scale_color_viridis_c(direction = -1)
+  
+  
+  
+
+
+
 
 
 ## merge with rank and persistence values for each species
@@ -18,6 +62,9 @@ edge_sum <- edge_rarity %>%
   group_by(site, treatment, species, year, percrank, persistence.site) %>%
   summarise(mean.cov = mean(mean.plot.cover),
             se.cov = calcSE(mean.plot.cover))
+
+
+
   #ungroup() %>%
   #group_by(site) %>%
   #factor(species,levels=edge_sum$percrank,ordered=TRUE)
@@ -32,14 +79,16 @@ edge_rare <- edge_sum %>%
 edge_rare$site <- factor(edge_rare$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black"))
 
 ggplot(edge_rare, aes(x=year, y=mean.cover, color = treatment, shape = rarity)) +
-  geom_point(size = 2) +
+  geom_point(size = 1.5) +
   geom_line() +
-  facet_wrap(~site) +
+  facet_wrap(~site*rarity, scales = "free") +
   scale_color_manual(values = c("#008080", "#ca562c")) +
   scale_shape_manual(values = c(15, 20)) +
   ylab("Mean Cover") +
   xlab("Year") +
   labs(color = "Treatment", shape = "Rarity")
+
+ggsave("preliminary_figs/meeting_jan_2024/dom_rare_cover_responses_time.png", width = 7, height = 4)
 
 edge_rare[edge_rare$site == "KNZ" & edge_rare$rarity == "dom",]$sp
 edge_rare[edge_rare$site == "CHY" & edge_rare$rarity == "dom",]$sp
