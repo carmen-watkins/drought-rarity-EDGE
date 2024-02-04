@@ -1,30 +1,27 @@
 library(lmerTest)
 
-## rank & persistence in same model
+## rank models
 ## drought
-FG_model<-lm(drought.RR~persistence.site*FunctionalGroup*percrank*site, data = edge_FG)
+rank_drought_model <- lm(drought.RR~percrank*site*FunctionalGroup, data = edge_FG)
 
-summary(FG_model)
-anova(FG_model)
+summary(rank_drought_model)
+anova(rank_drought_model)
 
 ## recovery
-FG_model_recov<-lm(recovery.RR~persistence.site*FunctionalGroup*percrank*site, data = edge_FG)
+rank_recov_model <- lm(recovery.RR~percrank*site*FunctionalGroup, data = edge_FG)
 
-summary(FG_model_recov)
-anova(FG_model_recov)
+summary(rank_recov_model)
+anova(rank_recov_model)
 
+## persistence models
+## drought
+persist_drought_model <- lm(drought.RR~persistence.site*site*FunctionalGroup, data = edge_FG)
 
-## rank only in models
-FG_modelR<-lm(recovery.RR~persistence.site*FunctionalGroup*percrank*site, data = edge_FG[edge_FG$FunctionalGroup != "tree" & !is.na(edge_FG$FunctionalGroup),])
+summary(persist_drought_model)
+anova(persist_drought_model)
 
-summary(FG_modelR)
-anova(FG_modelR)
+## recovery
+persist_recov_model <- lm(recovery.RR~persistence.site*site*FunctionalGroup, data = edge_FG)
 
-
-FG_model_recovR<-lm(resp.ratio.site~FunctionalGroup*percrank, data = edge_FG_recov[edge_FG_recov$FunctionalGroup != "tree" & !is.na(edge_FG_recov$FunctionalGroup),])
-
-summary(FG_model_recovR)
-
-
-
-## site as random effect?
+summary(persist_recov_model)
+anova(persist_recov_model)
