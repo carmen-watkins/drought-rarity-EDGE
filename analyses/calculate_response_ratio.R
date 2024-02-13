@@ -62,11 +62,13 @@ resp.ratio.site.recov <- edge_all %>%
   filter(treatment.year == "recovery") %>% 
   group_by(site, treatment, species) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
-  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
-  replace(is.na(.), 0) %>%
+  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>% ## make columns of cover in D and C treatments
+  replace(is.na(.), 0) %>% ## input 0 instead of NAs (NAs would be present where there is no cover of a particular species in either drought or control)
   ungroup() %>%
   group_by(site, species) %>%
   mutate(resp.ratio.site = (D-C)/(C+D))
+
+## resp ratio values of 0
 
 ## merge with rank and persistence values for each species
 edge_w_predictors.site.recov <- left_join(resp.ratio.site.recov, rank_persist, by = c("site", "species"))
