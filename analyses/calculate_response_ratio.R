@@ -10,43 +10,22 @@
 # Set up env ####
 ## read in cleaned data
 source("data-prep/classify_rank_persistence.R")
-source("data-prep/clean_edge_data.R")
+#source("data-prep/clean_edge_data.R")
 
 FG <- read.csv("data/edge_species_info.csv")
 
 # Resp Ratio Across Years ####
 ## During Drought ####
 ## (drought - control)/control + drought
-
-### Block Level ##
-## NOT using block level anymore
-#resp.ratio.block <- edge_all %>%
- # filter(experiment.year %in% c(1:4)) %>% ## 0 is pre-treat year; drought was years 1-4
-  #group_by(site, block, treatment, species) %>%
-#  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by block across years
- # pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
-  #ungroup() %>%
-#  group_by(site, block, species) %>%
- # mutate(resp.ratio.block = (D-C)/(C+D)) 
-
-## merge with rank and persistence values for each species
-#edge_w_predictors.block <- left_join(resp.ratio.block, rank_persist, by = c("site", "species"))
-
-## change site to an ordered factor
-#edge_w_predictors.block$site <- as.factor(edge_w_predictors.block$site)
-#edge_w_predictors.block <- edge_w_predictors.block %>%
- # mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black")))
-
-### Site Level ####
 resp.ratio.site <- edge_all %>%
   filter(experiment.year %in% c(1:4)) %>% ## 0 is pre-treat year; drought was years 1-4
   group_by(site, treatment, species) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
-  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
-  replace(is.na(.), 0) %>%
+  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>% ## make columns of cover in D and C treatments
+  replace(is.na(.), 0) %>% ## input 0 instead of NAs (NAs would be present where there is no cover of a particular species in either drought or control)
   ungroup() %>%
   group_by(site, species) %>%
-  mutate(resp.ratio.site = (D-C)/(C+D)) 
+  mutate(resp.ratio.site = (D-C)/(C+D)) ## calc response ratio
 
 ## merge with rank and persistence values for each species
 edge_w_predictors.site <- left_join(resp.ratio.site, rank_persist, by = c("site", "species"))
@@ -57,16 +36,17 @@ edge_w_predictors.site <- edge_w_predictors.site %>%
   mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black")))
 
 ## During Recovery ####
-### Site Level ####
 resp.ratio.site.recov <- edge_all %>%
   filter(treatment.year == "recovery") %>% 
   group_by(site, treatment, species) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
-  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
-  replace(is.na(.), 0) %>%
+  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>% ## make columns of cover in D and C treatments
+  replace(is.na(.), 0) %>% ## input 0 instead of NAs (NAs would be present where there is no cover of a particular species in either drought or control)
   ungroup() %>%
   group_by(site, species) %>%
   mutate(resp.ratio.site = (D-C)/(C+D))
+
+## resp ratio values of 0
 
 ## merge with rank and persistence values for each species
 edge_w_predictors.site.recov <- left_join(resp.ratio.site.recov, rank_persist, by = c("site", "species"))
@@ -83,6 +63,7 @@ resp.ratio.yearly <- edge_all %>%
   group_by(site, treatment, species, experiment.year, treatment.year) %>%
   summarise(mean.cover.sp = mean(mean.plot.cover)) %>% 
   pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
+  replace(is.na(.), 0) %>%
   ungroup() %>%
   group_by(site, species, experiment.year, treatment.year) %>%
   mutate(resp.ratio.site = (D-C)/(C+D))
@@ -112,20 +93,24 @@ recov.RR <- edge_w_predictors.site.recov %>%
 
 ## merge drought & recov dataframes
 response.ratio.tog <- rbind(drought.RR, recov.RR) %>%
-  mutate(precip.bin = ifelse(site %in% c("KNZ", "HYS"), "high",
-                             ifelse(site %in% c("CHY", "SGS"), "med", "low"))) %>%
+ # mutate(precip.bin = ifelse(site %in% c("KNZ", "HYS"), "high",
+                         #    ifelse(site %in% c("CHY", "SGS"), "med", "low"))) %>%
   pivot_wider(names_from = treatment.period, values_from = resp.ratio.site) %>%
   mutate(drought.RR = ifelse(is.na(drought.RR), 0, drought.RR),
          recovery.RR = ifelse(is.na(recovery.RR), 0, recovery.RR))
+
+
+na.check <- response.ratio.tog %>%
+  filter(is.na(drought.RR) | is.na(recovery.RR))
 
 # Merge FG Data ####
 edge_FG <- left_join(response.ratio.tog, FG, by = "species") %>%
   filter(FunctionalGroup != "tree", !is.na(FunctionalGroup)) 
 
-edge_FG$precip.bin <- as.factor(edge_FG$precip.bin)
+#edge_FG$precip.bin <- as.factor(edge_FG$precip.bin)
 
-edge_FG <- edge_FG %>%
-  mutate(precip.bin = fct_relevel(precip.bin, "high", "med", "low"))
+#edge_FG <- edge_FG %>%
+  #mutate(precip.bin = fct_relevel(precip.bin, "high", "med", "low"))
 
 # Clean up ####
-rm(edge_all, edge_w_zeros, rank_persist, resp.ratio.site, resp.ratio.site.recov, resp.ratio.yearly, response.ratio.tog, drought.RR, recov.RR, edge_w_predictors.site, edge_w_predictors.site.recov)
+rm(edge_all, edge_w_zeros, rank_persist, resp.ratio.site, resp.ratio.site.recov, resp.ratio.yearly, response.ratio.tog, drought.RR, recov.RR, edge_w_predictors.site, edge_w_predictors.site.recov, na.check)

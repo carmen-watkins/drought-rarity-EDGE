@@ -10,7 +10,7 @@
 # Set up Env ####
 ## load packages
 library(tidyverse)
-theme_set(theme_bw())
+theme_set(theme_classic())
 
 ## Read in Data ####
 ## northern edge
@@ -165,7 +165,7 @@ unique(north_edge$Spcode)
 sort(unique(north_edge$Species))
 
 ## remove unknowns
-rm <- c("oxytopis_like_legume", "seedling_unknown", "UK_Fuzzy_Aster", "UK_onagraceac", "UK_poa", "UK_Tall_Phlox", "unk_Alien", "unk_alternate_leaf_forb", "unk_alternate_strong_midvein_hairy_margin", "unk_Aristida", "unk_Artemisia_ludoviciana", "UNK_Aster_rosette", "unk_astragalus_oxytropis", "unk_Clover", "unk_Eriogonum_Hays", "unk_fall_opposite_leaf", "unk_forb_soft_velvet", "unk_juicy_forb", "unk_Lepidium_like_forb", "unk_Milky_waxy", "unk_Oenothera", "unk_oenotheria", "unk_Oerothera_rosette", "unk_opposite_leaf", "Unk_overlapping_alt", "unk_Oxytropis_sp.", "unk_Primrose_like", "unk_Red_edged_forb", "unk_rush_unknown", "unk_Sonchus_seedling", "unk_Stipa_veridas", "unk_Tall_astragulus", "unk_Three_Leaf_Unknown_forb", "unk_Townsendia_grandiflora", "UNKFCHY1", "UNKFCHY2", "UNKFCHY3", "UNKFCHY4", "UNKFCHY5", "UNKFCHY6", "UNKFCHY7", "UNKFCHY8", "UNKFHYS1", "UNKFHYS2", "UNKFHYS3", "UNKFHYS4","UNKFHYS5", "UNKFHYS7", "UNKFHYS8", "UNKFKNZ1", "UNKFKNZ2", "UNKFKNZ3",  "unkforb_opp_Lvs", "UNKFSGS1", "UNKFSGS2", "UNKFSGS3", "UNKGRHYS1", "UNKGRHYS2","UNKHYS", "unknown", "Unknown_Cirsium", "Unknown_dry_sad", "Unknown_ericoides_small", "Unknown_Erysimum", "unknown_forb", "Unknown_forb", "unknown_forb_tooth", "Unknown_grass", "Unknown_linear_lvs", "unknown_machearanthera", "Unknown_milky_waxy", "Unknown_pilos_forb", "unknown_pinnately_lobed", "Unknown_ranunculus", "Unknown_rosette", "Unknown_Seedling", "unknown_shiny_alternate", "unknown_short_alternate", "Unknown_whorled_linear", "Unknown_woody", "UNKTRKNZ1", "UNKTRKNZ2", "huge_penstemon", "blob_unknown")
+rm <- c("oxytopis_like_legume", "seedling_unknown", "UK_Fuzzy_Aster", "UK_onagraceac", "UK_poa", "UK_Tall_Phlox", "unk_Alien", "unk_alternate_leaf_forb", "unk_alternate_strong_midvein_hairy_margin", "unk_Aristida", "unk_Artemisia_ludoviciana", "UNK_Aster_rosette", "unk_astragalus_oxytropis", "unk_Clover", "unk_Eriogonum_Hays", "unk_fall_opposite_leaf", "unk_forb_soft_velvet", "unk_juicy_forb", "unk_Lepidium_like_forb", "unk_Milky_waxy", "unk_Oenothera", "unk_oenotheria", "unk_Oerothera_rosette", "unk_opposite_leaf", "Unk_overlapping_alt", "unk_Oxytropis_sp.", "unk_Primrose_like", "unk_Red_edged_forb", "unk_rush_unknown", "unk_Sonchus_seedling", "unk_Stipa_veridas", "unk_Tall_astragulus", "unk_Three_Leaf_Unknown_forb", "unk_Townsendia_grandiflora", "UNKFCHY1", "UNKFCHY2", "UNKFCHY3", "UNKFCHY4", "UNKFCHY5", "UNKFCHY6", "UNKFCHY7", "UNKFCHY8", "UNKFHYS1", "UNKFHYS2", "UNKFHYS3", "UNKFHYS4","UNKFHYS5", "UNKFHYS7", "UNKFHYS8", "UNKFKNZ1", "UNKFKNZ2", "UNKFKNZ3",  "unkforb_opp_Lvs", "UNKFSGS1", "UNKFSGS2", "UNKFSGS3", "UNKGRHYS1", "UNKGRHYS2","UNKHYS", "unknown", "Unknown_Cirsium", "Unknown_dry_sad", "Unknown_ericoides_small", "Unknown_Erysimum", "unknown_forb", "Unknown_forb", "unknown_forb_tooth", "Unknown_grass", "Unknown_linear_lvs", "unknown_machearanthera", "Unknown_milky_waxy", "Unknown_pilos_forb", "unknown_pinnately_lobed", "Unknown_ranunculus", "Unknown_rosette", "Unknown_Seedling", "unknown_shiny_alternate", "unknown_short_alternate", "Unknown_whorled_linear", "Unknown_woody", "UNKTRKNZ1", "UNKTRKNZ2", "huge_penstemon", "blob_unknown", "Ulmus_sp.", "NA_NA", "Ulmus_americana")
 
 north_clean <- north_edge %>%
   mutate(site = Site, ## fix column names
@@ -231,7 +231,7 @@ hay <- edge_all %>%
   ungroup() %>%
   select(-spcode, -kartez) %>%
   pivot_wider(names_from = "species", values_from = "mean.plot.cover", values_fill = 0) %>%
-  pivot_longer(Achillea_millefolium:Ulmus_sp., names_to = "species", values_to = "mean.plot.cover")
+  pivot_longer(Achillea_millefolium:Solanum_rostratum, names_to = "species", values_to = "mean.plot.cover")
 
 knz <- edge_all %>%
   filter(site == "KNZ") %>%
