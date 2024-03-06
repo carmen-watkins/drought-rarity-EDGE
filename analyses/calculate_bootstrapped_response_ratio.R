@@ -2,6 +2,7 @@
 ## Script name: Calculate Response Ratio
 ##
 ## Purpose of script: Calculate the response ratio between drought and control plots 1. across years during two time periods (drought & recovery) and 2. for each year. Add in functional group data as well.
+## Code version only bootstraps species-site-treatment combinations that reach a min number of measurements in EITHER the treatment or control plots
 ##
 ## Author: Carmen Watkins
 ##
@@ -62,6 +63,8 @@ random_spp_mat_drought <- function(orig_mat, #tibble created earlier with the cl
     distinct(site,species)%>%
     left_join(orig_mat,
               join_by(site,species))%>%
+    filter(experiment.year %in% c(1:4)) %>% 
+    group_by(site, species) %>%
     slice_sample(prop = (1-frac_samp))%>% #this is the randomly sampling step
     group_by(site, treatment, species) %>%
     summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
@@ -152,6 +155,10 @@ resp.ratio.site_bootstrapped<-resp.ratio.site.bootstrap.df(edge_all,
                                             min_samples=4,
                                             boots_perm=100)#100 permutations returns 27,439 rows in the tibble
 
+#Species that do not reach the min of 4 measures#####
+print(resp.ratio.site_bootstrapped|>
+  filter(is.na(int_num)),n=139)
+
 #Summarizing the permutation data for mean and 95% confidence
 resp.ratio.site_bootstrapped_sum<- 
   resp.ratio.site_bootstrapped%>%
@@ -163,7 +170,7 @@ resp.ratio.site_bootstrapped_sum<-
 
 
 ## merge with rank and persistence values for each species
-resp.ratio.site
+
 edge_w_predictors.site <- left_join(resp.ratio.site, rank_persist, by = c("site", "species"))#original dataset for sanity checks
 edge_w_predictors.site.bootstrap <- left_join(resp.ratio.site_bootstrapped_sum, rank_persist, by = c("site", "species"))
 
@@ -204,7 +211,6 @@ ggplot(edge_w_predictors.site.bootstrap_TEMP,
 
 
 
-
 ## During Recovery ####
 ### Site Level ####
 
@@ -223,6 +229,8 @@ random_spp_mat_recov <- function(orig_mat, #tibble created earlier with the clea
     distinct(site,species)%>%
     left_join(orig_mat,
               join_by(site,species))%>%
+    filter(treatment.year == "recovery") %>%
+    group_by(site, species) %>%
     slice_sample(prop = (1-frac_samp))%>%#this is the randomly sampling step
     group_by(site, treatment, species) %>%
     summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
@@ -308,6 +316,11 @@ resp.ratio.site.recov_bootstrapped<-resp.ratio.site.recov.bootstrap.df(edge_all,
                                                            frac_samp=0.2, 
                                                            min_samples=4,
                                                            boots_perm=100)
+
+#Species that do not reach the min of 4 measures#####
+print(resp.ratio.site.recov_bootstrapped|>
+        filter(is.na(int_num)),n=135)
+
 #Summarizing the permutation data for mean and 95% confidence
 resp.ratio.site.recov_bootstrapped_sum<- 
   resp.ratio.site.recov_bootstrapped%>%
