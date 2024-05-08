@@ -1,10 +1,10 @@
 # Header #### 
-## Script name: Calculate Response Ratio
+## Script name: Calculate Boot strapped Response Ratio
 ##
 ## Purpose of script: Calculate the response ratio between drought and control plots 1. across years during two time periods (drought & recovery) and 2. for each year. Add in functional group data as well.
 ## Code version only bootstraps species-site-treatment combinations that reach a min number of measurements in EITHER the treatment or control plots
 ##
-## Author: Carmen Watkins
+## Author: Carmen Watkins & Lukas Bell-Dereske
 ##
 ## Email: cebel2@uoregon.edu
 
@@ -17,39 +17,8 @@ FG <- read.csv("data/edge_species_info.csv")
 
 "%w/o%" <- function(x,y)!('%in%'(x,y))# a function for the opposite of "%in%", not in list
 
-
-
-
 # Resp Ratio Across Years ####
-## During Drought ####
-## (drought - control)/control + drought
-
-### Block Level ##
-## NOT using block level anymore
-#resp.ratio.block <- edge_all %>%
- # filter(experiment.year %in% c(1:4)) %>% ## 0 is pre-treat year; drought was years 1-4
-  #group_by(site, block, treatment, species) %>%
-#  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by block across years
- # pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
-  #ungroup() %>%
-#  group_by(site, block, species) %>%
- # mutate(resp.ratio.block = (D-C)/(C+D)) 
-
-## merge with rank and persistence values for each species
-#edge_w_predictors.block <- left_join(resp.ratio.block, rank_persist, by = c("site", "species"))
-
-## change site to an ordered factor
-#edge_w_predictors.block$site <- as.factor(edge_w_predictors.block$site)
-#edge_w_predictors.block <- edge_w_predictors.block %>%
- # mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black")))
-
-### Site Level ####
-
-
-
 #Function to create a response ratio with random plant measures removed
-
-
 random_spp_mat_drought <- function(orig_mat, #tibble created earlier with the cleaned plant data
                                    frac_samp=NULL, #proportion of plant measure you want to randomly exclude without replacement
                                    min_samples=NULL #minimum number of samples for a species that you would like to include in bootstrapping
@@ -74,17 +43,11 @@ random_spp_mat_drought <- function(orig_mat, #tibble created earlier with the cl
     group_by(site, species) %>%
     mutate(resp.ratio.site = (D-C)/(C+D)) 
   
-  
   return(resp.ratio.site.temp)
-  
 
 }
 
-  
 #Function for the random re-sampling/bootstrapping that use the function "random_spp_mat_drought"
-
-
-
 resp.ratio.site.bootstrap.df <- function(orig_dibble,#tibble created earlier with the cleaned plant data
                                          frac_samp=NULL, #proportion (decimal) of plant measure you want to randomly exclude without replacement
                                          min_samples=NULL, #minimum number of samples for a species that you would like to include in bootstrapping
@@ -159,6 +122,9 @@ resp.ratio.site_bootstrapped<-resp.ratio.site.bootstrap.df(edge_all,
 print(resp.ratio.site_bootstrapped|>
   filter(is.na(int_num)),n=139)
 
+lowrep.sp <- resp.ratio.site_bootstrapped|>
+  filter(is.na(int_num))
+
 #Summarizing the permutation data for mean and 95% confidence
 resp.ratio.site_bootstrapped_sum<- 
   resp.ratio.site_bootstrapped%>%
@@ -170,7 +136,6 @@ resp.ratio.site_bootstrapped_sum<-
 
 
 ## merge with rank and persistence values for each species
-
 edge_w_predictors.site <- left_join(resp.ratio.site, rank_persist, by = c("site", "species"))#original dataset for sanity checks
 edge_w_predictors.site.bootstrap <- left_join(resp.ratio.site_bootstrapped_sum, rank_persist, by = c("site", "species"))
 
@@ -209,12 +174,10 @@ ggplot(edge_w_predictors.site.bootstrap_TEMP,
                                                method = "pearson"),3)))+ #Including the correlation in the plot
   theme_bw()
 
-
+ggsave("preliminary_figs/march_2024/bootstrap_DRR_sanity_check.png", width = 4, height = 4)
 
 ## During Recovery ####
 ### Site Level ####
-
-
 #Function to create a response ratio with random plant measures removed
 random_spp_mat_recov <- function(orig_mat, #tibble created earlier with the cleaned plant data
                                  frac_samp=NULL, #proportion of plant measure you want to randomly exclude without replacement
@@ -361,6 +324,8 @@ ggplot(edge_w_predictors.site.recov.bootstrap_TEMP,
                                                 edge_w_predictors.site.recov.bootstrap_TEMP$resp.ratio.site.mean,
                                                 method = "pearson"),3)))+ #Including the correlation in the plot
   theme_bw()
+
+ggsave("preliminary_figs/march_2024/bootstrap_RRR_sanity_check.png", width = 4, height = 4)
 
 ###NOTE: I did not write bootstrapping code for the yearly. 
 ## Resp Ratio Yearly ####
