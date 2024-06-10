@@ -20,7 +20,19 @@ library(viridis)
 
 theme_set(theme_classic())
 
-# Figure 4 ####
+pal <- wes_palette("Royal3")
+
+wes_palette("Royal3")
+
+edge_FG$site <- as.character(edge_FG$site)
+
+edge_FG <- edge_FG %>%
+  mutate(site = ifelse(site == "SEV_blue", "SBL",
+                       ifelse(site == "SEV_black", "SBK",
+                              site)))
+edge_FG$site <- factor(edge_FG$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+
+# Figure 3 ####
 ## no color
 rankD2 <- ggplot(edge_FG, aes(x=percrank, y=drought.RR)) +
   geom_point(color = "#9F9F9F") +
@@ -99,7 +111,7 @@ ggarrange(rankD2, persD2, rankR2, persR2,
           rankD3, persD3, rankR3, persR3, 
           labels = "AUTO", common.legend = T, legend = "bottom", ncol = 4, nrow=2)
 
-ggarrange(rankD2, persD2, rankR2, persR2, labels = "AUTO", common.legend = T, legend = "bottom", nrow = 1, ncol = 4)
+#ggarrange(rankD2, persD2, rankR2, persR2, labels = "AUTO", common.legend = T, legend = "bottom", nrow = 1, ncol = 4)
 
 ggsave("preliminary_figs/march_2024/Figure4_RR_drought_recov.png", width = 10, height = 6)
 

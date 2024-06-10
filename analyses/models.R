@@ -17,7 +17,7 @@ qqline(resid(rank_drought_model))
 plot(resid(rank_drought_model) ~ fitted(rank_drought_model))
 ## these don't look great... 
 
-### no functional group ####
+### *no functional group ####
 rank_drought_model2 <- lm(drought.RR~percrank*site, data = edge_FG)
 summary(rank_drought_model2)
 Anova(rank_drought_model2)
@@ -37,7 +37,7 @@ qqnorm(resid(rank_recov_model))
 qqline(resid(rank_recov_model))
 plot(resid(rank_recov_model) ~ fitted(rank_recov_model))
 
-### no functional group ####
+### * no functional group ####
 rank_recov_model2 <- lm(recovery.RR~percrank*site, data = edge_FG)
 
 summary(rank_recov_model2)
@@ -57,11 +57,11 @@ qqnorm(resid(persist_drought_model))
 qqline(resid(persist_drought_model))
 plot(resid(persist_drought_model) ~ fitted(persist_drought_model))
 
-### no functional group ####
+### * no functional group ####
 persist_drought_model2 <- lm(drought.RR~persistence.site*site, data = edge_FG)
 
 summary(persist_drought_model2)
-anova(persist_drought_model2)
+Anova(persist_drought_model2)
 
 qqnorm(resid(persist_drought_model2))
 qqline(resid(persist_drought_model2))
@@ -81,7 +81,7 @@ plot(resid(persist_recov_model) ~ fitted(persist_recov_model))
 persist_recov_model2 <- lm(recovery.RR~persistence.site*site, data = edge_FG)
 
 summary(persist_recov_model2)
-anova(persist_recov_model2)
+Anova(persist_recov_model2)
 
 qqnorm(resid(persist_recov_model2))
 qqline(resid(persist_recov_model2))
