@@ -18,6 +18,7 @@ FG <- read.csv("data/edge_species_info.csv")
 "%w/o%" <- function(x,y)!('%in%'(x,y))# a function for the opposite of "%in%", not in list
 
 # Resp Ratio Across Years ####
+## Create functions ####
 #Function to create a response ratio with random plant measures removed
 random_spp_mat_drought <- function(orig_mat, #tibble created earlier with the cleaned plant data
                                    frac_samp=NULL, #proportion of plant measure you want to randomly exclude without replacement
@@ -96,21 +97,7 @@ resp.ratio.site.bootstrap.df <- function(orig_dibble,#tibble created earlier wit
 }# this code with return a tibble with values for every iteration conducted
 # I decided to return this large tibble format for flexibility in summarizing and calculating variance
 
-
-
-
-#Original ratio Code####
-resp.ratio.site <- edge_all %>%
-  filter(experiment.year %in% c(1:4)) %>% ## 0 is pre-treat year; drought was years 1-4
-  group_by(site, treatment, species) %>%
-  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
-  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
-  replace(is.na(.), 0) %>%
-  ungroup() %>%
-  group_by(site, species) %>%
-  mutate(resp.ratio.site = (D-C)/(C+D)) 
-
-
+## Run bootstrap ####
 #Run of the bootstrapping with my minimum parameters
 #We could change these if we want to be more conservative
 resp.ratio.site_bootstrapped<-resp.ratio.site.bootstrap.df(edge_all, 
@@ -118,13 +105,14 @@ resp.ratio.site_bootstrapped<-resp.ratio.site.bootstrap.df(edge_all,
                                             min_samples=4,
                                             boots_perm=100)#100 permutations returns 27,439 rows in the tibble
 
-#Species that do not reach the min of 4 measures#####
+### Species below min 4 measures #####
 print(resp.ratio.site_bootstrapped|>
   filter(is.na(int_num)),n=139)
 
 lowrep.sp <- resp.ratio.site_bootstrapped|>
   filter(is.na(int_num))
 
+### Summarise permutation ####
 #Summarizing the permutation data for mean and 95% confidence
 resp.ratio.site_bootstrapped_sum<- 
   resp.ratio.site_bootstrapped%>%
@@ -134,7 +122,7 @@ resp.ratio.site_bootstrapped_sum<-
             resp.ratio.site.margin=qt(0.975,df=n()-1)*sd(resp.ratio.site)/sqrt(n()))#NAs are produced due to the non-bootstrapped species
 
 
-
+### Merge ####
 ## merge with rank and persistence values for each species
 edge_w_predictors.site <- left_join(resp.ratio.site, rank_persist, by = c("site", "species"))#original dataset for sanity checks
 edge_w_predictors.site.bootstrap <- left_join(resp.ratio.site_bootstrapped_sum, rank_persist, by = c("site", "species"))
@@ -154,10 +142,8 @@ dim(edge_w_predictors.site.bootstrap)
 
 
 
-#Sanity check
+### Sanity check ####
 #Let's see how well the bootstrapped results match the original calculations 
-
-
 edge_w_predictors.site.bootstrap_TEMP<-
   inner_join(edge_w_predictors.site,edge_w_predictors.site.bootstrap)
 
@@ -176,8 +162,8 @@ ggplot(edge_w_predictors.site.bootstrap_TEMP,
 
 ggsave("preliminary_figs/march_2024/bootstrap_DRR_sanity_check.png", width = 4, height = 4)
 
-## During Recovery ####
-### Site Level ####
+# During Recovery ####
+## Create Functions ####
 #Function to create a response ratio with random plant measures removed
 random_spp_mat_recov <- function(orig_mat, #tibble created earlier with the cleaned plant data
                                  frac_samp=NULL, #proportion of plant measure you want to randomly exclude without replacement
@@ -203,15 +189,11 @@ random_spp_mat_recov <- function(orig_mat, #tibble created earlier with the clea
     group_by(site, species) %>%
     mutate(resp.ratio.site = (D-C)/(C+D)) 
   
-  
   return(resp.ratio.site.temp)
-  
   
 }
 
-
 #Function for the random re-sampling/bootstrapping that use the function "random_spp_mat_recov"
-
 resp.ratio.site.recov.bootstrap.df <- function(orig_dibble,
                                          frac_samp=NULL, 
                                          min_samples=NULL,
@@ -258,32 +240,19 @@ resp.ratio.site.recov.bootstrap.df <- function(orig_dibble,
   return(tibble(random_site_ratio_temp2))
 }
 
-
-
-#Original recovery ratio####
-resp.ratio.site.recov <- edge_all %>%
-  filter(treatment.year == "recovery") %>% 
-  group_by(site, treatment, species) %>%
-  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
-  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
-  replace(is.na(.), 0) %>%
-  ungroup() %>%
-  group_by(site, species) %>%
-  mutate(resp.ratio.site = (D-C)/(C+D))
-
-
+## Run Bootstrap ####
 #Run of the bootstrapping with my minimum parameters
 #We could change these if we want to be more conservative
-
 resp.ratio.site.recov_bootstrapped<-resp.ratio.site.recov.bootstrap.df(edge_all, 
                                                            frac_samp=0.2, 
                                                            min_samples=4,
                                                            boots_perm=100)
 
-#Species that do not reach the min of 4 measures#####
+## Species below min 4 measures ####
 print(resp.ratio.site.recov_bootstrapped|>
         filter(is.na(int_num)),n=135)
 
+## Summarise permutation ####
 #Summarizing the permutation data for mean and 95% confidence
 resp.ratio.site.recov_bootstrapped_sum<- 
   resp.ratio.site.recov_bootstrapped%>%
@@ -292,6 +261,7 @@ resp.ratio.site.recov_bootstrapped_sum<-
             resp.ratio.site.median=median(resp.ratio.site),
             resp.ratio.site.margin=qt(0.975,df=n()-1)*sd(resp.ratio.site)/sqrt(n())) #NAs produced for the species with no bootstrap values
 
+## Merge ####
 ## merge with rank and persistence values for each species
 edge_w_predictors.site.recov <- left_join(resp.ratio.site.recov, rank_persist, by = c("site", "species"))
 edge_w_predictors.site.recov.bootstrap <- left_join(resp.ratio.site.recov_bootstrapped_sum, rank_persist, by = c("site", "species"))
@@ -305,10 +275,8 @@ edge_w_predictors.site.recov.bootstrap$site <- as.factor(edge_w_predictors.site.
 edge_w_predictors.site.recov.bootstrap <- edge_w_predictors.site.recov.bootstrap %>%
   mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black")))
 
-#Sanity check
+## Sanity check ####
 #Let's see how well the bootstrapped results match the original calculations 
-
-
 edge_w_predictors.site.recov.bootstrap_TEMP<-
   inner_join(edge_w_predictors.site.recov,edge_w_predictors.site.recov.bootstrap)
 
@@ -326,32 +294,6 @@ ggplot(edge_w_predictors.site.recov.bootstrap_TEMP,
   theme_bw()
 
 ggsave("preliminary_figs/march_2024/bootstrap_RRR_sanity_check.png", width = 4, height = 4)
-
-###NOTE: I did not write bootstrapping code for the yearly. 
-## Resp Ratio Yearly ####
-resp.ratio.yearly <- edge_all %>%
-  ungroup() %>%
-  select(-spcode, -kartez, -plot, -block, -year) %>% ## remove extraneous cols that will mess up pivoting
-  group_by(site, treatment, species, experiment.year, treatment.year) %>%
-  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% 
-  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
-  ungroup() %>%
-  group_by(site, species, experiment.year, treatment.year) %>%
-  mutate(resp.ratio.site = (D-C)/(C+D))
-
-## merge with rank & persistence vals
-edge_yearly_w_predictors <- left_join(resp.ratio.yearly, rank_persist, by = c("site", "species"))
-
-## change site to an ordered factor
-edge_yearly_w_predictors$site <- as.factor(edge_yearly_w_predictors$site)
-edge_yearly_w_predictors <- edge_yearly_w_predictors %>%
-  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black")))
-
-## create a key of years
-## will be used to match up spei data to particular treatment years
-year.key <- edge_all %>%
-  group_by(site, experiment.year, treatment.year, year) %>%
-  summarise(year2 = unique(year)) 
 
 # Merge DR & RR Data ####
 drought.RR.bootstrap <- edge_w_predictors.site.bootstrap %>%
@@ -392,6 +334,4 @@ ggplot(edge_FG.bootstrap,
 
 
 # Clean up ####
-#list of objects to be removed 
-
 rm(edge_all, edge_w_zeros, rank_persist, resp.ratio.site, resp.ratio.site.recov, resp.ratio.yearly, response.ratio.tog, drought.RR.bootstrap, recov.RR.bootstrap, edge_w_predictors.site, edge_w_predictors.site.recov)

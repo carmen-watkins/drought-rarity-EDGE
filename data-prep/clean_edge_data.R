@@ -43,6 +43,13 @@ ggplot(north_edge, aes(x=as.factor(Block), y=Plot)) +
   facet_wrap(~Site)
 #ggsave("preliminary_figs/north_edge_plots_per_block.png", width = 6, height = 5)
 
+ggplot(north_edge, aes(x=max.cover))+
+  geom_histogram()
+## maximum cover of one species is 100
+
+high.cov = north_edge %>%
+  filter(max.cover > 95)
+
 ## Column Names ####
 colnames(north_edge)
 colnames(north_spkey)
@@ -85,7 +92,7 @@ sort(unique(sev_edge$genus))
 empty <- sev_edge %>%
   filter(kartez == "EMPTY")
 none <- sev_edge %>%
-  filter(kartez == "NONE")
+  filter(kartez == "NONE") ## this is actually a species, don't filter it out!!
 
 ## each of the unknowns shows up once
 unk1 <- sev_edge %>%
@@ -97,7 +104,12 @@ unk2 <- sev_edge %>%
 ## should we keep species with 'NA' for specific epithet? - leave in
 ## what should we do with unknowns? - remove
 
-rm_kartez <- c("NONE", "EMPTY", "UNKFORB1", "UNKNOWN") ## remove unknowns and empty/none
+rm_kartez <- c("EMPTY", "UNKFORB1", "UNKNOWN") ## remove unknowns and empty
+
+### quantify unknowns ####
+sev_unknowns = sev_edge %>%
+  filter(kartez %in% rm_kartez,
+         kartez != "EMPTY", treatment != "D")
 
 ### make mods ####
 unique(sev_edge$year)
@@ -107,7 +119,7 @@ unique(sev_edge$year)
 ## do I calculate the max cover by comparing spring and fall of diff or the same years?
 ## from readings, seems like growing season is ~Apr - Oct so it should be same year 
 sev_clean <- sev_edge %>%
-  mutate(site = ifelse(site == "EDGE_black", "SEV_black", "SEV_blue"), ## fix site code
+  mutate(site = ifelse(site == "EDGE_black", "SBK", "SBL"), ## fix site code
          subplot = quad, ## rename quad as subplot to match north sites
          spcode = paste0(substr(genus, 1, 3), substr(sp.epithet, 1, 3)), ## make 6 letter sp codes
          species = paste0(genus, "_", sp.epithet)) %>%
@@ -135,7 +147,7 @@ colnames(sev_clean)
 ### duplicated row ####
 duplicates <- sev_clean %>%
   group_by(site, year, block, plot, treatment, species) %>%
-  filter(site == "SEV_blue") %>%
+  filter(site == "SBL") %>%
   summarise(num.obs = n()) %>%
   filter(num.obs != 1)
 
@@ -167,6 +179,36 @@ sort(unique(north_edge$Species))
 ## remove unknowns
 rm <- c("oxytopis_like_legume", "seedling_unknown", "UK_Fuzzy_Aster", "UK_onagraceac", "UK_poa", "UK_Tall_Phlox", "unk_Alien", "unk_alternate_leaf_forb", "unk_alternate_strong_midvein_hairy_margin", "unk_Aristida", "unk_Artemisia_ludoviciana", "UNK_Aster_rosette", "unk_astragalus_oxytropis", "unk_Clover", "unk_Eriogonum_Hays", "unk_fall_opposite_leaf", "unk_forb_soft_velvet", "unk_juicy_forb", "unk_Lepidium_like_forb", "unk_Milky_waxy", "unk_Oenothera", "unk_oenotheria", "unk_Oerothera_rosette", "unk_opposite_leaf", "Unk_overlapping_alt", "unk_Oxytropis_sp.", "unk_Primrose_like", "unk_Red_edged_forb", "unk_rush_unknown", "unk_Sonchus_seedling", "unk_Stipa_veridas", "unk_Tall_astragulus", "unk_Three_Leaf_Unknown_forb", "unk_Townsendia_grandiflora", "UNKFCHY1", "UNKFCHY2", "UNKFCHY3", "UNKFCHY4", "UNKFCHY5", "UNKFCHY6", "UNKFCHY7", "UNKFCHY8", "UNKFHYS1", "UNKFHYS2", "UNKFHYS3", "UNKFHYS4","UNKFHYS5", "UNKFHYS7", "UNKFHYS8", "UNKFKNZ1", "UNKFKNZ2", "UNKFKNZ3",  "unkforb_opp_Lvs", "UNKFSGS1", "UNKFSGS2", "UNKFSGS3", "UNKGRHYS1", "UNKGRHYS2","UNKHYS", "unknown", "Unknown_Cirsium", "Unknown_dry_sad", "Unknown_ericoides_small", "Unknown_Erysimum", "unknown_forb", "Unknown_forb", "unknown_forb_tooth", "Unknown_grass", "Unknown_linear_lvs", "unknown_machearanthera", "Unknown_milky_waxy", "Unknown_pilos_forb", "unknown_pinnately_lobed", "Unknown_ranunculus", "Unknown_rosette", "Unknown_Seedling", "unknown_shiny_alternate", "unknown_short_alternate", "Unknown_whorled_linear", "Unknown_woody", "UNKTRKNZ1", "UNKTRKNZ2", "huge_penstemon", "blob_unknown", "Ulmus_sp.", "NA_NA", "Ulmus_americana")
 
+### quantify unknowns ####
+north_unknowns = north_edge %>%
+  filter(Species %in% rm, 
+         max.cover > 0,
+         Species != "Ulmus_americana",
+         Species != "Ulmus_sp.", 
+         Year > 2012,
+         Trt != "int") %>%
+  mutate(Site = fct_relevel(Site, "KNZ", "HYS", "CHY", "SGS"),
+         cov_below1 = ifelse(max.cover <= 2, 1, 0))
+
+sum(north_unknowns$cov_below1)/nrow(north_unknowns)
+## 0.9375
+
+length(north_unknowns$Site)
+## 144
+
+length(unique(north_unknowns$Species))
+## 57
+
+ggplot(north_unknowns, aes(x=max.cover)) +
+  geom_histogram() +
+  facet_wrap(~Site, ncol = 4, nrow = 1) +
+  xlab("Unknown Species Cover") +
+  ylab("Count")
+
+ggsave("preliminary_figs/june_2024/north_sites_unknowns.png", width = 6, height = 2.5)
+length(unique(north_unknowns$Species))
+
+### clean data ####
 north_clean <- north_edge %>%
   mutate(site = Site, ## fix column names
          plot = Plot,
@@ -194,6 +236,12 @@ north_clean <- north_edge %>%
          relative.sp.cover = mean.plot.cover/total.plot.cover) %>%
   select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year, relative.sp.cover, total.plot.cover)
 
+### finish quantifying unknowns ####
+north_knowns = north_clean %>%
+  filter(mean.plot.cover>0)
+
+length(north_knowns$year)+length(north_unknowns$Spcode)
+
 ### explore species ####
 summary <- north_clean %>%
   group_by(site, treatment) %>%
@@ -213,14 +261,14 @@ sort(unique(edge_all$year))
 
 ## Fill 0's ####
 sev_black <- edge_all %>%
-  filter(site == "SEV_black") %>%
+  filter(site == "SBK") %>%
   ungroup() %>%
   select(-spcode, -kartez) %>%
   pivot_wider(names_from = "species", values_from = "mean.plot.cover", values_fill = 0) %>%
   pivot_longer(Bouteloua_eriopoda:Psilostrophe_tagetina, names_to = "species", values_to = "mean.plot.cover")
 
 sev_blue <- edge_all %>%
-  filter(site == "SEV_blue") %>%
+  filter(site == "SBL") %>%
   ungroup() %>%
   select(-spcode, -kartez) %>%
   pivot_wider(names_from = "species", values_from = "mean.plot.cover", values_fill = 0) %>%

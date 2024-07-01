@@ -101,7 +101,7 @@ persist_sum <-  left_join(persist_plot, persist_site, by = c("site", "species"))
 ## change site to factor to visualize
 persist_sum$site <- as.factor(persist_sum$site)
 persist_sum <- persist_sum %>%
-  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black"))
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
 ### explore spatial scale ####
 ggplot(persist_sum, aes(x=site, y=mean.persist.overall, color = spatial.scale)) +
