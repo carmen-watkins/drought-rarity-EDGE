@@ -33,7 +33,7 @@ edge_w_predictors.site <- left_join(resp.ratio.site, rank_persist, by = c("site"
 ## change site to an ordered factor
 edge_w_predictors.site$site <- as.factor(edge_w_predictors.site$site)
 edge_w_predictors.site <- edge_w_predictors.site %>%
-  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black")))
+  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")))
 
 ## During Recovery ####
 resp.ratio.site.recov <- edge_all %>%
@@ -54,7 +54,7 @@ edge_w_predictors.site.recov <- left_join(resp.ratio.site.recov, rank_persist, b
 ## change site to an ordered factor
 edge_w_predictors.site.recov$site <- as.factor(edge_w_predictors.site.recov$site)
 edge_w_predictors.site.recov <- edge_w_predictors.site.recov %>%
-  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black")))
+  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")))
 
 ## Resp Ratio Yearly ####
 resp.ratio.yearly <- edge_all %>%
@@ -74,7 +74,7 @@ edge_yearly_w_predictors <- left_join(resp.ratio.yearly, rank_persist, by = c("s
 ## change site to an ordered factor
 edge_yearly_w_predictors$site <- as.factor(edge_yearly_w_predictors$site)
 edge_yearly_w_predictors <- edge_yearly_w_predictors %>%
-  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black")))
+  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")))
 
 ## create a key of years
 ## will be used to match up spei data to particular treatment years
@@ -107,10 +107,5 @@ na.check <- response.ratio.tog %>%
 edge_FG <- left_join(response.ratio.tog, FG, by = "species") %>%
   filter(FunctionalGroup != "tree", !is.na(FunctionalGroup)) 
 
-#edge_FG$precip.bin <- as.factor(edge_FG$precip.bin)
-
-#edge_FG <- edge_FG %>%
-  #mutate(precip.bin = fct_relevel(precip.bin, "high", "med", "low"))
-
 # Clean up ####
-rm(edge_all, edge_w_zeros, rank_persist, resp.ratio.site, resp.ratio.site.recov, resp.ratio.yearly, response.ratio.tog, drought.RR, recov.RR, edge_w_predictors.site, edge_w_predictors.site.recov, na.check)
+rm(edge_all, edge_w_zeros, rank_persist, resp.ratio.site, resp.ratio.site.recov, resp.ratio.yearly, response.ratio.tog, drought.RR, recov.RR, edge_w_predictors.site, edge_w_predictors.site.recov, na.check, FG, high.cov, north_knowns, north_unknowns, sev_unknowns)
