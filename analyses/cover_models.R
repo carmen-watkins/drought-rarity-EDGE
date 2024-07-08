@@ -3,6 +3,7 @@ source("analyses/cov_thru_time.R")
 
 library(emmeans)
 
+# Figure 2 Models ####
 ## For data in each panel, run a model lm(cover~year*treatment), make sure year is a factor, not continuous. Then, posthoc (use emmeans) test for pairwise comparisons between drought and control for each year. Mark significant comparisons with a star
 
 ## change year to a factor for model comparisons
@@ -63,3 +64,6 @@ sgs <- signif_out[signif_out$site == "SGS",]
 sbk <- signif_out[signif_out$site == "SBK",]
 sbl <- signif_out[signif_out$site == "SBL",]
 
+# Figure S4 Models ####
+
+# Figure S5 Models ####

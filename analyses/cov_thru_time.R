@@ -177,3 +177,25 @@ ggplot(edge_sum_site, aes(x=as.integer(year2), y=mean.sum.cover)) +
   theme(legend.position="bottom")
 
 ggsave("preliminary_figs/june_2024/mean_total_cover_by_RA.png", width = 8, height = 8)
+
+# Rank Abundance ####
+rank_mean_all <- edge_rarity2 %>%
+  group_by(site, treatment, rarity, species) %>% 
+  summarise(mean.cov = mean(mean.plot.cover), 
+            rank = median(percrank))
+
+rank_mean_all$site = as.factor(rank_mean_all$site)
+rank_mean_all = rank_mean_all %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+
+ggplot(rank_mean_all, aes(x=-(rank), y=mean.cov, color = treatment))+
+  geom_point() +
+  facet_wrap(~site, nrow = 3, ncol = 2) +
+  ylab("Cover") +
+  xlab("Rank") +
+  scale_color_manual(values = c("#008080", "#de8a5a"))
+
+ggsave("preliminary_figs/june_2024/rank_abund_curves.png", width = 6, height = 5)
+
+#008080,#70a494,#b4c8a8,#f6edbd,#edbb8a,#de8a5a,#ca562c
+
