@@ -1,7 +1,7 @@
 # Header ####
-## Script name: Response Ratio Functional Group
+## Script name: Response Ratio Analyses
 
-## Purpose of script: Visualize drought and recovery response ratios in relation to functional group and rarity patterns.
+## Purpose of script: Visualize drought and post-drought response ratios in relation to rarity patterns.
 ##
 ## Author: Carmen Watkins
 ##
@@ -22,6 +22,10 @@ library(viridis)
 theme_set(theme_classic())
 pal <- wes_palette("Royal3")
 wes_palette("Royal3")
+
+## get number of unique species in analyses
+unique(edge_FG$species)
+## 289
 
 ## arrange sites in df
 edge_FG$site <- factor(edge_FG$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
@@ -48,17 +52,19 @@ sumRR$quad <- factor(sumRR$quad, levels = c("+D+R", "+D-R", "-D-R", "-D+R", "los
 
 
 # Figure S1 ####
-ggplot(edge_FG, aes(x=percrank, y=persistence.site))+
+ggplot(edge_FG, aes(x=percrank, y=persistence.site, color = site))+
   geom_point() +
-  facet_wrap(~site, ncol = 6, nrow = 1) +
+  facet_wrap(~site, ncol = 2, nrow = 3) +
   geom_abline(slope = 1) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
-  xlab("Percent Rank")+
-  ylab("Persistence")
+  scale_color_manual(values = pal) +
+  xlab("Spatial Rarity")+
+  ylab("Temporal Rarity") +
+  labs(color = "Site") 
 
-ggsave("preliminary_figs/june_2024/figureS1.png", width = 10, height = 2)
+ggsave("preliminary_figs/oct_2024/figure3.png", width = 6, height = 5.5)
 
 ## check correlations
 cor(edge_FG[edge_FG$site == "KNZ",]$percrank, edge_FG[edge_FG$site == "KNZ",]$persistence.site, method = c("pearson"))
@@ -68,86 +74,56 @@ cor(edge_FG[edge_FG$site == "SGS",]$percrank, edge_FG[edge_FG$site == "SGS",]$pe
 cor(edge_FG[edge_FG$site == "SBL",]$percrank, edge_FG[edge_FG$site == "SBL",]$persistence.site, method = c("pearson"))
 cor(edge_FG[edge_FG$site == "SBK",]$percrank, edge_FG[edge_FG$site == "SBK",]$persistence.site, method = c("pearson"))
 
-# Figure 3 ####
-## no color
-rankD2 <- ggplot(edge_FG, aes(x=percrank, y=drought.RR)) +
-  geom_point(color = "#9F9F9F") +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.5) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  xlab("Rank") +
-  ylab("Drought Resp. Ratio") +
-  theme(text = element_text(size = 13.5))
-
-rankR2 <- ggplot(edge_FG, aes(x=percrank, y=recovery.RR)) +
-  geom_point(color = "#9F9F9F")+
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.5) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_color_manual(values = pal) +
-  xlab("Rank") +
-  ylab("Recovery Resp. Ratio") +
-  theme(text = element_text(size = 13.5))
-
-persD2 <- ggplot(edge_FG, aes(x=persistence.site, y=drought.RR)) +
-  geom_point(color = "#9F9F9F") +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.5) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  xlab("Persistence") +
-  ylab("Drought Resp. Ratio") +
-  theme(text = element_text(size = 13.5))
-
-persR2 <- ggplot(edge_FG, aes(x=persistence.site, y=recovery.RR)) +
-  geom_point(color = "#9F9F9F")+
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.5) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  xlab("Persistence") +
-  ylab("Recovery Resp. Ratio") +
-  theme(text = element_text(size = 13.5))
-
+# Figure 2 ####
 rankD3 <- ggplot(edge_FG, aes(x=percrank, y=drought.RR)) +
-  geom_point(aes(color = site), alpha = 0.75, size = 0.9) +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0, linewidth = 1.5) +
+  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0, linewidth = 1.35) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
-  xlab("Rank") +
-  ylab("Drought Resp. Ratio") +
+  xlab(" ") +
+  ylab("Drought Response Ratio") +
+  labs(color = "Site") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13.5))
+  theme(text = element_text(size = 15))
 
 rankR3 <- ggplot(edge_FG, aes(x=percrank, y=recovery.RR)) +
-  geom_point(aes(color = site), alpha = 0.75, size = 0.9) +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0, linewidth = 1.5) +
+  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0, linewidth = 1.35) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
-  xlab("Rank") +
-  ylab("Recovery Resp. Ratio") +
+  xlab("Spatial Rarity") +
+  ylab("Post-drought Response Ratio") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13.5))
+  theme(text = element_text(size = 15))
 
 persD3 <- ggplot(edge_FG, aes(x=persistence.site, y=drought.RR)) +
-  geom_point(aes(color = site), alpha = 0.75, size = 0.9) +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0, linewidth = 1.5) +
+  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0, linewidth = 1.35) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
-  xlab("Persistence") +
-  ylab("Drought Resp. Ratio") +
+  xlab(" ") +
+  ylab(" ") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13.5))
+  theme(text = element_text(size = 15))
 
 persR3 <- ggplot(edge_FG, aes(x=persistence.site, y=recovery.RR)) +
-  geom_point(aes(color = site), alpha = 0.9, size = 0.9) +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0, linewidth = 1.5) +
+  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0, linewidth = 1.35) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
-  xlab("Persistence") +
-  ylab("Recovery Resp. Ratio") +
+  xlab("Temporal Rarity") +
+  ylab("") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13.5))
+  theme(text = element_text(size = 15))
 
-ggarrange(rankD2, persD2, rankR2, persR2, 
-          rankD3, persD3, rankR3, persR3, 
-          labels = "AUTO", common.legend = T, legend = "bottom", ncol = 4, nrow=2)
+ggarrange(rankD3, persD3, rankR3, persR3, 
+          labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-ggsave("preliminary_figs/march_2024/Figure4_RR_drought_recov.png", width = 10, height = 6)
+ggsave("preliminary_figs/oct_2024/Figure2_RR_drought_recov.png", width = 10, height = 8.5)
 
 ## explore site level patterns ####
 p1 = ggplot(edge_FG, aes(x=percrank, y=drought.RR)) +
@@ -196,17 +172,16 @@ ggsave("preliminary_figs/june_2024/site_level_responses_large.png", width = 10, 
 
 
 # Figure 4 ####
-pa <- ggplot(edge_FG, aes(x=drought.RR, y=recovery.RR, color = percrank)) +
+ggplot(edge_FG, aes(x=drought.RR, y=recovery.RR, color = percrank)) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
-  geom_point()+
-  facet_wrap(~site, nrow = 1, ncol = 6) +
+  geom_point(size = 2)+
+  facet_wrap(~site, nrow = 3, ncol = 2) +
   xlab("Drought Response Ratio") +
-  ylab("Recovery Response Ratio") +
+  ylab("Post-drought Response Ratio") +
   scale_color_gradientn(
     colors = c("#E3B710", "#DCCB4E", "#BDC881", "#A2A475", "#81A88D", "#00A08A", "#0B775E", "#175149")) +
-  labs(color = "Rank") +
-  
+  labs(color = "Spatial Rarity") +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
@@ -219,26 +194,43 @@ pa <- ggplot(edge_FG, aes(x=drought.RR, y=recovery.RR, color = percrank)) +
   annotate(geom="text", x=0.75, y=1.2, label="+D+R",
            color="black", size = 3) +
   annotate(geom="text", x=0.75, y=-1.2, label="+D-R",
-           color="black", size = 3)
+           color="black", size = 3) +
+  theme(text = element_text(size = 15))
+
+ggsave("preliminary_figs/oct_2024/figure4.png", width = 7, height = 6)
   
-#ggsave("preliminary_figs/june_2024/figure4.tiff", width = 9, height = 2)
+ 
+#sumRR2 = sumRR %>%
+ # mutate(position_x = ifelse(substr(quad, start = 1, stop = 2) == "+D", 0.25, -0.25),
+        # position_y = ifelse(substr(quad, start = 3, stop = 4) == "+R", 0.25, -0.25),
+        # position_x = ifelse(quad == "no fx", 0, position_x),
+         #position_y = ifelse(quad == "no fx", 0, position_y),
+        # position_y = ifelse(quad == "lost", -0.5, position_y),
+        # position_x = ifelse(quad == "lost", 0, position_x),
+       #  position_y = ifelse(quad == "recov", 0.5, position_y),
+       # position_x = ifelse(quad == "recov", 0, position_x), 
+         
+       #  position_y = ifelse(rarity == "Dom", position_y - 0.1, position_y),
+       #  position_x = ifelse(rarity == "Dom", position_x - 0.15, position_x))
 
-pb <- ggplot(sumRR, aes(x=quad, y=percent.quad, fill = rarity)) +
-  geom_bar(stat = 'identity') +
-  facet_wrap(~site, ncol = 6, nrow = 1) +
-  xlab("Response Trajectory") + ylab("Proportion of Species") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  scale_fill_manual(values = c("#175149", "#BDC881"), name = NULL) +
-  theme(legend.position="right") +
-  theme_bw() +
-  theme(panel.grid = element_blank()) +
-  theme(strip.background =element_rect(fill="white")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-  
+#pb = ggplot(sumRR2, aes(x=position_x, y=position_y)) +
+ # geom_hline(yintercept = 0) +
+ # geom_vline(xintercept = 0) +
+ # geom_point(aes(fill=rarity, size = percent.quad*10), 
+       #       colour="black",pch=21) +
+#  scale_fill_manual(values = c("white", "black"))+
+#  facet_wrap(~site, ncol = 1, nrow = 6) +
+ # theme_bw() +
+#  theme(panel.grid = element_blank()) +
+ # theme(strip.background =element_rect(fill="white")) +
+#  coord_cartesian(xlim = c(-0.6,0.6), ylim = c(-0.6,0.6)) +
+#  xlab("Drought Response Ratio") + ylab("") +
+ # theme(text = element_text(size = 15)) +
+ # labs(size = "Proportion", fill = "Abundance") +
+  #geom_text(aes(label = round(percent.quad, digits = 3)), check_overlap = TRUE, hjust = "outward", size = 4, vjust = "top") +
+ # theme(legend.position="bottom")
 
-ggarrange(pa, pb, ncol = 1, nrow = 2)
-
-ggsave("preliminary_figs/june_2024/figure4.png", height = 5, width = 10)
+#ggarrange(pa, pb, ncol = 2, nrow = 1)
 
 # Figure S5 ####
 ## Persist by Site ####

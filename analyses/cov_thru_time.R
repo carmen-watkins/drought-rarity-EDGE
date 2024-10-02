@@ -131,35 +131,36 @@ edge_sum_site$year <- as.Date(edge_sum_site$year, format = "%Y")
 dom <- ggplot(edge_sum_site[edge_sum_site$rarity == "dominant species",], aes(x=as.integer(year2), y=mean.cover)) +
   geom_rect(aes(xmin = drought_start_year,xmax = drought_end_year,ymin = -Inf, ymax = Inf),
             fill="#E6E6E6", alpha = .2) +
-  geom_line(aes(linetype = treatment, color = rarity), linewidth= 1.25) +
-  geom_point(aes(color = rarity), size = 2) +
+  geom_line(aes(linetype = treatment), linewidth= 1.25) +
+  geom_point(size = 2) +
   facet_grid(site~rarity, scales = "free") +
-  scale_color_manual(values = c("#175149")) +
+ # scale_color_manual(values = c("#175149")) +
   xlab("Year") +  ylab("Mean Species Cover") +
-  labs(color = NULL, linetype = "Treatment", ) +
+  labs(linetype = "Rainfall Treatment") +
   coord_cartesian(xlim = c(2012, 2021)) +
   theme(text = element_text(size = 14.5)) +
-  geom_errorbar(aes(ymin = mean.cover - se.cover, ymax = mean.cover + se.cover, color = rarity), width = 0.25, linewidth = 0.8) +
+  geom_errorbar(aes(ymin = mean.cover - se.cover, ymax = mean.cover + se.cover), width = 0.25, linewidth = 0.8) +
   theme(legend.position="bottom")
 
 sub <- ggplot(edge_sum_site[edge_sum_site$rarity == "subordinate species",], aes(x=as.integer(year2), y=mean.cover)) +
   geom_rect(aes(xmin = drought_start_year,xmax = drought_end_year,ymin = -Inf, ymax = Inf),
             fill="#E6E6E6", alpha = .2) +
-  geom_line(aes(linetype = treatment, color = rarity), linewidth= 1.25) +
-  geom_point(aes(color = rarity), size = 2) +
+  geom_line(aes(linetype = treatment), linewidth= 1.25) +
+  geom_point(size = 2) +
   facet_grid(site~rarity, scales = "free") +
-  scale_color_manual(values = c( "#BDC881")) +
+  #scale_color_manual(values = c( "#BDC881")) +
   xlab("Year") +  ylab(NULL) +
-  labs(color = NULL, linetype = "Treatment", ) +
+  labs(linetype = "Rainfall Treatment") +
   coord_cartesian(xlim = c(2012, 2021)) +
   theme(text = element_text(size = 14.5)) +
-  geom_errorbar(aes(ymin = mean.cover - se.cover, ymax = mean.cover + se.cover, color = rarity), width = 0.25, linewidth = 0.8) +
+  geom_errorbar(aes(ymin = mean.cover - se.cover, ymax = mean.cover + se.cover), width = 0.25, linewidth = 0.8) +
   theme(legend.position="bottom") +
   guides(linetype = "none")
 
-ggarrange(dom, sub)
+ggarrange(dom, sub, common.legend = T, legend = "bottom")
 
-ggsave("preliminary_figs/june_2024/figure2_meansp_cov_updated.tiff", width = 8, height = 8)
+ggsave("preliminary_figs/aug_sept_2024/figure2_meansp_cov_updated.tiff", width = 8, height = 8)
+ggsave("preliminary_figs/aug_sept_2024/figure2_meansp_cov_updated.png", width = 8, height = 8)
 
 # Figure S5 ####
 ggplot(edge_sum_site, aes(x=as.integer(year2), y=mean.sum.cover)) +
