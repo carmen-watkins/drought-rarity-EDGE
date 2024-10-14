@@ -86,3 +86,13 @@ Anova(persist_recov_model2)
 qqnorm(resid(persist_recov_model2))
 qqline(resid(persist_recov_model2))
 plot(resid(persist_recov_model2) ~ fitted(persist_recov_model2))
+
+
+# Rarity Category models ####
+
+m1 = lm(recovery.RR~drought.RR+rarity_cat, data = edge_FG_cats)
+summary(m1)
+
+t = anova(m1)
+
+TukeyHSD(t)

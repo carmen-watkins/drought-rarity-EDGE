@@ -50,6 +50,26 @@ ggplot(north_edge, aes(x=max.cover))+
 high.cov = north_edge %>%
   filter(max.cover > 95)
 
+## how many cover values per plot in a single year? i.e. is one subplot measured per plot or multiple ?
+
+north_plot_check = north_edge %>%
+  mutate(uniqueID = paste0(Site, "B", Block, "P", Plot, Trt, Subplot)) %>%
+  filter(Site == "KNZ",
+         Block == 1, 
+         Trt != "int")
+ 
+unique(north_plot_check$uniqueID)
+## yep, all four subplot per plot
+
+sev_plot_check = sev_edge %>%
+  mutate(uniqueID = paste0(site, "B", block, "P", plot, treatment, subplot)) %>%
+  filter(site == "EDGE_black",
+         block == 3, 
+         treatment != "D")
+
+unique(sev_plot_check$uniqueID)
+
+
 ## Column Names ####
 colnames(north_edge)
 colnames(north_spkey)

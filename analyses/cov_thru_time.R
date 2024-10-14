@@ -28,13 +28,156 @@ edge_rarity <- left_join(edge_all, rank_persist, by = c("site", "species"))
 edge_rarity$species <- as.factor(edge_rarity$species)
 
 edge_rarity2 <- edge_rarity %>%
-  mutate(rarity = ifelse(percrank > 0.98, "dominant species", "subordinate species"))
+  mutate(spatial = ifelse(percrank > 0.5, "Abundant", "Scarce"),
+         temporal = ifelse(persistence.site > 0.5, "Core", "Transient"),
+         rarity_cat = paste0(temporal, ", ", spatial))
+ # mutate(rarity = ifelse(percrank > 0.98, "dominant species", "subordinate species"))
 
 ggplot(edge_rarity2, aes(x=mean.plot.cover)) +
   geom_histogram() +
  # facet_grid(vars(rarity),vars(site)) +
   facet_wrap(~site)+
   geom_vline(xintercept = 100)
+
+# Figure 2 ####
+## average sp cover per category ####
+edge_sp_means_plot <- edge_rarity2 %>%
+  group_by(site, treatment, year, block, plot, rarity_cat) %>% 
+  summarise(mean.sp.cov = mean(mean.plot.cover)) ## get means
+
+ggplot(edge_sum_plot, aes(x=year, y=mean.sp.cov, color = rarity_cat)) +
+  geom_point() +
+  facet_wrap(~site)
+  
+test = edge_sum_plot %>%
+  ungroup() %>%
+  group_by(site, treatment, year, rarity_cat) %>%
+  summarise(mean.spcov.atsite = mean(mean.sp.cov),
+            se.spcov.atsite = calcSE(mean.sp.cov))
+
+
+ggplot(test, aes(x=year, y=mean.spcov.atsite, color = rarity_cat)) +
+  geom_point()+
+  facet_wrap(~site)
+
+
+#, 
+        #    sum.cov = sum(mean.plot.cover))
+
+## why sum???
+
+ggplot(edge_sum_plot, aes(x=sum.cov)) + 
+  geom_histogram() +
+  facet_grid(vars(rarity),vars(site)) +
+  geom_vline(xintercept = 100)
+
+## site level ####
+## calc mean cover for dom vs. sub sp at the site level in each year
+edge_sum_site <- edge_sum_plot %>%
+  ungroup() %>%
+  group_by(site, treatment, rarity, year) %>%
+  summarise(mean.cover = mean(mean.cov),
+            se.cover = calcSE(mean.cov),
+            #sp = list(species),
+            mean.sum.cover = mean(sum.cov),
+            se.sum.cover = calcSE(sum.cov)) %>%
+  mutate(drought_start_year = ifelse(site %in% c("SBL", "SBK"), 2013, 2014),
+         drought_end_year = ifelse(site %in% c("SBL", "SBK"), 2016, 2017)) %>%
+  mutate(fakeM = 10,
+         fakeD = 25,
+         fulldate = paste0(year, fakeM, fakeD),
+         fulldate2 = ymd(fulldate),
+         year2 = year(fulldate2))
+
+edge_sum_site$site <- factor(edge_sum_site$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+
+## create line data for graphing
+line_data <- edge_sum_site %>%
+  ungroup() %>%
+  select(site, drought_start_year, drought_end_year) %>%
+  distinct()
+
+str(edge_sum_site)
+
+edge_sum_site$year <- as.character(edge_sum_site$year)
+edge_sum_site$year <- as.Date(edge_sum_site$year, format = "%Y")
+
+## plot Figure 2 ####
+dom <- ggplot(edge_sum_site[edge_sum_site$rarity == "dominant species",], aes(x=as.integer(year2), y=mean.cover)) +
+  geom_rect(aes(xmin = drought_start_year,xmax = drought_end_year,ymin = -Inf, ymax = Inf),
+            fill="#E6E6E6", alpha = .2) +
+  geom_line(aes(linetype = treatment), linewidth= 1.25) +
+  geom_point(size = 2) +
+  facet_grid(site~rarity, scales = "free") +
+  # scale_color_manual(values = c("#175149")) +
+  xlab("Year") +  ylab("Mean Species Cover") +
+  labs(linetype = "Rainfall Treatment") +
+  coord_cartesian(xlim = c(2012, 2021)) +
+  theme(text = element_text(size = 14.5)) +
+  geom_errorbar(aes(ymin = mean.cover - se.cover, ymax = mean.cover + se.cover), width = 0.25, linewidth = 0.8) +
+  theme(legend.position="bottom")
+
+sub <- ggplot(edge_sum_site[edge_sum_site$rarity == "subordinate species",], aes(x=as.integer(year2), y=mean.cover)) +
+  geom_rect(aes(xmin = drought_start_year,xmax = drought_end_year,ymin = -Inf, ymax = Inf),
+            fill="#E6E6E6", alpha = .2) +
+  geom_line(aes(linetype = treatment), linewidth= 1.25) +
+  geom_point(size = 2) +
+  facet_grid(site~rarity, scales = "free") +
+  #scale_color_manual(values = c( "#BDC881")) +
+  xlab("Year") +  ylab(NULL) +
+  labs(linetype = "Rainfall Treatment") +
+  coord_cartesian(xlim = c(2012, 2021)) +
+  theme(text = element_text(size = 14.5)) +
+  geom_errorbar(aes(ymin = mean.cover - se.cover, ymax = mean.cover + se.cover), width = 0.25, linewidth = 0.8) +
+  theme(legend.position="bottom") +
+  guides(linetype = "none")
+
+ggarrange(dom, sub, common.legend = T, legend = "bottom")
+
+ggsave("preliminary_figs/aug_sept_2024/figure2_meansp_cov_updated.tiff", width = 8, height = 8)
+ggsave("preliminary_figs/aug_sept_2024/figure2_meansp_cov_updated.png", width = 8, height = 8)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## total cover ####
 edge_sum_plot_tc <- edge_rarity %>%
@@ -82,85 +225,6 @@ ggplot(edge_sum_plot, aes(x=sum.cov)) +
   facet_grid(vars(rarity),vars(site)) +
   geom_vline(xintercept = 100)
 
-## plot level ####
-## calculate mean cover for dom vs. sub sp at the plot level in each year
-edge_sum_plot <- edge_rarity %>%
-  mutate(rarity = ifelse(percrank > 0.98, "dominant species", "subordinate species")) %>% ## classify sp by abundance
-  group_by(site, treatment, year, block, plot, rarity) %>% 
-  ## take plot means of dom vs. sub sp
-  summarise(mean.cov = mean(mean.plot.cover),
-            sum.cov = sum(mean.plot.cover))
-
-ggplot(edge_sum_plot, aes(x=sum.cov)) + 
-  geom_histogram() +
-  facet_grid(vars(rarity),vars(site)) +
-  geom_vline(xintercept = 100)
-
-## site level ####
-## calc mean cover for dom vs. sub sp at the site level in each year
-edge_sum_site <- edge_sum_plot %>%
-  ungroup() %>%
-  group_by(site, treatment, rarity, year) %>%
-  summarise(mean.cover = mean(mean.cov),
-            se.cover = calcSE(mean.cov),
-            #sp = list(species),
-            mean.sum.cover = mean(sum.cov),
-            se.sum.cover = calcSE(sum.cov)) %>%
-  mutate(drought_start_year = ifelse(site %in% c("SBL", "SBK"), 2013, 2014),
-         drought_end_year = ifelse(site %in% c("SBL", "SBK"), 2016, 2017)) %>%
-  mutate(fakeM = 10,
-         fakeD = 25,
-         fulldate = paste0(year, fakeM, fakeD),
-         fulldate2 = ymd(fulldate),
-         year2 = year(fulldate2))
-
-edge_sum_site$site <- factor(edge_sum_site$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
-
-## create line data for graphing
-line_data <- edge_sum_site %>%
-  ungroup() %>%
-  select(site, drought_start_year, drought_end_year) %>%
-  distinct()
-
-str(edge_sum_site)
-
-edge_sum_site$year <- as.character(edge_sum_site$year)
-edge_sum_site$year <- as.Date(edge_sum_site$year, format = "%Y")
-
-# Figure 2 ####
-dom <- ggplot(edge_sum_site[edge_sum_site$rarity == "dominant species",], aes(x=as.integer(year2), y=mean.cover)) +
-  geom_rect(aes(xmin = drought_start_year,xmax = drought_end_year,ymin = -Inf, ymax = Inf),
-            fill="#E6E6E6", alpha = .2) +
-  geom_line(aes(linetype = treatment), linewidth= 1.25) +
-  geom_point(size = 2) +
-  facet_grid(site~rarity, scales = "free") +
- # scale_color_manual(values = c("#175149")) +
-  xlab("Year") +  ylab("Mean Species Cover") +
-  labs(linetype = "Rainfall Treatment") +
-  coord_cartesian(xlim = c(2012, 2021)) +
-  theme(text = element_text(size = 14.5)) +
-  geom_errorbar(aes(ymin = mean.cover - se.cover, ymax = mean.cover + se.cover), width = 0.25, linewidth = 0.8) +
-  theme(legend.position="bottom")
-
-sub <- ggplot(edge_sum_site[edge_sum_site$rarity == "subordinate species",], aes(x=as.integer(year2), y=mean.cover)) +
-  geom_rect(aes(xmin = drought_start_year,xmax = drought_end_year,ymin = -Inf, ymax = Inf),
-            fill="#E6E6E6", alpha = .2) +
-  geom_line(aes(linetype = treatment), linewidth= 1.25) +
-  geom_point(size = 2) +
-  facet_grid(site~rarity, scales = "free") +
-  #scale_color_manual(values = c( "#BDC881")) +
-  xlab("Year") +  ylab(NULL) +
-  labs(linetype = "Rainfall Treatment") +
-  coord_cartesian(xlim = c(2012, 2021)) +
-  theme(text = element_text(size = 14.5)) +
-  geom_errorbar(aes(ymin = mean.cover - se.cover, ymax = mean.cover + se.cover), width = 0.25, linewidth = 0.8) +
-  theme(legend.position="bottom") +
-  guides(linetype = "none")
-
-ggarrange(dom, sub, common.legend = T, legend = "bottom")
-
-ggsave("preliminary_figs/aug_sept_2024/figure2_meansp_cov_updated.tiff", width = 8, height = 8)
-ggsave("preliminary_figs/aug_sept_2024/figure2_meansp_cov_updated.png", width = 8, height = 8)
 
 # Figure S5 ####
 ggplot(edge_sum_site, aes(x=as.integer(year2), y=mean.sum.cover)) +
