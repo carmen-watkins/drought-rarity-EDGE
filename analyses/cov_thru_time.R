@@ -16,6 +16,76 @@ calcSE<-function(x){
   sd(x2)/sqrt(length(x2))
 }
 
+names(edge_all)
+
+KNZ_dom = edge_all %>%
+  filter(site == "KNZ", spcode == "ANDGER", treatment == "C") %>%
+  group_by(year) %>%
+  summarise(mean_cov = mean(total.plot.cover),
+            se_cov = calcSE(total.plot.cover))
+
+ggplot(KNZ_dom, aes(x=year, y=mean_cov)) +
+  geom_point() +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 205)) +
+  xlab("Year") +
+  ylab("Cover")
+
+
+CHY_CS = edge_FG_cats %>%
+  filter(site == "CHY", rarity_cat == "Core, Scarce")
+
+CHY_CS = edge_all %>%
+  filter(site == "CHY", treatment == "C", species == "Collomia_linearis") %>%
+  group_by(year) %>%
+  summarise(mean_cov = mean(total.plot.cover),
+            se_cov = calcSE(total.plot.cover))
+
+ggplot(CHY_CS, aes(x=year, y=mean_cov)) +
+  geom_point() +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 205)) +
+  xlab("Year") +
+  ylab("Cover")
+
+
+SBK_TA = edge_all %>%
+  filter(site == "SBK", species == "Astragalus_missouriensis", treatment == "C") %>%
+  group_by(year) %>%
+  summarise(mean_cov = mean(total.plot.cover),
+            se_cov = calcSE(total.plot.cover))
+
+SBK_TA_addtl = data.frame(year = c(2013, 2014, 2015, 2020, 2021), mean_cov = c(0,0,0,0,0), se_cov = c(0,0,0,0,0))
+
+SBK_TA_all = rbind(SBK_TA, SBK_TA_addtl)
+
+ggplot(SBK_TA_all, aes(x=year, y=mean_cov)) +
+  geom_point() +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 205)) +
+  xlab("Year") +
+  ylab("Cover")
+
+
+check_SBL = edge_FG_cats %>%
+  filter(site == "SBL", rarity_cat == "Transient, Scarce")
+
+SBL_TS = edge_all %>%
+  filter(site == "SBL", species == "Bouteloua_barbata", treatment == "C") %>%
+  group_by(year) %>%
+  summarise(mean_cov = mean(total.plot.cover),
+            se_cov = calcSE(total.plot.cover))
+
+ggplot(SBL_TS, aes(x=year, y=mean_cov)) +
+  geom_point() +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 205)) +
+  xlab("Year") +
+  ylab("Cover")
+
+
+
+
 # Calc means ####
 ## add in drought start & end years for graphing later
 edge_all <- edge_all %>%
