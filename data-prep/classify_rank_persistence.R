@@ -24,7 +24,6 @@ calcSE<-function(x){
 controls <- edge_w_zeros %>%
   filter(treatment == "C")
 
-
 # New Calcs ####
 ## Rank ####
 ## take the rank of the mean (NOT the mean of the rank)

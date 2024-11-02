@@ -1,111 +1,67 @@
 # Header #### 
 ## Script name: Calculate Response Ratio
 ##
-## Purpose of script: Calculate the response ratio between drought and control plots 1. across years during two time periods (drought & recovery) and 2. for each year. Add in functional group data as well.
+## Purpose of script: Calculate the response ratio between drought and control plots across years during two time periods (drought & recovery). Add in functional group data at end as well.
 ##
 ## Author: Carmen Watkins
 ##
 ## Email: cebel2@uoregon.edu
 
-# Set up env ####
+## References: 
+## Response Ratio: Armas et al. 2004
+## SE of Response Ratio: Armas et al. 2004 supplement A, file:///C:/Users/carme/Downloads/appendixA.htm
+
+# Set up ####
 ## read in cleaned data
 source("data-prep/classify_rank_persistence.R")
-#source("data-prep/clean_edge_data.R")
 
-FG <- read.csv("data/edge_species_info.csv")
-
-# Resp Ratio Across Years ####
-## During Drought ####
-## (drought - control)/control + drought
-resp.ratio.site <- edge_all %>%
+# Resp Ratio ####
+## Drought ####
+drought.SE.RII <- edge_all %>%
   filter(experiment.year %in% c(1:4)) %>% ## 0 is pre-treat year; drought was years 1-4
   group_by(site, treatment, species) %>%
-  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
-  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>% ## make columns of cover in D and C treatments
-  replace(is.na(.), 0) %>% ## input 0 instead of NAs (NAs would be present where there is no cover of a particular species in either drought or control)
+  summarise(mean.cover.sp = mean(mean.plot.cover), ## mean cover by site across years
+            sd.cover.sp = sd(mean.plot.cover),
+            num.obs = n()) %>% ## calc sd of cover for use in error calcs
+  pivot_wider(names_from = "treatment", values_from = c("mean.cover.sp", "sd.cover.sp", "num.obs")) %>% 
   ungroup() %>%
+  mutate(mean.cover.sp_D = coalesce(mean.cover.sp_D, 0), ## input 0 instead of NAs (NAs are present where there is no cover of a particular species in either drought or control)
+         mean.cover.sp_C = coalesce(mean.cover.sp_C, 0)) %>%
   group_by(site, species) %>%
-  mutate(resp.ratio.site = (D-C)/(C+D)) ## calc response ratio
+  mutate(resp.ratio.site = (mean.cover.sp_D-mean.cover.sp_C)/(mean.cover.sp_C+mean.cover.sp_D), ## calc response ratio
+         SE.RII = (((sd.cover.sp_D^2)/num.obs_D) - ((sd.cover.sp_C^2)/num.obs_C)) / ((sd.cover.sp_D^2/num.obs_D) + (sd.cover.sp_C^2/num.obs_C)), ## calc SE of RR
+         treatment.period = "D") ## add in column to differentiate from post-drought RR
 
-## merge with rank and persistence values for each species
-edge_w_predictors.site <- left_join(resp.ratio.site, rank_persist, by = c("site", "species"))
-
-## change site to an ordered factor
-edge_w_predictors.site$site <- as.factor(edge_w_predictors.site$site)
-edge_w_predictors.site <- edge_w_predictors.site %>%
-  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")))
-
-## During Recovery ####
-resp.ratio.site.recov <- edge_all %>%
+## Post-Drought ####
+recov.SE.RII <- edge_all %>%
   filter(treatment.year == "recovery") %>% 
   group_by(site, treatment, species) %>%
-  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% ## mean cover by site across years
-  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>% ## make columns of cover in D and C treatments
-  replace(is.na(.), 0) %>% ## input 0 instead of NAs (NAs would be present where there is no cover of a particular species in either drought or control)
+  summarise(mean.cover.sp = mean(mean.plot.cover), ## mean cover by site across years
+            sd.cover.sp = sd(mean.plot.cover),
+            num.obs = n()) %>% ## mean cover by site across years
+  pivot_wider(names_from = "treatment", values_from = c("mean.cover.sp", "sd.cover.sp", "num.obs")) %>% 
   ungroup() %>%
+  mutate(mean.cover.sp_D = coalesce(mean.cover.sp_D, 0), ## input 0 instead of NAs (NAs would be present where there is no cover of a particular species in either drought or control)
+         mean.cover.sp_C = coalesce(mean.cover.sp_C, 0)) %>%
   group_by(site, species) %>%
-  mutate(resp.ratio.site = (D-C)/(C+D))
+  mutate(resp.ratio.site = (mean.cover.sp_D-mean.cover.sp_C)/(mean.cover.sp_C+mean.cover.sp_D), ## calc response ratio
+         SE.RII = (((sd.cover.sp_D^2)/num.obs_D) - ((sd.cover.sp_C^2)/num.obs_C)) / ((sd.cover.sp_D^2/num.obs_D) + (sd.cover.sp_C^2/num.obs_C)), ## calc SE of RR
+         treatment.period = "PD")
 
-## resp ratio values of 0
+## Merge ####
+RR.tog <- rbind(drought.SE.RII, recov.SE.RII) %>%
+  select(site, species, resp.ratio.site, SE.RII, treatment.period) %>%
+  pivot_wider(names_from = treatment.period, values_from = c(resp.ratio.site, SE.RII))# %>%
+ # mutate(drought.RR = ifelse(is.na(drought.RR), 0, drought.RR), ## taking this part out 11/1/24 as it seems like it is giving an artifical value for species when really there should juust be no value. 0 can be achieved several ways, so it's not right to put 0's in for species that just didn't have a value during a certain time period.
+
+## although that being said, if there is a row for a species it was around at some point during the time period at that site.
+## it was either not present at all during drought period in cntrol or treat plots but showed up during post-drought; or alternatively it was present in drought period but post-drought it was lost entirely 
+
+## need to think more about hwether to add these in and if they mean what I think they do...
+         #recovery.RR = ifelse(is.na(recovery.RR), 0, recovery.RR))
 
 ## merge with rank and persistence values for each species
-edge_w_predictors.site.recov <- left_join(resp.ratio.site.recov, rank_persist, by = c("site", "species"))
-
-## change site to an ordered factor
-edge_w_predictors.site.recov$site <- as.factor(edge_w_predictors.site.recov$site)
-edge_w_predictors.site.recov <- edge_w_predictors.site.recov %>%
-  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")))
-
-## Resp Ratio Yearly ####
-resp.ratio.yearly <- edge_all %>%
-  ungroup() %>%
-  select(-spcode, -kartez, -plot, -block, -year) %>% ## remove extraneous cols that will mess up pivoting
-  group_by(site, treatment, species, experiment.year, treatment.year) %>%
-  summarise(mean.cover.sp = mean(mean.plot.cover)) %>% 
-  pivot_wider(names_from = "treatment", values_from = "mean.cover.sp") %>%
-  replace(is.na(.), 0) %>%
-  ungroup() %>%
-  group_by(site, species, experiment.year, treatment.year) %>%
-  mutate(resp.ratio.site = (D-C)/(C+D))
-
-## merge with rank & persistence vals
-edge_yearly_w_predictors <- left_join(resp.ratio.yearly, rank_persist, by = c("site", "species"))
-
-## change site to an ordered factor
-edge_yearly_w_predictors$site <- as.factor(edge_yearly_w_predictors$site)
-edge_yearly_w_predictors <- edge_yearly_w_predictors %>%
-  mutate(site = fct_relevel(site, c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")))
-
-## create a key of years
-## will be used to match up spei data to particular treatment years
-year.key <- edge_all %>%
-  group_by(site, experiment.year, treatment.year, year) %>%
-  summarise(year2 = unique(year)) 
-
-# Merge DR & RR Data ####
-drought.RR <- edge_w_predictors.site %>%
-  mutate(treatment.period = "drought.RR") %>%
-  select(site, treatment.period, species, resp.ratio.site, persistence.site, percrank)
-
-recov.RR <- edge_w_predictors.site.recov %>%
-  mutate(treatment.period = "recovery.RR") %>%
-  select(site, treatment.period, species, resp.ratio.site, persistence.site, percrank)
-
-## merge drought & recov dataframes
-response.ratio.tog <- rbind(drought.RR, recov.RR) %>%
- # mutate(precip.bin = ifelse(site %in% c("KNZ", "HYS"), "high",
-                         #    ifelse(site %in% c("CHY", "SGS"), "med", "low"))) %>%
-  pivot_wider(names_from = treatment.period, values_from = resp.ratio.site) %>%
-  mutate(drought.RR = ifelse(is.na(drought.RR), 0, drought.RR),
-         recovery.RR = ifelse(is.na(recovery.RR), 0, recovery.RR))
-
-
-na.check <- response.ratio.tog %>%
-  filter(is.na(drought.RR) | is.na(recovery.RR))
-
-# Merge FG Data ####
-edge_FG <- left_join(response.ratio.tog, FG, by = "species") %>%
-  filter(FunctionalGroup != "tree", !is.na(FunctionalGroup)) 
+edge_RR <- left_join(RR.tog, rank_persist, by = c("site", "species"))
 
 # Clean up ####
-rm(edge_all, edge_w_zeros, rank_persist, resp.ratio.site, resp.ratio.site.recov, resp.ratio.yearly, response.ratio.tog, drought.RR, recov.RR, edge_w_predictors.site, edge_w_predictors.site.recov, na.check, FG, high.cov, north_knowns, north_unknowns, sev_unknowns)
+rm(edge_all, drought.SE.RII, recov.SE.RII, RR.tog, edge_w_zeros, rank_persist, high.cov, north_knowns, north_unknowns, sev_unknowns, north_plot_check, sev_plot_check)

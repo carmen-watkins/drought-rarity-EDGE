@@ -5,6 +5,96 @@ source("analyses/calculate_response_ratio.R")
 library(lmerTest)
 library(car)
 
+## categorize species and sites 
+edge_FG_cats = edge_FG %>%
+  mutate(spatial = ifelse(percrank > 0.5, "Abundant", "Scarce"),
+         temporal = ifelse(persistence.site > 0.5, "Core", "Transient"),
+         rarity_cat = paste0(temporal, ", ", spatial),
+         MAP_level = ifelse(site %in% c("KNZ", "HYS"), "High", 
+                            ifelse(site %in% c("CHY", "SGS"), "Intermediate", "Low")))
+
+# Rank ####
+## drought ####
+plot(x=edge_FG_cats$percrank, y=edge_FG_cats$drought.RR)
+
+rd_mod = lm(drought.RR~percrank*MAP_level, data = edge_FG_cats)
+summary(rd_mod)
+
+summary(edge_FG_cats$drought.RR - rd_mod$fitted.values)
+
+Anova(rd_mod)
+
+qqnorm(resid(rd_mod))
+qqline(resid(rd_mod))
+
+plot(resid(rd_mod) ~ fitted(rd_mod))
+## decreasing variance in the residuals
+## this model is not a good fit for the data
+
+## post-drought ####
+plot(x=edge_FG_cats$percrank, y=edge_FG_cats$recovery.RR)
+
+rpd_mod = lm(recovery.RR~percrank*MAP_level, data = edge_FG_cats)
+summary(rpd_mod)
+
+summary(edge_FG_cats$recovery.RR - rpd_mod$fitted.values)
+
+Anova(rpd_mod)
+
+qqnorm(resid(rpd_mod))
+qqline(resid(rpd_mod))
+
+plot(resid(rpd_mod) ~ fitted(rpd_mod))
+## decreasing variance in the residuals
+## this model is not a good fit for the data
+
+# Persistence ####
+## drought ####
+plot(x=edge_FG_cats$persistence.site, y=edge_FG_cats$drought.RR)
+
+pd_mod = lm(drought.RR~persistence.site*MAP_level, data = edge_FG_cats)
+summary(pd_mod)
+
+summary(edge_FG_cats$drought.RR - pd_mod$fitted.values)
+
+Anova(pd_mod)
+
+qqnorm(resid(pd_mod))
+qqline(resid(pd_mod))
+
+plot(resid(pd_mod) ~ fitted(pd_mod))
+## decreasing variance in the residuals
+## this model is not a good fit for the data
+
+## post-drought ####
+plot(x=edge_FG_cats$persistence.site, y=edge_FG_cats$recovery.RR)
+
+ppd_mod = lm(recovery.RR~persistence.site*MAP_level, data = edge_FG_cats)
+summary(ppd_mod)
+
+summary(edge_FG_cats$recovery.RR - ppd_mod$fitted.values)
+
+Anova(ppd_mod)
+
+qqnorm(resid(ppd_mod))
+qqline(resid(ppd_mod))
+
+plot(resid(ppd_mod) ~ fitted(ppd_mod))
+## decreasing variance in the residuals
+## this model is not a good fit for the data
+
+
+
+
+glm()
+
+
+
+
+
+
+
+# OLD ####
 # Rank models ####
 ## drought ####
 rank_drought_model <- lm(drought.RR~percrank*site*FunctionalGroup, data = edge_FG)
