@@ -139,7 +139,7 @@ ggplot(edge_RR_cats, aes(x=resp.ratio.site_D, y=resp.ratio.site_PD, color = MAP_
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
   geom_point(size = 2) +
-  facet_wrap(~rarity_cat, nrow = 3, ncol = 2) +
+  facet_wrap(~rarity_cat, nrow = 2, ncol = 2) +
   xlab("Drought Response Ratio") +
   ylab("Post-drought Response Ratio") +
   labs(color = "Relative MAP") +
@@ -148,6 +148,28 @@ ggplot(edge_RR_cats, aes(x=resp.ratio.site_D, y=resp.ratio.site_PD, color = MAP_
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 15)) +
+  theme(legend.position = "bottom")
 
-ggsave("final_figs/figure4.tiff", width = 7.5, height = 6)
+ggsave("final_figs/figure4.tiff", width = 7, height = 7)
+
+## Fig 4 Alternative ####
+ggplot(edge_RR_cats, aes(x=resp.ratio.site_D, y=resp.ratio.site_PD, color = rarity_cat)) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
+  geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
+  geom_point(size = 2) +
+  facet_wrap(~MAP_level, nrow = 1, ncol = 3) +
+  xlab("Drought Response Ratio") +
+  ylab("Post-drought Response Ratio") +
+  labs(color = "Rarity Category") +
+  #geom_smooth(method = "lm", alpha = 1)+
+  scale_color_manual(values = c("#88CCEE", "#CC6677", "#DDCC77", "#117733")) +
+  theme_bw() +
+  theme(panel.grid = element_blank()) +
+  theme(strip.background =element_rect(fill="white")) +
+  theme(text = element_text(size = 15)) +
+  theme(legend.position = "bottom")
+
+ggsave("final_figs/figure4_alt.tiff", width = 9, height = 4)
+
+#88CCEE,#CC6677,#DDCC77,#117733,#332288,#AA4499,#44AA99,#999933,#882255,#661100,#6699CC,#888888
