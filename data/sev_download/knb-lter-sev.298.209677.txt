@@ -1,0 +1,908 @@
+
+   
+      
+         uid=SEV,o=LTER,dc=ecoinformatics,dc=org
+         all
+      
+      
+         public
+         read
+      
+   
+   
+      doi:10.6073/pasta/8d28fa9c31095c4c15836cbd3467f0d1Extreme Drought in Grassland Ecosystems (EDGE) Seasonal Biomass and Seasonal and Annual NPP Data at the Sevilleta National Wildlife Refuge, New Mexico
+      
+         Lauren Baur
+         University of New Mexico
+         lbaur@unm.edu
+      
+      
+         Scott Collins
+         University of New Mexico
+         scollins@unm.edu
+         https://orcid.org/0000-0002-0193-2892
+      
+      
+         Esteban Muldavin
+         University of New Mexico
+         muldavin@unm.edu
+      
+      
+         Jennifer Rudgers
+         University of New Mexico
+         jrudgers@unm.edu
+         https://orcid.org/0000-0001-7094-4857
+      
+      
+         William Pockman
+         University of New Mexico
+         pockman@unm.edu
+         https://orcid.org/0000-0002-3286-0457
+      
+      
+         Samantha Cafferky
+         University of New Mexico
+         slc14@unm.edu
+         Data management
+      
+      
+         Pablo Cardenas
+         University of New Mexico
+         pancar81@unm.edu
+         Field crew lead
+      
+      
+         Jade McLaughlin
+         University of New Mexico
+         jmclaugh@unm.edu
+         Field crew
+      
+      
+         Jessica Johnson
+         University of New Mexico
+         jjohnson6@unm.edu
+         Field crew
+      
+      
+         Alesia Hallmark
+         University of New Mexico
+         alesiahallmark@unm.edu
+         https://orcid.org/0000-0002-1024-5779
+         Graduate student
+      
+      
+         Stephanie Baker
+         University of New Mexico
+         srbaker@unm.edu
+         Former field crew
+      
+      2024-03-04
+      
+         Net primary production is a fundamental ecological variable that quantifies rates of carbon consumption and fixation. Estimates of NPP are important in understanding energy flow at a community level as well as spatial and temporal responses to a range of ecological processes. While measures of both below- and above-ground biomass are important in estimating total NPP, this study focuses on above-ground net primary production (ANPP). Above-ground net primary production is the change in plant biomass, including loss to death and decomposition, over a given period of time. Volumetric measurements are made using vegetation data from permanent plots collected in SEV297, "Extreme Drought in Grassland Ecosystems (EDGE) Net Primary Production Quadrat Data" and regressions correlating biomass and volume constructed using seasonal harvest weights from SEV157, "Net Primary Productivity (NPP) Weight Data."
+      
+      
+         annual net primary production
+         biodiversity
+         burning
+         climate
+         community patterns
+         community structure
+         deserts
+         disturbance
+         disturbances
+         droughts
+         ecology
+         ecosystem properties
+         elevation
+         fertilization
+         fertilizer
+         fires
+         foliage
+         forbs
+         grasses
+         grasslands
+         herbs
+         litter
+         long term
+         measurements
+         net primary productivity
+         nitrogen deposition
+         nutrients
+         organisms
+         permanent plots
+         plant communities
+         plant cover
+         plant ecology
+         plant growth
+         plant species composition
+         plant species
+         plants
+         precipitation
+         primary production
+         production
+         productivity
+         recovery
+         seasonality
+         shrubs
+         simulation
+         soil moisture
+         soil warming
+         species diversity
+         species richness
+         stems
+         succession
+         successional dynamics
+         transects
+         vegetation dynamics
+         vegetation
+         wildfires
+         communities
+         forests
+         species
+         LTER controlled vocabulary
+      
+      
+         primary production
+         LTER core research area
+      
+      
+         Personnel:
+         Joshua Cortez April 2021-present, Alfredo Garcia April 2021-present, Saul Kelly Roman September 2020-present, Timothy Ohlert September 2018-present, Melanie Kazenel September 2018-present, Lauren Baur July 2017-present, Cassandra Miller May 2021, Alesia Hallmark August 2020-September 2020, Melissa Bacigalupa May 2018-September 2020, Ayhan Yener September 2020, Jessica Johnson January 2019-September 2020, Samantha Cafferky April 2019-April 2020, Kelly Lizewski September 2019-April 2020, Nicholas Smith May 2019-October 2019, Nick Dolhyj July 2018-March 2019, Jade McLaughlin July 2018-present, Pablo Cardenas May 2017-April 2021, , Emily McCall July 2017-May 2018, Tracy Ridlinghafer July-2017-July 2018, Nathan Gehres 2014-2017, Chandra Tucker April 2014-2017, Megan McClung April 2013-July 2017, Stephanie Baker October 2010-2016, John Mulhouse August 2009-June 2013, Amaris Swann August 25, 2008-January 2013, Maya Kapoor August 9, 2003-January 21, 2005 and April 2010-March 2011, Terri Koontz February 2000-August 2003 and August 2006-August 2010, Yang Xia January 31, 2005-April 2009, Karen Wetherill February 7, 2000-August 2009, Michell Thomey September 3, 2005-August 2008, Jay McLeod January 2006-August 2006, Charity Hall January 31, 2005-January 3, 2006, Tessa Edelen August 15, 2004-August 15, 2005, Seth Munson September 9, 2002-June 2004, Caleb Hickman September 9, 2002-November 15, 2004, Heather Simpson August 2000-August 2002, Chris Roberts September 2001-August 2002, Mike Friggens 1999-September 2001, Shana Penington February 2000-August 2000.
+      
+      
+         This data package is released to the "public domain" under Creative Commons CC0 1.0 "No Rights Reserved" (see: https://creativecommons.org/publicdomain/zero/1.0/). It is considered professional etiquette to provide attribution of the original work if this data package is shared in whole or by individual components. A generic citation is provided for this data package on the website https://portal.edirepository.org (herein "website") in the summary metadata page. Communication (and collaboration) with the creators of this data package is recommended to prevent duplicate research or publication. This data package (and its components) is made available "as is" and with no warranty of accuracy or fitness for use. The creators of this data package and the website shall not be liable for any damages resulting from misinterpretation or misuse of the data package or its components. Periodic updates of this data package may be available from the website. Thank you.
+      
+      https://doi.org/10.6073/pasta/8d28fa9c31095c4c15836cbd3467f0d1
+         
+            EDGE_black - Description: The Extreme Drought in Grasslands Experiment (EDGE) was started in 2012 as part of a cross-site extreme drought experiment, and it included sites in Colorado, Wyoming and Kansas. There are two EDGE sites at Sevilleta, one in black grama (Bouteloua eriopoda) dominated grassland (EDGE_black) and one in blue grama (B. gracilis) dominated grassland (EDGE_blue). Experimental treatments. The EDGE experiment manipulates rainfall amount and timing using a randomized block design with a total of thirty 3 x 4 m plots in each grassland ecosystem. Control plots (n=10) receive only ambient precipitation. In a second treatment (n=10 each) rainout shelters were erected each year from 2013-2019 that removed 66% of growing season precipitation from April through mid-September. In 2020 we began drought recovery observations and experiments. A second on-going treatment started in 2013 involves complete rainout shelters that capture and remove all precipitation in July and August and then the captured precipitation is reapplied via overhead sprinklers to the plots in September and October. This treatment extends the hyperarid period between spring and summer rains, effectively delaying the summer monsoon by 2 months. iii. Core measurements. All EDGE replicates are instrumented with soil moisture, and soil and air temperature probes, and three replicates of each treatment at each site have soil CO2 probes. Soil CO2 concentration is measured at 15 min intervals with Vaisala CARBOCAP CO2 sensors (GMM222, Vaisala, Finland) placed at three depths (5, 10, and 20 cm). We calculate soil respiration using the flux-gradient method. ANPP and plant species composition are measured in spring and fall each year initially in four 1-m2 quadrats twice yearly but these measurements were reduced to two quadrats in 2019. Occasionally, belowground NPP has been measured in 5 replicates of each treatment with 5cm diameter by 20cm deep root ingrowth bags during the monsoon season. In winter 2019 on root ingrowth donut was installed in each replicate of each treatment and each EDGE site. The EDGE Black Grama site is located within Five Points Black Grama area, just to the west of Black Grama Core site. Vegetation is dominated by black grama grass (Bouteloua eriopoda). Broom snakeweed (Gutierrezia sarothrae) and Sphaeralcea polychroma are common forbs/sub-shrubs.
+            
+               -106.728
+               -106.728
+               34.3373
+               34.3373
+            
+         
+         
+            EDGE_blue - Description: The Extreme Drought in Grasslands Experiment (EDGE) was started in 2012 as part of a cross-site extreme drought experiment, and it included sites in Colorado, Wyoming and Kansas. There are two EDGE sites at Sevilleta, one in black grama (Bouteloua eriopoda) dominated grassland (EDGE_black) and one in blue grama (B. gracilis) dominated grassland (EDGE_blue). Experimental treatments. The EDGE experiment manipulates rainfall amount and timing using a randomized block design with a total of thirty 3 x 4 m plots in each grassland ecosystem. Control plots (n=10) receive only ambient precipitation. In a second treatment (n=10 each) rainout shelters were erected each year from 2013-2019 that removed 66% of growing season precipitation from April through mid-September. In 2020 we began drought recovery observations and experiments. A second on-going treatment started in 2013 involves complete rainout shelters that capture and remove all precipitation in July and August and then the captured precipitation is reapplied via overhead sprinklers to the plots in September and October. This treatment extends the hyperarid period between spring and summer rains, effectively delaying the summer monsoon by 2 months. iii. Core measurements. All EDGE replicates are instrumented with soil moisture, and soil and air temperature probes, and three replicates of each treatment at each site have soil CO2 probes. Soil CO2 concentration is measured at 15 min intervals with Vaisala CARBOCAP CO2 sensors (GMM222, Vaisala, Finland) placed at three depths (5, 10, and 20 cm). We calculate soil respiration using the flux-gradient method. ANPP and plant species composition are measured in spring and fall each year initially in four 1-m2 quadrats twice yearly but these measurements were reduced to two quadrats in 2019. Occasionally, belowground NPP has been measured in 5 replicates of each treatment with 5cm diameter by 20cm deep root ingrowth bags during the monsoon season. In winter 2019 on root ingrowth donut was installed in each replicate of each treatment and each EDGE site. The EDGE Black Grama site is located within Five Points Black Grama area, just to the west of Black Grama Core site. Vegetation is dominated by black grama grass (Bouteloua eriopoda). Broom snakeweed (Gutierrezia sarothrae) and Sphaeralcea polychroma are common forbs/sub-shrubs. The EDGE Blue Grama site is located on the east side of McKenzie Flats approximately 0.5 km due west from the foothills of the Los Pinos Mountains. The study is also just northeast of the Blue Grama Core site and dominated by blue grama grass (Bouteloua gracilis) with black grama (B. eriopoda) as the next dominant grass.
+            
+               -106.623
+               -106.623
+               34.3421
+               34.3421
+            
+         
+         
+            
+               
+                  2012-10-02
+               
+               
+                  2021-04-19
+               
+            
+         
+      
+      
+         ongoing
+      
+      
+         University of New Mexico
+         Information Manager
+         sevim@unm.edu
+      
+      
+         Environmental Data Initiative
+         info@edirepository.org
+         https://edirepository.org
+         0330j0z60
+      
+      Environmental Data Initiative
+      
+         
+            
+               Derivation of Biomass and Net primary Production: Data from SEV297 and SEV157 are used to calculate the seasonal and annual production (i.e., biomass) of each species in each quadrat for a given year. Allometric equations derived from harvested samples of each species for each season are applied to the measured cover, height, and count of each species in each quadrat. This provides seasonal biomass for winter, spring, and fall. Seasonal net primary production (NPP) is derived by subtracting the previous season's biomass from the biomass for the current season. For example, spring NPP is calculated by subtracting the winter weight from the spring weight for each species in a given quadrat. Negative differences are considered to be 0. Likewise, fall production is computed by subtracting spring biomass from fall biomass. Annual biomass is taken as the sum of spring and fall NPP.
+            
+         
+      
+      
+         No project title to report
+         
+            Seth Newsome
+            University of New Mexico
+            newsome@unm.edu
+            https://orcid.org/0000-0002-4534-1242
+            Principal Investigator
+         
+         No funding to report
+         
+            No project title to report
+            
+               Marcy Litvak
+               University of New Mexico
+               mlitvak@unm.edu
+               https://orcid.org/0000-0002-4255-2263
+               Principal Investigator
+            
+            No funding to report
+         
+         
+            No project title to report
+            
+               Esteban Muldavin
+               University of New Mexico
+               muldavin@unm.edu
+               Principal Investigator
+            
+            No funding to report
+         
+         
+            Sevilleta LTER IV: Abiotic Pulses and Constraints: Effects on Dynamics and Stability in an Aridland Ecosystem
+            
+               Scott Collins
+               University of New Mexico
+               scollins@unm.edu
+               https://orcid.org/0000-0002-0193-2892
+               Principal Investigator
+            
+            NSF 0217774
+         
+         
+            LTERV: Pulse dynamics in an aridland ecosystem
+            
+               Scott Collins
+               University of New Mexico
+               scollins@unm.edu
+               https://orcid.org/0000-0002-0193-2892
+               Principal Investigator
+            
+            NSF 1232294
+         
+         
+            LTER V: Long Term Pulse Dynamics in an Aridland Ecosystem
+            
+               William Pockman
+               University of New Mexico
+               pockman@unm.edu
+               https://orcid.org/0000-0002-3286-0457
+               Principal Investigator
+            
+            NSF 1440478
+         
+         
+            LTER: Sevilleta (SEV) Site: Climate Variability at Dryland Ecotones
+            
+               Jennifer Rudgers
+               University of New Mexico
+               jrudgers@unm.edu
+               https://orcid.org/0000-0001-7094-4857
+               Principal Investigator
+            
+            NSF 1655499
+         
+         
+            EAGER: Collaborative Research: Sevilleta LTER Environmental Variability at Dryland Ecotones
+            
+               Jennifer Rudgers
+               University of New Mexico
+               jrudgers@unm.edu
+               https://orcid.org/0000-0001-7094-4857
+               Principal Investigator
+            
+            NSF 1748133
+         
+      
+      
+         sev298_NPP_edge_biomass.csv
+         NPP EDGE biomass data.
+         
+            sev298_NPP_edge_biomass.csv
+            4586201
+            fdab4fe46c9a0f31f73ece98bcf804f6
+            
+               
+                  1
+                  \n
+                  column
+                  
+                     ,
+                     "
+                  
+               
+            
+            
+               
+                  https://pasta.lternet.edu/package/data/eml/knb-lter-sev/298/209677/67d2972ea8318643a0ae88e59bc7f934
+               
+            
+         
+         
+            
+               site
+               Site at which data was collected.
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               year
+               The year in which data was collected.
+               date
+               
+                  
+                     YYYY
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               season
+               The season in which data was collected.
+               string
+               
+                  
+                     
+                        
+                           
+                              fall
+                              fall
+                           
+                           
+                              spring
+                              spring
+                           
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               date
+               The date data was collected.
+               date
+               
+                  
+                     YYYY-MM-DD
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               web
+               The number of the web for sites that have sampling web designs
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               transect
+               The letter code for the transect for sites that have transect designs
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               block
+               The block number for sites that have block designs
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               plot
+               The plot number or letter for sites that have plot designs
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               subplot
+               The subplot character for sites that have subplots
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               quad
+               The quadrat number which is nested within each site, plot, block, etc. depending on the design
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               treatment
+               The treatment applied to a sampled unit.
+               string
+               
+                  
+                     
+                        
+                           
+                              C
+                              control plot
+                           
+                           
+                              D
+                              delayed monsoon treatment
+                           
+                           
+                              E
+                              event size reduction treatment, -66% ambient
+                           
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               kartez
+               USDA plant code for the plant species
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               genus
+               Genus of the plant
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               sp.epithet
+               Species name of the plant
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               family
+               Family of the plant
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               LifeHistory
+               Life history of the plant species
+               string
+               
+                  
+                     
+                        
+                           
+                              ann/perenn
+                              Plant that may be annual or perennial
+                           
+                           
+                              annual
+                              Plant that completes life cycle in one growing season
+                           
+                           
+                              perennial
+                              Plant that lives for multiple years
+                           
+                           
+                              unknown
+                              unknown life history
+                           
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               PhotoPath
+               Type of photosynthesis performed by the plant species
+               string
+               
+                  
+                     
+                        
+                           
+                              C3
+                              Plant that uses the C3 photosynthetic pathway
+                           
+                           
+                              C4
+                              Plant that uses the C4 photosynthetic pathway
+                           
+                           
+                              CAM
+                              Plant that uses the CAM photosynthetic pathway
+                           
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               FunctionalGroup
+               Functional group of the plant species
+               string
+               
+                  
+                     
+                        
+                           
+                              forb
+                              Non-graminoid herbaceous plant
+                           
+                           
+                              grass
+                              Plant in the family Poaceae
+                           
+                           
+                              shrub
+                              Short, multi-stemmed woody plant
+                           
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               cover
+               Percent of one square meter covered by a given plant species in a given quad, calculated as the sum of the covers of all individuals of that species in that quad
+               float
+               
+                  
+                     
+                        percent
+                     
+                     
+                        real
+                        
+                           0
+                           249.7
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               volume
+               Total volume of a given species in a given quad, calculated as the sum of the volumes of each individual of that species in that quad (cover times height)
+               float
+               
+                  
+                     
+                        cubicMeter
+                     
+                     
+                        real
+                        
+                           0
+                           5850.5
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               biomass.BM
+               Biomass of a given species in a given quad, calculated using the best overall model
+               float
+               
+                  
+                     
+                        gram
+                     
+                     
+                        real
+                        
+                           0
+                           1409.9705
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               biomass.BIM
+               Biomass of a given species in a given quad, calculated using the best climate invariant model
+               float
+               
+                  
+                     
+                        gram
+                     
+                     
+                        real
+                        
+                           0
+                           1409.9705
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               SiteCluster
+               Group of sites geographically near each other
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               MetStation
+               Meteorological station closest to a given site cluster
+               string
+               
+                  
+                     
+                        
+                           text
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               season.precip
+               Seasonal precipitation
+               float
+               
+                  
+                     
+                        millimeter
+                     
+                     
+                        real
+                        
+                           13.608
+                           262.5
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               GDD
+               Growing degree days
+               float
+               
+                  
+                     
+                        nominalDay
+                     
+                     
+                        real
+                        
+                           1433.471
+                           4831.7415
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+            
+               SPEI.comp
+               Standardized Precipitation-Evapotranspiration Index
+               float
+               
+                  
+                     
+                        dimensionless
+                     
+                     
+                        real
+                        
+                           -1.89873459813835
+                           0.865865923904189
+                        
+                     
+                  
+               
+               
+                  NA
+                  missing
+               
+            
+         
+         no
+         26575
+      
+   
+   
+      
+         
+      
+   
+   
+      
+         
+      
+   
+   
+      
+         
+      
+   

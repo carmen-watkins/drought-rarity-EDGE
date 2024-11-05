@@ -170,4 +170,4 @@ ggarrange(b1, b2, b3, b4, b5, ncol = 3, nrow = 2)
 ggsave("analyses/model_figs/PDRR_error_plots.png", width = 9, height =5.5)
 
 # Clean up ####
-rm(edge_all, drought.SE.RII, recov.SE.RII, RR.tog, edge_w_zeros, rank_persist, high.cov, north_knowns, north_unknowns, sev_unknowns, north_plot_check, sev_plot_check)
+rm(edge_all, drought.SE.RII, recov.SE.RII, RR.tog, edge_w_zeros, rank_persist, high.cov, north_knowns, north_unknowns, sev_unknowns, north_plot_check, sev_plot_check, a1, a2, a3, a4, a5, b1, b2, b3, b4, b5)

@@ -1,3 +1,15 @@
+# Header #### 
+## Script name: Models
+##
+## Purpose of script: Run models to test the relationship between response ratios and rank, persistence, MAP level, site, etc.
+##
+## Author: Carmen Watkins
+##
+## Email: cebel2@uoregon.edu
+
+## References: 
+## Response Ratio: Armas et al. 2004
+## SE of Response Ratio: Armas et al. 2004 supplement A, file:///C:/Users/carme/Downloads/appendixA.htm
 
 # Set Up ####
 source("analyses/calculate_response_ratio.R") 
@@ -19,15 +31,14 @@ edge_RR_cats = edge_RR %>%
 hist(edge_RR_cats$percrank)
 
 ## drought ####
-### visualize
+### visualize ####
 ggplot(edge_RR_cats, aes(x=percrank, y=resp.ratio.site_D)) +
   geom_point()
-
-ggsave("analyses/model_figs/rankvDRR.png", width = 5, height = 4)
+#ggsave("analyses/model_figs/rankvDRR.png", width = 5, height = 4)
 
 hist(edge_RR_cats$resp.ratio.site_D)
 
-### run fixed effects model
+### fixed effects model ####
 rd_fe = lm(resp.ratio.site_D~percrank*MAP_level, data = edge_RR_cats)
 summary(rd_fe)
 Anova(rd_fe)
@@ -47,31 +58,89 @@ bptest(rd_fe)
 ## alt hypo = heteroscedasticity present
 ## p=val = 0.000066; heteroscedasticity is a problem in this model
 
+### random effects model ####
+rd_re =lmer(resp.ratio.site_D ~ percrank*MAP_level + (1|site) + (1|species), data = edge_RR_cats)
+summary(rd_re)
+Anova(rd_re)
+
+qqnorm(resid(rd_re))
+qqline(resid(rd_re))
+
+AIC(rd_re)
+plot(resid(rd_re) ~ fitted(rd_re))
+
+### weighted analysis ####
+## first, remove NAs
 DRR = edge_RR_cats %>%
   filter(!is.na(resp.ratio.site_D),
          !is.na(SE.RII_D))
 
+## quantify NAs
+NAcount_site = edge_RR_cats %>%
+  mutate(NA.SE = ifelse(is.na(SE.RII_D), "Y", "N"),
+         NA.RII = ifelse(is.na(resp.ratio.site_D), "Y", "N")) %>%
+  group_by(site, MAP_level, NA.SE, NA.RII) %>%
+  summarise(num_obs = n())
+
+NAcount_MAP = edge_RR_cats %>%
+  mutate(NA.SE = ifelse(is.na(SE.RII_D), "Y", "N"),
+         NA.RII = ifelse(is.na(resp.ratio.site_D), "Y", "N")) %>%
+  group_by(MAP_level, NA.SE, NA.RII) %>%
+  summarise(num_obs = n())
+
+NAcountoverall = edge_RR_cats %>%
+  mutate(NA.SE = ifelse(is.na(SE.RII_D), "Y", "N"),
+         NA.RII = ifelse(is.na(resp.ratio.site_D), "Y", "N")) %>%
+  group_by(NA.SE, NA.RII) %>%
+  summarise(num_obs = n())
+
+ggplot(DRR, aes(x=percrank, y=persistence.site)) +
+  geom_hline(yintercept = 0.5, color = "gray") +
+  geom_vline(xintercept = 0.5, color = "gray") +
+  geom_point(size = 1.5) +
+  facet_wrap(~MAP_level, ncol = 3, nrow = 1) +
+  theme_bw() +
+  theme(panel.grid = element_blank()) +
+  theme(strip.background =element_rect(fill="white")) +
+  xlab("Spatial Rarity")+
+  ylab("Temporal Rarity") +
+  theme(legend.position = "right") +
+  theme(text = element_text(size = 15)) +
+  scale_x_reverse() +
+  scale_y_reverse()
+
+#### fixed fx ####
 ## try weighted least squares regression
-test = lm(resp.ratio.site_D ~ percrank*MAP_level, data = DRR, weights = 1/DRR$SE.RII_D)
+rd_wfe = lm(resp.ratio.site_D ~ percrank*MAP_level, data = DRR, weights = 1/DRR$SE.RII_D)
 
-summary(test)
-Anova(test)
+summary(rd_wfe)
+Anova(rd_wfe)
 
-qqnorm(resid(test))
-qqline(resid(test))
+qqnorm(resid(rd_wfe))
+qqline(resid(rd_wfe))
+AIC(rd_wfe)
+## 595.8389
+
+plot(rstandard(rd_wfe) ~ fitted(rd_wfe))
+plot(resid(rd_wfe) ~ fitted(rd_wfe))
 
 
-test_rfx =lmer(resp.ratio.site_D ~ percrank*MAP_level + (1|site) + (1|species), data = DRR, weights = 1/DRR$SE.RII_D)
+#### random fx ####
+rd_wre =lmer(resp.ratio.site_D ~ percrank*MAP_level + (1|site) + (1|species), data = DRR, weights = 1/DRR$SE.RII_D)
 
-summary(test_rfx)
-Anova(test_rfx)
+## lmer, better for fitting
+## refit using lme for AIC comparison
+## supplement with other model options; otherwise choose best
 
-qqnorm(resid(test_rfx))
-qqline(resid(test_rfx))
+summary(rd_re)
+Anova(rd_re)
 
-AIC(test)
-AIC(test_rfx)
+qqnorm(resid(rd_re))
+qqline(resid(rd_wre))
 
+AIC(rd_re)
+#plot(rstandard(rd_wre) ~ fitted(rd_wre))
+plot(resid(rd_re) ~ fitted(rd_re))
 
 ## post-drought ####
 ggplot(edge_RR_cats, aes(x=percrank, y=resp.ratio.site_PD)) +
@@ -248,107 +317,3 @@ qqline(resid(ppd_mod))
 plot(resid(ppd_mod) ~ fitted(ppd_mod))
 ## decreasing variance in the residuals
 ## this model is not a good fit for the data
-
-
-
-
-glm()
-
-
-
-
-
-
-
-# OLD ####
-# Rank models ####
-## drought ####
-rank_drought_model <- lm(resp.ratio.site_D~percrank*site*FunctionalGroup, data = edge_RR)
-
-summary(rank_drought_model)
-Anova(rank_drought_model)
-
-qqnorm(resid(rank_drought_model))
-qqline(resid(rank_drought_model))
-plot(resid(rank_drought_model) ~ fitted(rank_drought_model))
-## these don't look great... 
-
-### *no functional group ####
-rank_drought_model2 <- lm(resp.ratio.site_D~percrank*site, data = edge_RR)
-summary(rank_drought_model2)
-Anova(rank_drought_model2)
-
-qqnorm(resid(rank_drought_model2))
-qqline(resid(rank_drought_model2))
-
-plot(resid(rank_drought_model2) ~ fitted(rank_drought_model2))
-
-## recovery ####
-rank_recov_model <- lm(recovery.RR~percrank*site*FunctionalGroup, data = edge_FG)
-
-summary(rank_recov_model)
-Anova(rank_recov_model)
-
-qqnorm(resid(rank_recov_model))
-qqline(resid(rank_recov_model))
-plot(resid(rank_recov_model) ~ fitted(rank_recov_model))
-
-### * no functional group ####
-rank_recov_model2 <- lm(recovery.RR~percrank*site, data = edge_FG)
-
-summary(rank_recov_model2)
-Anova(rank_recov_model2)
-
-qqnorm(resid(rank_recov_model2))
-qqline(resid(rank_recov_model2))
-plot(resid(rank_recov_model2) ~ fitted(rank_recov_model2))
-
-# Persistence models ####
-## drought ####
-persist_drought_model <- lm(drought.RR~persistence.site*site*FunctionalGroup, data = edge_FG)
-summary(persist_drought_model)
-Anova(persist_drought_model)
-
-qqnorm(resid(persist_drought_model))
-qqline(resid(persist_drought_model))
-plot(resid(persist_drought_model) ~ fitted(persist_drought_model))
-
-### * no functional group ####
-persist_drought_model2 <- lm(drought.RR~persistence.site*site, data = edge_FG)
-
-summary(persist_drought_model2)
-Anova(persist_drought_model2)
-
-qqnorm(resid(persist_drought_model2))
-qqline(resid(persist_drought_model2))
-plot(resid(persist_drought_model2) ~ fitted(persist_drought_model2))
-
-## recovery ####
-persist_recov_model <- lm(recovery.RR~persistence.site*site*FunctionalGroup, data = edge_FG)
-
-summary(persist_recov_model)
-anova(persist_recov_model)
-
-qqnorm(resid(persist_recov_model))
-qqline(resid(persist_recov_model))
-plot(resid(persist_recov_model) ~ fitted(persist_recov_model))
-
-### no functional group ####
-persist_recov_model2 <- lm(recovery.RR~persistence.site*site, data = edge_FG)
-
-summary(persist_recov_model2)
-Anova(persist_recov_model2)
-
-qqnorm(resid(persist_recov_model2))
-qqline(resid(persist_recov_model2))
-plot(resid(persist_recov_model2) ~ fitted(persist_recov_model2))
-
-
-# Rarity Category models ####
-
-m1 = lm(recovery.RR~drought.RR+rarity_cat, data = edge_FG_cats)
-summary(m1)
-
-t = anova(m1)
-
-TukeyHSD(t)

@@ -1,0 +1,5 @@
+Manifest file for knb-lter-sev.298.209677.zip created on Tue Nov 05 18:05:29 UTC 2024
+sev298_NPP_edge_biomass.csv (4586201 bytes)
+knb-lter-sev.298.209677.xml (53546 bytes)
+knb-lter-sev.298.209677.txt (31173 bytes)
+knb-lter-sev.298.209677.report.xml (33338 bytes)
