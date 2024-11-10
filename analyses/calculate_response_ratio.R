@@ -17,15 +17,24 @@ source("data-prep/classify_rank_persistence.R")
 
 library(ggpubr)
 
+## double check
+SEVcheck = edge_all %>%
+  filter(site %in% c("SBK", "SBL"), 
+         treatment.year == "recovery")
+
+sort(unique(SEVcheck$year))
+
 # Resp Ratio ####
 ## Drought ####
 drought.SE.RII <- edge_all %>%
   filter(experiment.year %in% c(1:4)) %>% ## 0 is pre-treat year; drought was years 1-4
-  group_by(site, treatment, species) %>%
+  group_by(site, treatment, species, block, plot) %>%
   
   summarise(mean.cover.sp = mean(mean.plot.cover), ## mean cover by site across years
             sd.cover.sp = sd(mean.plot.cover), ## calc sd of cover for use in error calcs
             num.obs = n()) %>% 
+  
+  select(-plot) %>%
   
   pivot_wider(names_from = "treatment", values_from = c("mean.cover.sp", "sd.cover.sp", "num.obs")) %>% 
   ungroup() %>%
@@ -34,7 +43,9 @@ drought.SE.RII <- edge_all %>%
          mean.cover.sp_C = coalesce(mean.cover.sp_C, 0)) %>%
   ## input 0 instead of NAs (NAs are present where there is no cover of a particular species in either drought or control)
   
-  group_by(site, species) %>%
+  group_by(site, species, block) %>%
+  
+  ## calculate block level resp ratio & SE
   mutate(resp.ratio.site = (mean.cover.sp_D-mean.cover.sp_C)/(mean.cover.sp_C+mean.cover.sp_D), ## calc response ratio
          
          ## calc error of RII
@@ -61,15 +72,25 @@ drought.SE.RII <- edge_all %>%
 ## Post-Drought ####
 recov.SE.RII <- edge_all %>%
   filter(treatment.year == "recovery") %>% 
-  group_by(site, treatment, species) %>%
+  
+  group_by(site, treatment, species, block, plot) %>%
+  
   summarise(mean.cover.sp = mean(mean.plot.cover), ## mean cover by site across years
-            sd.cover.sp = sd(mean.plot.cover),
-            num.obs = n()) %>% ## mean cover by site across years
+            sd.cover.sp = sd(mean.plot.cover), ## calc sd of cover for use in error calcs
+            num.obs = n()) %>% 
+  
+  select(-plot) %>%
+  
   pivot_wider(names_from = "treatment", values_from = c("mean.cover.sp", "sd.cover.sp", "num.obs")) %>% 
   ungroup() %>%
-  mutate(mean.cover.sp_D = coalesce(mean.cover.sp_D, 0), ## input 0 instead of NAs (NAs would be present where there is no cover of a particular species in either drought or control)
+  
+  mutate(mean.cover.sp_D = coalesce(mean.cover.sp_D, 0), 
          mean.cover.sp_C = coalesce(mean.cover.sp_C, 0)) %>%
-  group_by(site, species) %>%
+  ## input 0 instead of NAs (NAs would be present where there is no cover of a particular species in either drought or control)
+  
+  group_by(site, species, block) %>%
+  
+  ## calculate block level resp ratio & SE
   mutate(resp.ratio.site = (mean.cover.sp_D-mean.cover.sp_C)/(mean.cover.sp_C+mean.cover.sp_D), ## calc response ratio
          
          ## calc error of RII
@@ -95,7 +116,7 @@ recov.SE.RII <- edge_all %>%
 
 ## Merge ####
 RR.tog <- rbind(drought.SE.RII, recov.SE.RII) %>%
-  select(site, species, resp.ratio.site, SE.RII, treatment.period) %>%
+  select(site, species, block, resp.ratio.site, SE.RII, treatment.period) %>%
   pivot_wider(names_from = treatment.period, values_from = c(resp.ratio.site, SE.RII))# %>%
  # mutate(drought.RR = ifelse(is.na(drought.RR), 0, drought.RR), ## taking this part out 11/1/24 as it seems like it is giving an artifical value for species when really there should juust be no value. 0 can be achieved several ways, so it's not right to put 0's in for species that just didn't have a value during a certain time period.
 
@@ -108,66 +129,6 @@ RR.tog <- rbind(drought.SE.RII, recov.SE.RII) %>%
 ## merge with rank and persistence values for each species
 edge_RR <- left_join(RR.tog, rank_persist, by = c("site", "species"))
 
-# Explore Error ####
-## drought ####
-a1 = ggplot(drought.SE.RII, aes(x=resp.ratio.site, y=SE.RII)) +
-  geom_point() +
-  xlab("Drought Response Ratio") +
-  ylab("SE of DRR")
-
-a2 = ggplot(drought.SE.RII, aes(x=num.obs_D, y=SE.RII)) +
-  geom_point() +
-  ylab("SE of DRR") +
-  xlab("Num Obs Drought")
-
-a3 = ggplot(drought.SE.RII, aes(x=num.obs_C, y=SE.RII)) +
-  geom_point() +
-  ylab("SE of DRR") +
-  xlab("Num Obs Control")
-
-a4 = ggplot(edge_RR, aes(x=percrank, y=SE.RII_D)) +
-  geom_point() +
-  xlab("Rank") +
-  ylab("SE of DRR")
-
-a5 = ggplot(edge_RR, aes(x=persistence.site, y=SE.RII_D)) +
-  geom_point() +
-  xlab("Persistence") +
-  ylab("SE of DRR")
-
-ggarrange(a1, a2, a3, a4, a5, ncol = 3, nrow = 2)
-
-ggsave("analyses/model_figs/DRR_error_plots.png", width = 9, height =5.5)
-
-## post-drought 
-b1 = ggplot(recov.SE.RII, aes(x=resp.ratio.site, y=SE.RII)) +
-  geom_point() +
-  xlab("Post-Drought Response Ratio") +
-  ylab("SE of PDRR")
-
-b2 = ggplot(recov.SE.RII, aes(x=num.obs_D, y=SE.RII)) +
-  geom_point() +
-  ylab("SE of PDRR") +
-  xlab("Num Obs Drought")
-
-b3 = ggplot(recov.SE.RII, aes(x=num.obs_C, y=SE.RII)) +
-  geom_point() +
-  ylab("SE of PDRR") +
-  xlab("Num Obs Control")
-
-b4 = ggplot(edge_RR, aes(x=percrank, y=SE.RII_PD)) +
-  geom_point() +
-  xlab("Rank") +
-  ylab("SE of PDRR")
-
-b5 = ggplot(edge_RR, aes(x=persistence.site, y=SE.RII_PD)) +
-  geom_point() +
-  xlab("Persistence") +
-  ylab("SE of PDRR")
-
-ggarrange(b1, b2, b3, b4, b5, ncol = 3, nrow = 2)
-
-ggsave("analyses/model_figs/PDRR_error_plots.png", width = 9, height =5.5)
 
 # Clean up ####
-rm(edge_all, drought.SE.RII, recov.SE.RII, RR.tog, edge_w_zeros, rank_persist, high.cov, north_knowns, north_unknowns, sev_unknowns, north_plot_check, sev_plot_check, a1, a2, a3, a4, a5, b1, b2, b3, b4, b5)
+rm(edge_all, drought.SE.RII, recov.SE.RII, RR.tog, edge_w_zeros, rank_persist, SEVcheck)

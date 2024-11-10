@@ -14,61 +14,51 @@ theme_set(theme_classic())
 
 ## Read in Data ####
 ## northern edge
-north_edge <- read.csv("data/spcomp_subplot_names.csv")
+north_edge <- read.csv("data/north_edge_sites/spcomp_subplot_names.csv")
     ## max cover combines the two seasonal samplings and takes the largest of these, I believe. 
-    ## Don't think this has been done with the sev site yet
 
-north_spkey <- read.csv("data/spnames_code.csv")
+north_spkey <- read.csv("data/north_edge_sites/spnames_code.csv")
 
 ## sev edge 
-sev_edge <- read.csv("data/sev298_NPP_edge_biomass.csv")
-    ## there is cover data here also
-    ## would be good to talk to SEV EDGE expert and confirm a few things about the data here
+sev_edge <- read.csv("data/sev_download/sev298_NPP_edge_biomass.csv")
+    ## the version of SEV data in the sev_download folder was downloaded on 11/5/2024 from EDI (https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-sev.298.209677)
 
 # Explore Data ####
 ## Exp Design ####
-
-blocks <- sev_edge %>%
-  group_by(site, block) %>%
-  summarise(plot.num = length(unique(plot)))
-## 3 plots per block, each corresponding to one treatment (drought, control, drought timing)
-
+### num plots / block
+#### SEV sites 
 ggplot(sev_edge, aes(x=block, y=plot)) +
   geom_point() +
   facet_wrap(~site)
-#ggsave("preliminary_figs/sev_plots_per_block.png", width = 6, height = 3)
 
+#### Northern sites
 ggplot(north_edge, aes(x=as.factor(Block), y=Plot)) +
   geom_point() +
   facet_wrap(~Site)
-#ggsave("preliminary_figs/north_edge_plots_per_block.png", width = 6, height = 5)
 
-ggplot(north_edge, aes(x=max.cover))+
-  geom_histogram()
-## maximum cover of one species is 100
-
-high.cov = north_edge %>%
-  filter(max.cover > 95)
-
-## how many cover values per plot in a single year? i.e. is one subplot measured per plot or multiple ?
-
+### num subplots / plot
+#### North sites 
 north_plot_check = north_edge %>%
-  mutate(uniqueID = paste0(Site, "B", Block, "P", Plot, Trt, Subplot)) %>%
-  filter(Site == "KNZ",
-         Block == 1, 
-         Trt != "int")
+  mutate(uniqueID = paste0(Site, "B", Block, "P", Plot, Trt, Subplot))
  
-unique(north_plot_check$uniqueID)
+sort(unique(north_plot_check$uniqueID))
 ## yep, all four subplot per plot
 
+ggplot(north_plot_check, aes(x=Plot, y=Subplot)) +
+  geom_point() +
+  facet_wrap(~Trt)
+
+#### SEV sites
 sev_plot_check = sev_edge %>%
-  mutate(uniqueID = paste0(site, "B", block, "P", plot, treatment, subplot)) %>%
-  filter(site == "EDGE_black",
-         block == 3, 
-         treatment != "D")
+  mutate(uniqueID = paste0(site, "_B", block, "_P", plot, treatment, quad))
+## no subplot vals in the sev data, quad seems to be the replacement
 
-unique(sev_plot_check$uniqueID)
+sort(unique(sev_plot_check$uniqueID))
 
+ggplot(sev_plot_check, aes(x=plot, y=quad)) +
+  geom_point() +
+  facet_wrap(~treatment)
+## every plot does indeed have 4 quads...
 
 ## Column Names ####
 colnames(north_edge)
@@ -97,9 +87,10 @@ sort(unique(sev_edge$date))
 
 ## Desired Changes ####
 ## list desired changes
-## SEV - the site name should be changed from 'EDGE_black' or 'EDGE_blue' to SEV_black or SEV_blue
+## SEV - the site name should be changed from 'EDGE_black' or 'EDGE_blue' to SBK or SBL
 ## SEV cover should be converted to max cover
 ## Consistent way of handling species names (4 letter code? make sure there's a key for everything)
+## need to subset years to match the northern edge sites
 
 ## need to harmonize treatment colname and abbreviations
 ## consistent way of handling drought treatment codes
@@ -115,10 +106,12 @@ none <- sev_edge %>%
   filter(kartez == "NONE") ## this is actually a species, don't filter it out!!
 
 ## each of the unknowns shows up once
-unk1 <- sev_edge %>%
+unk <- sev_edge %>%
+  filter(kartez == "UNKNOWN", treatment != "D")
+## 11 unknowns in the two relevant treatments
+
+unk2 = sev_edge %>%
   filter(kartez == "UNKFORB1")
-unk2 <- sev_edge %>%
-  filter(kartez == "UNKNOWN")
 
 ### sp questions
 ## should we keep species with 'NA' for specific epithet? - leave in
@@ -126,10 +119,12 @@ unk2 <- sev_edge %>%
 
 rm_kartez <- c("EMPTY", "UNKFORB1", "UNKNOWN") ## remove unknowns and empty
 
+rm_k2 = c(rm_kartez, "SPHAE")
+
 ### quantify unknowns ####
 sev_unknowns = sev_edge %>%
-  filter(kartez %in% rm_kartez,
-         kartez != "EMPTY", treatment != "D")
+  filter(kartez %in% rm_k2, treatment != "D", kartez != "EMPTY")
+## 22 obs in the Control and Event Reduction Treats
 
 ### make mods ####
 unique(sev_edge$year)
@@ -138,29 +133,71 @@ unique(sev_edge$year)
 ## Q HERE ####
 ## do I calculate the max cover by comparing spring and fall of diff or the same years?
 ## from readings, seems like growing season is ~Apr - Oct so it should be same year 
-sev_clean <- sev_edge %>%
+sev_temp <- sev_edge %>%
   mutate(site = ifelse(site == "EDGE_black", "SBK", "SBL"), ## fix site code
          subplot = quad, ## rename quad as subplot to match north sites
          spcode = paste0(substr(genus, 1, 3), substr(sp.epithet, 1, 3)), ## make 6 letter sp codes
          species = paste0(genus, "_", sp.epithet)) %>%
-  mutate(across(c(spcode), toupper), ## capitalize
-         kartez = ifelse(species == "Glandularia_bipinnatifida", "GLBI2", kartez)) %>% ## fix a kartez code to prevent row from duplicating
   mutate(experiment.year = year - 2012, 
          treatment.year = ifelse(year == 2012, "pre-treatment", 
-                                 ifelse((2012 < year) & (year < 2017), "drought", "recovery"))) %>%
-  filter(treatment != "D", !kartez %in% rm_kartez) %>% ## remove monsoon timing treatment and unknowns/empty species
-  #pivot_wider(names_from = season, values_from = cover, values_fill = 0) %>%
+                                 ifelse((2012 < year) & (year < 2020), "drought", "recovery"))) %>%
+  ## according to meta-data drought was applied 2013-2019
+  
+  filter(treatment != "D", ## remove monsoon timing treatment 
+         !kartez %in% rm_kartez) ## remove unknowns/empty species
+
+## look for species with genus id but sp epithet is NA
+sort(unique(sev_temp$species))
+## "Astragalus_missouriensis"     "Astragalus_NA"                "Astragalus_nuttallianus" 
+
+## "Sphaeralcea_leptophylla" "Sphaeralcea_NA" "Sphaeralcea_polychroma" "Sphaeralcea_wrightii" 
+
+## "Sporobolus_contractus"   "Sporobolus_cryptandrus"       "Sporobolus_flexuosus"         "Sporobolus_NA" 
+
+astrag = sev_temp %>%
+  filter(genus == "Astragalus") %>%
+  group_by(site, species, year) %>%
+  summarise(num.obs = n())
+## seems like astragalus was perhaps not identified by species until 2016
+
+sphaer = sev_temp %>%
+  filter(genus == "Sphaeralcea") %>%
+  group_by(site, species, year) %>%
+  summarise(num.obs = n())
+## only one observation of Sphaeralcea_NA in 2020; probably best to remove this one
+
+sphaer2 = sev_temp %>%
+  filter(species == "Sphaeralcea_NA")
+## only one observation of Sphaeralcea_NA in 2020; probably best to remove this one
+
+
+
+sporob = sev_temp %>%
+  filter(genus == "Sporobolus") %>%
+  group_by(site, species, year) %>%
+  summarise(num.obs = n())
+## Sporobolus NA is the most abundant one; need to determine how best to handle this; perhaps consider lumping at genus level unless someone with experiment knowledge can confirm that NA is a distinct species...
+
+sev_clean = sev_temp %>%  
+  filter(species != "Sphaeralcea_NA") %>%
+  
+  mutate(across(c(spcode), toupper), ## capitalize
+         kartez = ifelse(species == "Glandularia_bipinnatifida", "GLBI2", kartez)) %>% ## fix a kartez code to prevent row from duplicating
+  
   group_by(site, treatment, block, plot, subplot, year, experiment.year, treatment.year, species, spcode, kartez) %>% ## grouping by everything except season; this lets us take the maximum value of the season in the same calendar year.
   summarise(max.cover = max(cover)) %>%
+  
   mutate(treatment = ifelse(treatment == "E", "D", treatment)) %>% ## change from E -> D for more intuitive notation
   ungroup() %>%
+  
   group_by(site, treatment, block, plot, year, experiment.year, treatment.year, species, spcode, kartez) %>%
   summarise(mean.plot.cover = mean(max.cover)) %>% ## take mean cover of all 4 subplots in a plot- subplots are psuedoreplicated
   ungroup() %>%
-  group_by(site, treatment, block, plot, year, experiment.year, treatment.year) %>%
-  mutate(total.plot.cover = sum(mean.plot.cover),
-         relative.sp.cover = mean.plot.cover/total.plot.cover) %>%
-  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year, relative.sp.cover, total.plot.cover)
+  
+  #group_by(site, treatment, block, plot, year, experiment.year, treatment.year) %>%
+  #mutate(total.plot.cover = sum(mean.plot.cover),
+         #relative.sp.cover = mean.plot.cover/total.plot.cover) %>%
+  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year)
 
 colnames(sev_clean)
 
@@ -199,22 +236,25 @@ sort(unique(north_edge$Species))
 ## remove unknowns
 rm <- c("oxytopis_like_legume", "seedling_unknown", "UK_Fuzzy_Aster", "UK_onagraceac", "UK_poa", "UK_Tall_Phlox", "unk_Alien", "unk_alternate_leaf_forb", "unk_alternate_strong_midvein_hairy_margin", "unk_Aristida", "unk_Artemisia_ludoviciana", "UNK_Aster_rosette", "unk_astragalus_oxytropis", "unk_Clover", "unk_Eriogonum_Hays", "unk_fall_opposite_leaf", "unk_forb_soft_velvet", "unk_juicy_forb", "unk_Lepidium_like_forb", "unk_Milky_waxy", "unk_Oenothera", "unk_oenotheria", "unk_Oerothera_rosette", "unk_opposite_leaf", "Unk_overlapping_alt", "unk_Oxytropis_sp.", "unk_Primrose_like", "unk_Red_edged_forb", "unk_rush_unknown", "unk_Sonchus_seedling", "unk_Stipa_veridas", "unk_Tall_astragulus", "unk_Three_Leaf_Unknown_forb", "unk_Townsendia_grandiflora", "UNKFCHY1", "UNKFCHY2", "UNKFCHY3", "UNKFCHY4", "UNKFCHY5", "UNKFCHY6", "UNKFCHY7", "UNKFCHY8", "UNKFHYS1", "UNKFHYS2", "UNKFHYS3", "UNKFHYS4","UNKFHYS5", "UNKFHYS7", "UNKFHYS8", "UNKFKNZ1", "UNKFKNZ2", "UNKFKNZ3",  "unkforb_opp_Lvs", "UNKFSGS1", "UNKFSGS2", "UNKFSGS3", "UNKGRHYS1", "UNKGRHYS2","UNKHYS", "unknown", "Unknown_Cirsium", "Unknown_dry_sad", "Unknown_ericoides_small", "Unknown_Erysimum", "unknown_forb", "Unknown_forb", "unknown_forb_tooth", "Unknown_grass", "Unknown_linear_lvs", "unknown_machearanthera", "Unknown_milky_waxy", "Unknown_pilos_forb", "unknown_pinnately_lobed", "Unknown_ranunculus", "Unknown_rosette", "Unknown_Seedling", "unknown_shiny_alternate", "unknown_short_alternate", "Unknown_whorled_linear", "Unknown_woody", "UNKTRKNZ1", "UNKTRKNZ2", "huge_penstemon", "blob_unknown", "Ulmus_sp.", "NA_NA", "Ulmus_americana")
 
+rm2 = c(rm, "Asclepias_seedling", "Asclepias_sp", "Cirsium_sp.", "Festuca_unknown", "panicum_unknown", "unk_mustard_unknown")
+
 ### quantify unknowns ####
 north_unknowns = north_edge %>%
-  filter(Species %in% rm, 
+  filter(Species %in% rm2, 
          max.cover > 0,
          Species != "Ulmus_americana",
          Species != "Ulmus_sp.", 
          Year > 2012,
-         Trt != "int") %>%
+         Trt != "int" 
+         ) %>%
   mutate(Site = fct_relevel(Site, "KNZ", "HYS", "CHY", "SGS"),
          cov_below1 = ifelse(max.cover <= 2, 1, 0))
 
 sum(north_unknowns$cov_below1)/nrow(north_unknowns)
-## 0.9375
+## 0.9036
 
 length(north_unknowns$Site)
-## 144
+## 166
 
 length(unique(north_unknowns$Species))
 ## 57
@@ -225,11 +265,10 @@ ggplot(north_unknowns, aes(x=max.cover)) +
   xlab("Unknown Species Cover") +
   ylab("Count")
 
-ggsave("preliminary_figs/june_2024/north_sites_unknowns.png", width = 6, height = 2.5)
-length(unique(north_unknowns$Species))
+ggsave("figures/final_figs/supp/north_sites_unknowns.png", width = 6, height = 2.5)
 
 ### clean data ####
-north_clean <- north_edge %>%
+north_temp <- north_edge %>%
   mutate(site = Site, ## fix column names
          plot = Plot,
          block = Block, 
@@ -242,25 +281,137 @@ north_clean <- north_edge %>%
          sp.ep = strsplit(Species, "_") %>%
            sapply(tail, 1),
          spepcode = toupper(substr(sp.ep, 1, 3)),
-         spcode = paste0(genuscode, spepcode)) %>%
-  filter(treatment != "int", year > 2012, !species %in% rm) %>% ## remove 2012 as was drought pre-treat year
+         spcode = paste0(genuscode, spepcode),
+         genus = strsplit(Species, "_") %>%
+           sapply(head,1)) %>%
+  filter(treatment != "int", year > 2012, !species %in% rm) ## remove 2012 as was drought pre-treat year
+
+sort(unique(north_temp$species))
+# "Asclepias_asperula"           "Asclepias_seedling"           "Asclepias_sp."                "Asclepias_stenophylla"  [21] "Asclepias_sullivantii"        "Asclepias_tuberosa"           "Asclepias_verticillata"       "Asclepias_viridiflora"  "Asclepias_viridis"
+
+
+
+asclep = north_temp %>%
+  filter(genus == "Asclepias", site == "HYS", species != "Asclepias_seedling") %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+## the problem Asclepias are at HYS
+## will have to remove Asclepias seedling, that's low cover & should be no problem
+## Asclepias species is more prevalent...
+
+ggplot(asclep, aes(x=year, y=plot, color = species)) +
+  geom_jitter(size = 4) +
+  #geom_line() +
+  facet_wrap(~plot)
+
+## plots, 1,7,8,17,28 all have 'Asclepias_sp'
+## doesn't seem like an easy way to separate it out; will have to just remove Asclepias_sp
+
+## "ASOX" "ASSY"
+AS_sp = north_temp %>%
+  filter(species %in% c("ASOX", "ASSY"))
+
+Assp = north_edge %>%
+  filter(Species %in% c("ASOX", "ASSY"))
+
+## ASSY seems to be Asclepias syriaca - this is the code on USDA plant database website
+
+## "Astragalus_drummondii"        "Astragalus_fluxuosus"         "Astragalus_gracilis"     "Astragalus_laxmanii"          "Astragalus_lotiflorus"        "Astragalus_missouriensis"     "Astragalus_mollissimus"    "Astragalus_shortianus"        "Astragalus_sp."               "Astragalus_unknown"           "Astragulus_crassicarpus"  
+astrag = north_temp %>%
+  filter(genus == "Astragalus", site != "SGS", site != "CHY") %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+## Astragalus_unknown shows up only one time, remove this
+## remove Astragalus_sp. at CHY for sure
+## consider lumping Astragalus sp and Astragalus_missouriensis and Astragalus_unknown at HYS
+
+ggplot(astrag, aes(x=year, y=num.obs, color = species)) +
+  geom_jitter(size = 4, width = 0, height = 0.09) +
+  #geom_line() +
+  #geom_line() +
+  facet_wrap(~plot) 
+
+
+## "Circium_ochochrocentrum"      "Cirsium_altissimum"   "Cirsium_sp."                  "Cirsium_undulatum"
+cirsi = north_temp %>%
+  filter(genus %in% c("Circium", "Cirsium")) %>%
+  group_by(site, species,) %>%
+  summarise(num.obs = n())
+## remove Cirsium species -- just 4 obs
+
+## "Euphorbia_marginata"          "Euphorbia_sp."                "Euphorbiadavidii"     
+euphorb = north_temp %>%
+  filter(genus == "Euphorbia") %>%
+  group_by(site, species,) %>%
+  summarise(num.obs = n())
+
+## Euphorbia sp is super prevalent; maybe they just lumped most of these to begin with...
+
+
+## "Festuca_unknown"  
+festuca = north_temp %>%
+  filter(genus == "Festuca")
+## get rid of this = only in one subplot
+
+
+## "Oenothera_albicaulis"         "Oenothera_coronopifolia"      "Oenothera_sp." "Oenothera_speciosa"           "Oenothera_suffrutescens" 
+
+oenoth = north_temp %>%
+  filter(genus == "Oenothera") %>%
+  group_by(site, species,) %>%
+  summarise(num.obs = n())
+
+## DECISION HERE ####
+
+unique(north_temp$Species)
+## "Panicum_capillare"            "panicum_unknown"              "Panicum_virgatum"  
+
+panic = north_temp %>%
+  filter(genus == "panicum") %>%
+  group_by(site, species,) %>%
+  summarise(num.obs = n())
+
+panicum = north_temp %>%
+  filter(genus == "Panicum") %>%
+  group_by(site, species,) %>%
+  summarise(num.obs = n())
+
+## "Silene_antirrhina"            "Silene_sp."
+silene = north_temp %>%
+  filter(genus == "Silene") %>%
+  group_by(site, species,) %>%
+  summarise(num.obs = n())
+## keep all obs in; silene_sp shows up at just one site that has no other silene at it
+
+## "Sporobolus_asper"  "Sporobolus_cryptandrus"       "Sporobolus_heterolepis"       "Sporobolus_sp."
+sporobN = north_temp %>%
+  filter(genus == "Sporobolus") %>%
+  group_by(site, species,) %>%
+  summarise(num.obs = n())
+## keep all obs in; sporobolus_sp shows up at just one site that has no other sporob at it
+
+## "unk_mustard_unknown"
+  
+north_clean = north_temp %>%  
+  
+  filter(!species %in% c("Asclepias_seedling", "Asclepias_sp", "Cirsium_sp.", "Festuca_unknown", "panicum_unknown", "unk_mustard_unknown")) %>%
+  
+
   mutate(treatment = ifelse(treatment == "chr", "D", "C"), 
          experiment.year = year - 2013, ## 2013 is pre-treat year
          treatment.year = ifelse(year == 2013, "pre-treatment", 
                                  ifelse((2013 < year) & (year < 2018), "drought", "recovery"))) %>%
+  
   group_by(site, treatment, block, plot, year, species, spcode, kartez, experiment.year, treatment.year) %>%
   summarise(mean.plot.cover = mean(max.cover)) %>% ## take mean cover of all 4 subplots in a plot- subplots are psuedoreplicated
-  ungroup() %>%
-  group_by(site, treatment, block, plot, year, experiment.year, treatment.year) %>%
-  mutate(total.plot.cover = sum(mean.plot.cover),
-         relative.sp.cover = mean.plot.cover/total.plot.cover) %>%
-  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year, relative.sp.cover, total.plot.cover)
+  #ungroup() %>%
+ # group_by(site, treatment, block, plot, year, experiment.year, treatment.year) %>%
+ # mutate(total.plot.cover = sum(mean.plot.cover),
+         #relative.sp.cover = mean.plot.cover/total.plot.cover) %>%
+  select(year, site, treatment, block, plot, spcode, species, kartez, mean.plot.cover, experiment.year, treatment.year)
 
-### finish quantifying unknowns ####
-north_knowns = north_clean %>%
-  filter(mean.plot.cover>0)
 
-length(north_knowns$year)+length(north_unknowns$Spcode)
+
 
 ### explore species ####
 summary <- north_clean %>%
@@ -280,14 +431,14 @@ unique(edge_all$site)
 sort(unique(edge_all$year))
 
 ## Fill 0's ####
-sev_black <- edge_all %>%
+sbk <- edge_all %>%
   filter(site == "SBK") %>%
   ungroup() %>%
   select(-spcode, -kartez) %>%
   pivot_wider(names_from = "species", values_from = "mean.plot.cover", values_fill = 0) %>%
   pivot_longer(Bouteloua_eriopoda:Psilostrophe_tagetina, names_to = "species", values_to = "mean.plot.cover")
 
-sev_blue <- edge_all %>%
+sbl <- edge_all %>%
   filter(site == "SBL") %>%
   ungroup() %>%
   select(-spcode, -kartez) %>%
@@ -313,7 +464,7 @@ chy <- edge_all %>%
   ungroup() %>%
   select(-spcode, -kartez) %>%
   pivot_wider(names_from = "species", values_from = "mean.plot.cover", values_fill = 0) %>%
-  pivot_longer(Allium_textile:Festuca_unknown, names_to = "species", values_to = "mean.plot.cover")
+  pivot_longer(Allium_textile:Ratibida_columnifera, names_to = "species", values_to = "mean.plot.cover")
 
 sgs <- edge_all %>%
   filter(site == "SGS") %>%
@@ -323,11 +474,11 @@ sgs <- edge_all %>%
   pivot_longer(ASOX:Astragalus_fluxuosus, names_to = "species", values_to = "mean.plot.cover")
 
 ## merge all together
-edge_w_zeros <- do.call("rbind", list(sev_black, sev_blue, hay, knz, chy, sgs)) %>%
+edge_w_zeros <- do.call("rbind", list(sbk, sbl, hay, knz, chy, sgs)) %>%
   #group_by(site, block, plot, year, species) %>%
   #summarise(mean.plot.cover = mean(max.cover)) %>%
   mutate(pres.abs = ifelse(mean.plot.cover > 0, 1, 0))
   
 
-## clean up env
-rm(list = c("north_clean", "north_edge", "sev_clean", "sev_edge", "north_spkey", "empty", "none",  "unk1", "unk2", "rm_kartez", "blocks", "chy", "hay", "knz", "sev_black", "sev_blue", "sgs", "summary", "summary2", "blue_3_20_2019", "duplicates", "rm"))
+# clean up env ####
+rm(north_clean, north_edge, sev_clean, sev_edge, north_spkey, empty, none,  unk, rm_kartez, chy, hay, knz, sgs, summary, summary2, blue_3_20_2019, duplicates, rm, sbk, sbl, sev_unknowns, sev_plot_check, north_unknowns, north_plot_check, AS_sp, asclep, Assp, astrag, cirsi, euphorb, festuca, north_temp, oenoth, panic, panicum, sev_temp, silene, sphaer, sporob, sporobN)

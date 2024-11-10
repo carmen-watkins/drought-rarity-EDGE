@@ -59,7 +59,7 @@ bptest(rd_fe)
 ## p=val = 0.000066; heteroscedasticity is a problem in this model
 
 ### random effects model ####
-rd_re =lmer(resp.ratio.site_D ~ percrank*MAP_level + (1|site) + (1|species), data = edge_RR_cats)
+rd_re =lmer(resp.ratio.site_D ~ percrank*MAP_level  + (1|site) + (1|species), data = edge_RR_cats)
 summary(rd_re)
 Anova(rd_re)
 
@@ -74,40 +74,6 @@ plot(resid(rd_re) ~ fitted(rd_re))
 DRR = edge_RR_cats %>%
   filter(!is.na(resp.ratio.site_D),
          !is.na(SE.RII_D))
-
-## quantify NAs
-NAcount_site = edge_RR_cats %>%
-  mutate(NA.SE = ifelse(is.na(SE.RII_D), "Y", "N"),
-         NA.RII = ifelse(is.na(resp.ratio.site_D), "Y", "N")) %>%
-  group_by(site, MAP_level, NA.SE, NA.RII) %>%
-  summarise(num_obs = n())
-
-NAcount_MAP = edge_RR_cats %>%
-  mutate(NA.SE = ifelse(is.na(SE.RII_D), "Y", "N"),
-         NA.RII = ifelse(is.na(resp.ratio.site_D), "Y", "N")) %>%
-  group_by(MAP_level, NA.SE, NA.RII) %>%
-  summarise(num_obs = n())
-
-NAcountoverall = edge_RR_cats %>%
-  mutate(NA.SE = ifelse(is.na(SE.RII_D), "Y", "N"),
-         NA.RII = ifelse(is.na(resp.ratio.site_D), "Y", "N")) %>%
-  group_by(NA.SE, NA.RII) %>%
-  summarise(num_obs = n())
-
-ggplot(DRR, aes(x=percrank, y=persistence.site)) +
-  geom_hline(yintercept = 0.5, color = "gray") +
-  geom_vline(xintercept = 0.5, color = "gray") +
-  geom_point(size = 1.5) +
-  facet_wrap(~MAP_level, ncol = 3, nrow = 1) +
-  theme_bw() +
-  theme(panel.grid = element_blank()) +
-  theme(strip.background =element_rect(fill="white")) +
-  xlab("Spatial Rarity")+
-  ylab("Temporal Rarity") +
-  theme(legend.position = "right") +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse() +
-  scale_y_reverse()
 
 #### fixed fx ####
 ## try weighted least squares regression
@@ -132,15 +98,15 @@ rd_wre =lmer(resp.ratio.site_D ~ percrank*MAP_level + (1|site) + (1|species), da
 ## refit using lme for AIC comparison
 ## supplement with other model options; otherwise choose best
 
-summary(rd_re)
-Anova(rd_re)
+summary(rd_wre)
+Anova(rd_wre)
 
-qqnorm(resid(rd_re))
+qqnorm(resid(rd_wre))
 qqline(resid(rd_wre))
 
-AIC(rd_re)
+AIC(rd_wre)
 #plot(rstandard(rd_wre) ~ fitted(rd_wre))
-plot(resid(rd_re) ~ fitted(rd_re))
+plot(resid(rd_wre) ~ fitted(rd_wre))
 
 ## post-drought ####
 ggplot(edge_RR_cats, aes(x=percrank, y=resp.ratio.site_PD)) +
