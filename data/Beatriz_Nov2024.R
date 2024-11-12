@@ -1,0 +1,65 @@
+#Read in functional group info
+setwd("~/Documents/NCEAS_Transitions/subordinate-species/data")
+FG <- read.csv("data/edge_species_info.csv")
+
+#add functional group to species
+sp.list.FG <- left_join(sp.list, FG, by = c("species"))
+
+sp.list.FG %>%
+  group_by(species) %>%
+  select(species, FunctionalGroup, Duration) -> sp.list.FG
+
+# Remove duplicate rows based on species
+sp.list.FG <- sp.list.FG %>%
+  distinct(species, .keep_all = TRUE)
+
+
+# 
+# sp_list_duplicates <- sp.list.FG %>%
+#   group_by(species) %>%
+#   filter(n() > 1) %>%
+#   arrange(species)
+# 
+# print(sp_list_duplicates)
+
+
+
+edge_RR2 <- edge_RR %>%
+  left_join(sp.list.FG, by = "species")
+
+   
+   
+   
+
+sum_edge_RR2 = edge_RR2 %>%
+  group_by(site, species, FunctionalGroup) %>%
+  summarise(meanDRR = mean(resp.ratio.site_D, na.rm = T), 
+            meanPDRR = mean(resp.ratio.site_PD, na.rm = T),
+            seDRR = calcSE(resp.ratio.site_D),
+            sePDRR = calcSE(resp.ratio.site_PD),
+            persistence = median(persistence.site), 
+            rank = median(percrank)) %>%
+  
+  mutate(spatial = ifelse(rank > 0.75, "Abundant", "Scarce"),
+         temporal = ifelse(persistence > 0.5, "Core", "Transient"),
+         rarity_cat = paste0(temporal, ", ", spatial),
+         MAP_level = ifelse(site %in% c("KNZ", "HYS"), "High", 
+                            ifelse(site %in% c("CHY", "SGS"), "Intermediate", "Low"))) 
+
+
+# Figure 2 ####
+ggplot(sum_edge_RR2, aes(x = rank, y=persistence))+
+  geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
+  #geom_vline(xintercept = 0.5, color = "lightgray") +
+  geom_vline(xintercept = 0.75, color = "red", linetype = "dashed") +
+  geom_point(aes(color=FunctionalGroup), size = 1.5) +
+  facet_wrap(~MAP_level, ncol = 3, nrow = 1) +
+  theme_bw() +
+  theme(panel.grid = element_blank()) +
+  theme(strip.background =element_rect(fill="white")) +
+  xlab("Spatial Rarity")+
+  ylab("Temporal Rarity") +
+  theme(legend.position = "right") +
+  theme(text = element_text(size = 15)) +
+  scale_x_reverse() +
+  scale_y_reverse()
