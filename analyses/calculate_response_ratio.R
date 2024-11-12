@@ -26,6 +26,7 @@ sort(unique(SEVcheck$year))
 
 # Resp Ratio ####
 ## Drought ####
+### 4-year ####
 drought.SE.RII <- edge_all %>%
   filter(experiment.year %in% c(1:4)) %>% ## 0 is pre-treat year; drought was years 1-4
   group_by(site, treatment, species, block, plot) %>%
@@ -68,6 +69,51 @@ drought.SE.RII <- edge_all %>%
          SE.RII = outpar * inpar,
          
          treatment.period = "D") ## add in column to differentiate from post-drought RR
+
+### 6-year ####
+drought.SE.RII.6 <- edge_all %>%
+  filter(treatment.year == "drought") %>% ## should select all 6 of the SEV drought years
+  group_by(site, treatment, species, block, plot) %>%
+  
+  summarise(mean.cover.sp = mean(mean.plot.cover), ## mean cover by site across years
+            sd.cover.sp = sd(mean.plot.cover), ## calc sd of cover for use in error calcs
+            num.obs = n()) %>% 
+  
+  select(-plot) %>%
+  
+  pivot_wider(names_from = "treatment", values_from = c("mean.cover.sp", "sd.cover.sp", "num.obs")) %>% 
+  ungroup() %>%
+  
+  mutate(mean.cover.sp_D = coalesce(mean.cover.sp_D, 0), 
+         mean.cover.sp_C = coalesce(mean.cover.sp_C, 0)) %>%
+  ## input 0 instead of NAs (NAs are present where there is no cover of a particular species in either drought or control)
+  
+  group_by(site, species, block) %>%
+  
+  ## calculate block level resp ratio & SE
+  mutate(resp.ratio.site = (mean.cover.sp_D-mean.cover.sp_C)/(mean.cover.sp_C+mean.cover.sp_D), ## calc response ratio
+         
+         ## calc error of RII
+         ## rho
+         rho = (((sd.cover.sp_D^2)/num.obs_D) - ((sd.cover.sp_C^2)/num.obs_C)) / ((sd.cover.sp_D^2/num.obs_D) + (sd.cover.sp_C^2/num.obs_C)), ## calc rho as part of standard error calc
+         
+         ## term outside of parentheses
+         outpar = ((sd.cover.sp_D^2)/num.obs_D + (sd.cover.sp_C^2)/num.obs_C) / ((mean.cover.sp_D + mean.cover.sp_C)^2),
+         
+         ## term 1 inside parentheses
+         term1 = ((mean.cover.sp_D - mean.cover.sp_C)^2) / ((mean.cover.sp_D + mean.cover.sp_C)^2),
+         
+         ## term 2 inside parentheses
+         term2 = (2 * rho * (mean.cover.sp_D - mean.cover.sp_C)) / (mean.cover.sp_D + mean.cover.sp_C),
+         
+         ## calc inside of parentheses
+         inpar = 1 + term1 - term2,
+         
+         ## calc SE
+         SE.RII = outpar * inpar,
+         
+         treatment.period = "D") ## add in column to differentiate from post-drought RR
+
 
 ## Post-Drought ####
 recov.SE.RII <- edge_all %>%

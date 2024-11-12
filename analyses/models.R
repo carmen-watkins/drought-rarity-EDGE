@@ -26,20 +26,13 @@ edge_RR_cats = edge_RR %>%
          MAP_level = ifelse(site %in% c("KNZ", "HYS"), "High", 
                             ifelse(site %in% c("CHY", "SGS"), "Intermediate", "Low")))
 
-
 # Rank ####
-hist(edge_RR_cats$percrank)
-
 ## drought ####
-### visualize ####
-ggplot(edge_RR_cats, aes(x=percrank, y=resp.ratio.site_D)) +
-  geom_point()
-#ggsave("analyses/model_figs/rankvDRR.png", width = 5, height = 4)
-
-hist(edge_RR_cats$resp.ratio.site_D)
+DRR1 = edge_RR_cats %>%
+  filter(!is.na(resp.ratio.site_D))
 
 ### fixed effects model ####
-rd_fe = lm(resp.ratio.site_D~percrank*MAP_level, data = edge_RR_cats)
+rd_fe = lm(resp.ratio.site_D~percrank*MAP_level, data = DRR1)
 summary(rd_fe)
 Anova(rd_fe)
 
@@ -49,25 +42,161 @@ qqline(resid(rd_fe))
 
 plot(resid(rd_fe) ~ fitted(rd_fe))
 
-plot(rstandard(rd_fe) ~ edge_RR_cats[!is.na(edge_RR_cats$resp.ratio.site_D),]$resp.ratio.site_D)
-
 ## perform Breusch-Pagan test for heteroscedasticity
 bptest(rd_fe)
+AIC(rd_fe)
 
 ## null = homoscedasticity; residuals distrib with equal variance
 ## alt hypo = heteroscedasticity present
 ## p=val = 0.000066; heteroscedasticity is a problem in this model
 
 ### random effects model ####
-rd_re =lmer(resp.ratio.site_D ~ percrank*MAP_level  + (1|site) + (1|species), data = edge_RR_cats)
+rd_re =lmer(resp.ratio.site_D ~ percrank*MAP_level  + (1|site) + (1|block) + (1|species), data = DRR1)
 summary(rd_re)
-Anova(rd_re)
+Anova(rd_re, type =  "III")
 
 qqnorm(resid(rd_re))
 qqline(resid(rd_re))
 
 AIC(rd_re)
 plot(resid(rd_re) ~ fitted(rd_re))
+
+### weighted analysis ####
+## first, remove NAs
+DRR2 = edge_RR_cats %>%
+  filter(!is.na(resp.ratio.site_D),
+         !is.na(SE.RII_D))
+
+#### fixed fx ####
+## try weighted least squares regression
+rd_wfe = lm(resp.ratio.site_D ~ percrank*MAP_level, data = DRR, weights = 1/DRR$SE.RII_D)
+
+summary(rd_wfe)
+Anova(rd_wfe)
+
+qqnorm(resid(rd_wfe))
+qqline(resid(rd_wfe))
+AIC(rd_wfe)
+## 595.8389
+
+plot(rstandard(rd_wfe) ~ fitted(rd_wfe))
+plot(resid(rd_wfe) ~ fitted(rd_wfe))
+
+
+#### random fx ####
+rd_wre =lmer(resp.ratio.site_D ~ percrank*MAP_level + (1|species), data = DRR2, weights = 1/DRR2$SE.RII_D)
+
+## lmer, better for fitting
+## refit using lme for AIC comparison
+## supplement with other model options; otherwise choose best
+
+summary(rd_wre)
+Anova(rd_wre)
+
+qqnorm(resid(rd_wre))
+qqline(resid(rd_wre))
+
+AIC(rd_wre)
+plot(resid(rd_wre) ~ fitted(rd_wre))
+
+## post-drought ####
+PDRR1 = edge_RR_cats %>%
+  filter(!is.na(resp.ratio.site_PD))
+
+### fixed effects model ####
+rpd_fe = lm(resp.ratio.site_PD~percrank*MAP_level, data = edge_RR_cats)
+summary(rpd_fe)
+Anova(rpd_fe)
+
+### diagnostics, fixed effects model
+qqnorm(resid(rpd_fe))
+qqline(resid(rpd_fe))
+
+plot(resid(rpd_fe) ~ fitted(rpd_fe))
+
+### random effects model ####
+rpd_re = lmer(resp.ratio.site_PD~percrank*MAP_level + (1|site) + (1|block) + (1|species), data = PDRR1)
+
+summary(rpd_re)
+Anova(rpd_re, type = "III")
+
+### diagnostics, fixed effects model
+qqnorm(resid(rpd_re))
+qqline(resid(rpd_re))
+
+plot(resid(rpd_re) ~ fitted(rpd_re))
+
+### weighted analysis ####
+## first, remove NAs
+PDRR = edge_RR_cats %>%
+  filter(!is.na(resp.ratio.site_PD),
+         !is.na(SE.RII_PD))
+
+#### fixed fx ####
+## try weighted least squares regression
+rpd_wfe = lm(resp.ratio.site_PD ~ percrank*MAP_level, data = PDRR, weights = 1/PDRR$SE.RII_PD)
+
+summary(rpd_wfe)
+Anova(rpd_wfe)
+
+qqnorm(resid(rpd_wfe))
+qqline(resid(rpd_wfe))
+AIC(rpd_wfe)
+
+plot(rstandard(rpd_wfe) ~ fitted(rpd_wfe))
+plot(resid(rpd_wfe) ~ fitted(rpd_wfe))
+
+
+#### random fx ####
+rpd_wre =lmer(resp.ratio.site_PD ~ percrank*MAP_level + (1|site) + (1|block) + (1|species), data = PDRR, weights = 1/PDRR$SE.RII_PD)
+
+summary(rpd_wre)
+Anova(rpd_wre)
+
+qqnorm(resid(rpd_wre))
+qqline(resid(rpd_wre))
+
+AIC(rpd_wre)
+#plot(rstandard(rd_wre) ~ fitted(rd_wre))
+plot(resid(rd_wre) ~ fitted(rd_wre))
+
+
+
+# Persistence ####
+hist(edge_RR_cats$persistence.site)
+
+## drought ####
+### visualize
+### fixed effects model ####
+pd_fe = lm(resp.ratio.site_D~persistence.site*MAP_level, data = edge_RR_cats)
+summary(pd_fe)
+Anova(pd_fe)
+
+### diagnostics, fixed effects model
+qqnorm(resid(pd_fe))
+qqline(resid(pd_fe))
+
+plot(resid(pd_fe) ~ fitted(pd_fe))
+
+## perform Breusch-Pagan test for heteroscedasticity
+bptest(pd_fe)
+AIC(pd_fe)
+
+## null = homoscedasticity; residuals distrib with equal variance
+## alt hypo = heteroscedasticity present
+## p=val = 0.000066; heteroscedasticity is a problem in this model
+
+### random effects model ####
+pd_re =lmer(resp.ratio.site_D ~ persistence.site*MAP_level  + (1|site) + (1|block) + (1|species), data = DRR1)
+
+summary(pd_re)
+Anova(pd_re, type = "III")
+
+qqnorm(resid(pd_re))
+qqline(resid(pd_re))
+
+AIC(pd_re)
+plot(resid(pd_re) ~ fitted(pd_re))
 
 ### weighted analysis ####
 ## first, remove NAs
@@ -92,7 +221,7 @@ plot(resid(rd_wfe) ~ fitted(rd_wfe))
 
 
 #### random fx ####
-rd_wre =lmer(resp.ratio.site_D ~ percrank*MAP_level + (1|site) + (1|species), data = DRR, weights = 1/DRR$SE.RII_D)
+rd_wre =lmer(resp.ratio.site_D ~ percrank*MAP_level + (1|site) + (1|block) + (1|species), data = DRR, weights = 1/DRR$SE.RII_D)
 
 ## lmer, better for fitting
 ## refit using lme for AIC comparison
@@ -109,57 +238,7 @@ AIC(rd_wre)
 plot(resid(rd_wre) ~ fitted(rd_wre))
 
 ## post-drought ####
-ggplot(edge_RR_cats, aes(x=percrank, y=resp.ratio.site_PD)) +
-  geom_point()
-
-ggsave("analyses/model_figs/rankvPDRR.png", width = 5, height = 4)
-
-hist(edge_RR_cats$resp.ratio.site_PD)
-
-### run fixed effects model
-rpd_fe = lm(resp.ratio.site_PD~percrank*MAP_level, data = edge_RR_cats)
-summary(rpd_fe)
-Anova(rpd_fe)
-
-### diagnostics, fixed effects model
-qqnorm(resid(rpd_fe))
-qqline(resid(rpd_fe))
-
-plot(resid(rpd_fe) ~ fitted(rpd_fe))
-
-
-
-# Persistence ####
-hist(edge_RR_cats$persistence.site)
-
-## drought ####
-### visualize
-ggplot(edge_RR_cats, aes(x=persistence.site, y=resp.ratio.site_D)) +
-  geom_point()
-
-ggsave("analyses/model_figs/persvDRR.png", width = 5, height = 4)
-
-### run fixed effects model
-pd_fe = lm(resp.ratio.site_D~persistence.site*MAP_level, data = edge_RR_cats)
-summary(pd_fe)
-Anova(pd_fe)
-
-### diagnostics, fixed effects model
-qqnorm(resid(pd_fe))
-qqline(resid(pd_fe))
-
-plot(resid(pd_fe) ~ fitted(pd_fe))
-
-
-## post-drought ####
-ggplot(edge_RR_cats, aes(x=persistence.site, y=resp.ratio.site_PD)) +
-  geom_point()
-
-ggsave("analyses/model_figs/persvPDRR.png", width = 5, height = 4)
-
-hist(edge_RR_cats$resp.ratio.site_PD)
-
-### run fixed effects model
+### run fixed effects model ####
 ppd_fe = lm(resp.ratio.site_PD~persistence.site*MAP_level, data = edge_RR_cats)
 summary(ppd_fe)
 Anova(ppd_fe)
@@ -170,116 +249,19 @@ qqline(resid(ppd_fe))
 
 plot(resid(ppd_fe) ~ fitted(ppd_fe))
 
+### random effects model ####
+ppd_re = lmer(resp.ratio.site_PD~persistence.site*MAP_level + (1|site) + (1|block) + (1|species), data = PDRR1)
 
+summary(ppd_re)
+Anova(ppd_re, type = "III")
 
+### diagnostics, fixed effects model
+qqnorm(resid(rpd_re))
+qqline(resid(rpd_re))
 
+plot(resid(rpd_re) ~ fitted(rpd_re))
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-summary(edge_FG_cats$drought.RR - rd_mod$fitted.values)
-
-rem = lmer(resp.ratio.site_D~percrank*MAP_level + (1|species), data = edge_RR_cats)
-
-summary(rem)
-Anova(rem)
-
-qqnorm(resid(rem))
-qqline(resid(rem))
-
-AIC(rem)
-AIC(rd_mod)
-
-
-summary(edge_FG_cats$drought.RR - rd_mod$fitted.values)
-
-Anova(rd_mod)
-
-qqnorm(resid(rd_mod))
-qqline(resid(rd_mod))
-
-plot(resid(rd_mod) ~ fitted(rd_mod))
-## decreasing variance in the residuals
-## this model is not a good fit for the data
-
-## post-drought ####
-plot(x=edge_FG_cats$percrank, y=edge_FG_cats$recovery.RR)
-
-rpd_mod = lm(recovery.RR~percrank*MAP_level, data = edge_FG_cats)
-summary(rpd_mod)
-
-summary(edge_FG_cats$recovery.RR - rpd_mod$fitted.values)
-
-Anova(rpd_mod)
-
-qqnorm(resid(rpd_mod))
-qqline(resid(rpd_mod))
-
-plot(resid(rpd_mod) ~ fitted(rpd_mod))
-## decreasing variance in the residuals
-## this model is not a good fit for the data
-
-# Persistence ####
-## drought ####
-plot(x=edge_FG_cats$persistence.site, y=edge_FG_cats$drought.RR)
-
-pd_mod = lm(drought.RR~persistence.site*MAP_level, data = edge_FG_cats)
-summary(pd_mod)
-
-summary(edge_FG_cats$drought.RR - pd_mod$fitted.values)
-
-Anova(pd_mod)
-
-qqnorm(resid(pd_mod))
-qqline(resid(pd_mod))
-
-plot(resid(pd_mod) ~ fitted(pd_mod))
-## decreasing variance in the residuals
-## this model is not a good fit for the data
-
-## post-drought ####
-plot(x=edge_FG_cats$persistence.site, y=edge_FG_cats$recovery.RR)
-
-ppd_mod = lm(recovery.RR~persistence.site*MAP_level, data = edge_FG_cats)
-summary(ppd_mod)
-
-summary(edge_FG_cats$recovery.RR - ppd_mod$fitted.values)
-
-Anova(ppd_mod)
-
-qqnorm(resid(ppd_mod))
-qqline(resid(ppd_mod))
-
-plot(resid(ppd_mod) ~ fitted(ppd_mod))
-## decreasing variance in the residuals
-## this model is not a good fit for the data
