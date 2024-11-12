@@ -14,22 +14,9 @@ sp.list.FG <- sp.list.FG %>%
   distinct(species, .keep_all = TRUE)
 
 
-# 
-# sp_list_duplicates <- sp.list.FG %>%
-#   group_by(species) %>%
-#   filter(n() > 1) %>%
-#   arrange(species)
-# 
-# print(sp_list_duplicates)
-
-
-
 edge_RR2 <- edge_RR %>%
   left_join(sp.list.FG, by = "species")
 
-   
-   
-   
 
 sum_edge_RR2 = edge_RR2 %>%
   group_by(site, species, FunctionalGroup) %>%
@@ -47,7 +34,7 @@ sum_edge_RR2 = edge_RR2 %>%
                             ifelse(site %in% c("CHY", "SGS"), "Intermediate", "Low"))) 
 
 
-# Figure 2 ####
+# Figure 2 with functional groups
 ggplot(sum_edge_RR2, aes(x = rank, y=persistence))+
   geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
   #geom_vline(xintercept = 0.5, color = "lightgray") +
