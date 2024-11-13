@@ -1,6 +1,6 @@
 #Read in functional group info
 setwd("~/Documents/NCEAS_Transitions/subordinate-species/data")
-FG <- read.csv("data/edge_species_info.csv")
+FG <- read.csv("edge_species_info_CP_BA.csv")
 
 #add functional group to species
 sp.list.FG <- left_join(sp.list, FG, by = c("species"))
@@ -49,4 +49,49 @@ ggplot(sum_edge_RR2, aes(x = rank, y=persistence))+
   theme(legend.position = "right") +
   theme(text = element_text(size = 15)) +
   scale_x_reverse() +
-  scale_y_reverse()
+  scale_y_reverse() -> object
+
+
+#create density plots for each rarity metric by functional group
+
+library(ggExtra)
+
+sum_edge_RR2 %>% 
+  group_by(site) %>% 
+  ggplot(aes(x=rank, fill=FunctionalGroup, colour = FunctionalGroup)) +
+  geom_density(alpha=0.05) +
+  facet_wrap(~MAP_level, ncol = 3, nrow = 1) +
+  theme_bw() +
+  theme(panel.grid = element_blank()) +
+  theme(strip.background =element_rect(fill="white")) +
+  xlab("Spatial Rarity")+
+  ylab("Density") +
+  theme(legend.position = "right") +
+  theme(text = element_text(size = 15)) -> object2
+
+object2
+ggsave("~/Documents/NCEAS_Transitions/subordinate-species/Nov 2024 Meeting Figures/FG_SpatialRarity_Density.jpeg", width = 10, height = 5)
+
+
+sum_edge_RR2 %>% 
+  group_by(site) %>% 
+  ggplot(aes(x=persistence, fill=FunctionalGroup, colour = FunctionalGroup)) +
+  geom_density(alpha=0.05) +
+  facet_wrap(~MAP_level, ncol = 3, nrow = 1) +
+  theme_bw() +
+  theme(panel.grid = element_blank()) +
+  theme(strip.background =element_rect(fill="white")) +
+  xlab("Temporal Rarity")+
+  ylab("Density") +
+  theme(legend.position = "right") +
+  theme(text = element_text(size = 15)) -> object3
+
+object3
+
+ggsave("~/Documents/NCEAS_Transitions/subordinate-species/Nov 2024 Meeting Figures/FG_TemporalRarity_Density.jpeg", width = 10, height = 5)
+
+
+
+sum_edge_RR2 %>% 
+  group_by(FunctionalGroup) %>% 
+  filter(is.na(FunctionalGroup)) -> unknown.observations
