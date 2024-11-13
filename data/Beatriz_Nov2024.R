@@ -1,3 +1,9 @@
+
+source("analyses/calculate_response_ratio.R") 
+source("analyses/color_palettes.R")
+source("analyses/response_ratio_analyses.R")
+
+
 #Read in functional group info
 setwd("~/Documents/NCEAS_Transitions/subordinate-species/data")
 FG <- read.csv("edge_species_info_CP_BA.csv")
@@ -70,7 +76,7 @@ sum_edge_RR2 %>%
   theme(text = element_text(size = 15)) -> object2
 
 object2
-ggsave("~/Documents/NCEAS_Transitions/subordinate-species/Nov 2024 Meeting Figures/FG_SpatialRarity_Density.jpeg", width = 12, height = 5)
+#ggsave("~/Documents/NCEAS_Transitions/subordinate-species/Nov 2024 Meeting Figures/FG_SpatialRarity_Density.jpeg", width = 12, height = 5)
 
 
 sum_edge_RR2 %>% 
@@ -87,7 +93,6 @@ sum_edge_RR2 %>%
   theme(text = element_text(size = 15)) -> object3
 
 object3
-
 ggsave("~/Documents/NCEAS_Transitions/subordinate-species/Nov 2024 Meeting Figures/FG_TemporalRarity_Density.jpeg", width = 12, height = 5)
 
 
