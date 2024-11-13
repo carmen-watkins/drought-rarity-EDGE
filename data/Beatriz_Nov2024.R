@@ -390,60 +390,59 @@ figure18
 ######################################################
 ######################################################
 #Save figures
-
-object
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_withFG.jpeg"), width = 12, height = 5)
-
-object2
-#ggsave(here::here("Nov 2024 Meeting Figures","FG_SpatialRarity_Density.jpeg"), width = 12, height = 5)
-
-object3
-#ggsave(here::here("Nov 2024 Meeting Figures","FG_TemporalRarity_Density.jpeg"), width = 12, height = 5)
-
-figure4
-#ggsave(here::here("Nov 2024 Meeting Figures","FG_Temporal Rarity_Life history.jpeg"), width = 12, height = 5)
-
-figure5
-#ggsave(here::here("Nov 2024 Meeting Figures","FG_ Spatial Rarity_Life history.jpeg"), width = 12, height = 5)
-
-figure6
-#ggsave(here::here("Nov 2024 Meeting Figures","Figure2_Lifehistory.jpeg"), width = 12, height = 5)
-
-figure7
-#ggsave(here::here("Nov 2024 Meeting Figures","Figure2_GrassType.jpeg"), width = 12, height = 5)
-
-figure8
-#ggsave(here::here("Nov 2024 Meeting Figures","GrassType_SpatialRarity.jpeg"), width = 12, height = 5)
-
-figure9
-#ggsave(here::here("Nov 2024 Meeting Figures","GrassType_TemporalRarity.jpeg"), width = 12, height = 5)
-
-figure10
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_FG.jpeg"), width = 12, height = 5)
-
-figure11
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_FG_spatial.jpeg"), width = 12, height = 5)
-
-figure12
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_FG_temporal.jpeg"), width = 12, height = 5)
-
-figure13
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_lifehistory_temporal.jpeg"), width = 12, height = 5)
-
-figure14
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_lifehistory_spatial.jpeg"), width = 12, height = 5)
-
-figure15
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_lifehistory.jpeg"), width = 12, height = 5)
-
-
-figure16
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_grass_C3C4.jpeg"), width = 12, height = 5)
-
-figure17
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_grass_C3C4_spatial.jpeg"), width = 12, height = 5)
-
-figure18
-#ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_grass_C3C4_temporal.jpeg"), width = 12, height = 5)
-
-
+# 
+# object
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_withFG.jpeg"), width = 12, height = 5)
+# 
+# object2
+# ggsave(here::here("Nov 2024 Meeting Figures","FG_SpatialRarity_Density.jpeg"), width = 12, height = 5)
+# 
+# object3
+# ggsave(here::here("Nov 2024 Meeting Figures","FG_TemporalRarity_Density.jpeg"), width = 12, height = 5)
+# 
+# figure4
+# ggsave(here::here("Nov 2024 Meeting Figures","FG_Temporal Rarity_Life history.jpeg"), width = 12, height = 5)
+# 
+# figure5
+# ggsave(here::here("Nov 2024 Meeting Figures","FG_ Spatial Rarity_Life history.jpeg"), width = 12, height = 5)
+# 
+# figure6
+# ggsave(here::here("Nov 2024 Meeting Figures","Figure2_Lifehistory.jpeg"), width = 12, height = 5)
+# 
+# figure7
+# ggsave(here::here("Nov 2024 Meeting Figures","Figure2_GrassType.jpeg"), width = 12, height = 5)
+# 
+# figure8
+# ggsave(here::here("Nov 2024 Meeting Figures","GrassType_SpatialRarity.jpeg"), width = 12, height = 5)
+# 
+# figure9
+# ggsave(here::here("Nov 2024 Meeting Figures","GrassType_TemporalRarity.jpeg"), width = 12, height = 5)
+# 
+# figure10
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_FG.jpeg"), width = 12, height = 5)
+# 
+# figure11
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_FG_spatial.jpeg"), width = 12, height = 5)
+# 
+# figure12
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_FG_temporal.jpeg"), width = 12, height = 5)
+# 
+# figure13
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_lifehistory_temporal.jpeg"), width = 12, height = 5)
+# 
+# figure14
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_lifehistory_spatial.jpeg"), width = 12, height = 5)
+# 
+# figure15
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_lifehistory.jpeg"), width = 12, height = 5)
+# 
+# figure16
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_grass_C3C4.jpeg"), width = 12, height = 5)
+# 
+# figure17
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_grass_C3C4_spatial.jpeg"), width = 12, height = 5)
+# 
+# figure18
+# ggsave(here::here("Nov 2024 Meeting Figures","Fig2_site_grass_C3C4_temporal.jpeg"), width = 12, height = 5)
+# 
+# 
