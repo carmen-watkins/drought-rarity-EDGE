@@ -1,4 +1,4 @@
-# Figure 2 by Functinal Group and Life History
+# Figure 2 by Functional Group and Life History
 # November 13, 2024
 # BAA
 
