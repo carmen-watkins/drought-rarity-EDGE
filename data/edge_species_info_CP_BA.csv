@@ -195,38 +195,38 @@ Chloris_sp.,chloris,grass,unk,c4,,
 Cyperus_acuminatus,cyperus,grass,perennial,c3,,
 Cyperus_lupulinus,cyperus,grass,perennial,c4,,
 Dasyochloa_pulchella,dasyochloa,grass,perennial,c4,,
-Dicanthelium_acuminatum,dicanthelium,grass,perennial,,,
-Dicanthelium_oligosanthes,dicanthelium,grass,perennial,,,
-Eleocharis_sp.,eleocharis,grass,perennial,,,rush (graminoid)
+Dicanthelium_acuminatum,dicanthelium,grass,perennial,c3,,
+Dicanthelium_oligosanthes,dicanthelium,grass,perennial,c3,,
+Eleocharis_sp.,eleocharis,grass,perennial,unk,,rush (graminoid)
 Elymus_elymoides,elymus,grass,perennial,c3,,
 Enneapogon_desvauxii,enneapogon,grass,perennial,c4,,
-Eragrostis_spectabilis,eragrostis,grass,perennial,,,
+Eragrostis_spectabilis,eragrostis,grass,perennial,c4,,photosythetic pathway not clear but Eragrostis tef is c4 and this species is referenced as a warm season grass https://www.sciencedirect.com/topics/biochemistry-genetics-and-molecular-biology/eragrostis
 Festuca_unknown,festuca,grass,perennial,c3,,
-Hesperostipa_comata,hesperostipa,grass,perennial,,,
+Hesperostipa_comata,hesperostipa,grass,perennial,c3,,"https://onlinelibrary.wiley.com/doi/10.1111/ddi.13669#:~:text=The%20C4%20photosynthetic%20pathway,et%20al.%2C%202013)."
 Hordeum_pusilum,hordeum,grass,annual,c3,,
-Juncus_interior,juncus,grass,perennial,,,
+Juncus_interior,juncus,grass,perennial,unk,,Juncus tenius is a c3 but I cannot find anything on this one https://onlinelibrary.wiley.com/doi/full/10.1002/its2.92
 Koeleria_macrantha,koeleria,grass,perennial,c3,,
 Muhlenbergia_arenicola,muhlenbergia,grass,perennial,c4,,
 Muhlenbergia_torreyi,muhlenbergia,grass,perennial,c4,,
 Munroa_squarrosa,munroa,grass,annual,c4,,
 Nassella_viridula,nassella,grass,perennial,c3,,
-Panicum_capillare,panicum,grass,annual,,,
-panicum_unknown,panicum,grass,unk,,,
-Panicum_virgatum,panicum,grass,perennial,,,
-Pascopyrum_smithii,pascopyrum,grass,perennial,,,
-Pleuraphis_jamesii,pleuraphis,grass,perennial,,,
+Panicum_capillare,panicum,grass,annual,c4,,
+panicum_unknown,panicum,grass,unk,unk,,
+Panicum_virgatum,panicum,grass,perennial,c4,,
+Pascopyrum_smithii,pascopyrum,grass,perennial,c3,,https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1365-3040.1994.tb02025.x
+Pleuraphis_jamesii,pleuraphis,grass,perennial,c4,,https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2745.12647
 Poa_pratensis,poa,grass,perennial,c3,,
 Schedonnardus_paniculatus,schedonnardus,grass,perennial,c4,,
 Schizachyrium_scoparium,schizachyrium,grass,perennial,c4,,
 Scleropogon_brevifolius,scleropogon,grass,perennial,c4,,
 Sorghastrum_nutans,sorghastrum,grass,perennial,c4,,
-Sporobolus_asper,sporobolus,grass,perennial,,,
-Sporobolus_contractus,sporobolus,grass,perennial,,,
-Sporobolus_cryptandrus,sporobolus,grass,perennial,,,
-Sporobolus_flexuosus,sporobolus,grass,perennial,,,
-Sporobolus_heterolepis,sporobolus,grass,perennial,,,
-Sporobolus_NA,sporobolus,grass,perennial,,,
-Sporobolus_sp.,sporobolus,grass,perennial,,,
+Sporobolus_asper,sporobolus,grass,perennial,c4,,https://repository.arizona.edu/bitstream/handle/10150/646540/6892-6771-1-PB.pdf;jsessionid=73101AB05E8A6DDD1496F3990EED350A?sequence=1
+Sporobolus_contractus,sporobolus,grass,perennial,c4,,https://repository.arizona.edu/bitstream/handle/10150/646540/6892-6771-1-PB.pdf;jsessionid=73101AB05E8A6DDD1496F3990EED350A?sequence=2
+Sporobolus_cryptandrus,sporobolus,grass,perennial,c4,,https://repository.arizona.edu/bitstream/handle/10150/646540/6892-6771-1-PB.pdf;jsessionid=73101AB05E8A6DDD1496F3990EED350A?sequence=3
+Sporobolus_flexuosus,sporobolus,grass,perennial,c4,,https://repository.arizona.edu/bitstream/handle/10150/646540/6892-6771-1-PB.pdf;jsessionid=73101AB05E8A6DDD1496F3990EED350A?sequence=4
+Sporobolus_heterolepis,sporobolus,grass,perennial,c4,,https://repository.arizona.edu/bitstream/handle/10150/646540/6892-6771-1-PB.pdf;jsessionid=73101AB05E8A6DDD1496F3990EED350A?sequence=5
+Sporobolus_NA,sporobolus,grass,perennial,c4,,https://repository.arizona.edu/bitstream/handle/10150/646540/6892-6771-1-PB.pdf;jsessionid=73101AB05E8A6DDD1496F3990EED350A?sequence=6
+Sporobolus_sp.,sporobolus,grass,perennial,c4,,https://repository.arizona.edu/bitstream/handle/10150/646540/6892-6771-1-PB.pdf;jsessionid=73101AB05E8A6DDD1496F3990EED350A?sequence=7
 Tragus_racemosus,tragus,grass,annual,c4,,
 Vulpia_octoflora,vulpia,grass,annual,c3,,
 NA_NA,na,NA,unk,,,
