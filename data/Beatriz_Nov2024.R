@@ -70,7 +70,7 @@ sum_edge_RR2 %>%
   theme(text = element_text(size = 15)) -> object2
 
 object2
-ggsave("~/Documents/NCEAS_Transitions/subordinate-species/Nov 2024 Meeting Figures/FG_SpatialRarity_Density.jpeg", width = 10, height = 5)
+ggsave("~/Documents/NCEAS_Transitions/subordinate-species/Nov 2024 Meeting Figures/FG_SpatialRarity_Density.jpeg", width = 12, height = 5)
 
 
 sum_edge_RR2 %>% 
@@ -88,7 +88,7 @@ sum_edge_RR2 %>%
 
 object3
 
-ggsave("~/Documents/NCEAS_Transitions/subordinate-species/Nov 2024 Meeting Figures/FG_TemporalRarity_Density.jpeg", width = 10, height = 5)
+ggsave("~/Documents/NCEAS_Transitions/subordinate-species/Nov 2024 Meeting Figures/FG_TemporalRarity_Density.jpeg", width = 12, height = 5)
 
 
 
