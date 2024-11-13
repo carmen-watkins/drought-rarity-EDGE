@@ -1,13 +1,11 @@
-setwd("~/Documents/NCEAS_Transitions/subordinate-species")
 
 source("analyses/calculate_response_ratio.R")
 source("analyses/color_palettes.R")
 source("analyses/response_ratio_analyses.R")
-
+source("analyses/old_analyses/funct_group_summaries.R")
 
 #Read in functional group info
-setwd("~/Documents/NCEAS_Transitions/subordinate-species/data")
-FG <- read.csv("edge_species_info_CP_BA.csv")
+FG <- read.csv(here::here("data","edge_species_info_CP_BA.csv"))
 
 #add functional group to species
 sp.list.FG <- left_join(sp.list, FG, by = c("species"))
