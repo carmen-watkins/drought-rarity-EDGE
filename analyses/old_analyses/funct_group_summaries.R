@@ -22,15 +22,15 @@ sum.stats <- sp.list.FG %>%
 sum.stats$site <- as.factor(sum.stats$site)
 
 sum.stats <- sum.stats %>%
-  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SEV_blue", "SEV_black"))
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
 
 ggplot(sum.stats, aes(x=FunctionalGroup, y=SR.FG, fill = FunctionalGroup)) +
   geom_bar(stat = 'identity') +
   facet_wrap(~site, ncol = 2, nrow = 3) +
-  ylab("Functional Group Richness") + 
+  ylab("Functional Group Richness") +
   xlab("Functional Group") +
   scale_fill_manual(values = c("#CC61B0", "#99C945","#5D69B1", "#E58606"))
   
-ggsave("preliminary_figures/FG_richness_site.png", height = 5, width = 5.5)
+#ggsave("preliminary_figures/FG_richness_site.png", height = 5, width = 5.5)
 
