@@ -77,7 +77,7 @@ ggplot(sum_edge_RR, aes(x = rank, y=persistence))+
   scale_x_reverse() +
   scale_y_reverse()
 
-ggsave("figures/final_figs/figure2_altclass.tiff", width = 8.25, height = 3)
+#ggsave("figures/final_figs/figure2_altclass.tiff", width = 8.25, height = 3)
 
 ## check correlations ####
 cor(sum_edge_RR[sum_edge_RR$site == "KNZ",]$rank, sum_edge_RR[sum_edge_RR$site == "KNZ",]$persistence, method = c("pearson"))
@@ -147,7 +147,7 @@ persR3 <- ggplot(sum_edge_RR, aes(x=persistence, y=meanPDRR)) +
 ggarrange(rankD3, persD3, rankR3, persR3, 
           labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-ggsave("figures/final_figs/figure3.tiff", width = 10, height = 8.5)
+#ggsave("figures/final_figs/figure3.tiff", width = 10, height = 8.5)
 
 ## Figure S5 ####
 siterankD3 <- ggplot(sum_edge_RR, aes(x= rank, y=meanDRR)) +
@@ -202,7 +202,7 @@ sitepersR3 <- ggplot(sum_edge_RR, aes(x=persistence, y=meanPDRR)) +
 ggarrange(siterankD3, sitepersD3, siterankR3, sitepersR3, 
           labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-ggsave("figures/final_figs/supp/figures5.tiff", width = 10, height = 8.5)
+#ggsave("figures/final_figs/supp/figures5.tiff", width = 10, height = 8.5)
 
 # Figure 4 ####
 ggplot(sum_edge_RR, aes(x=meanDRR, y=meanPDRR, color = MAP_level)) +
@@ -221,7 +221,7 @@ ggplot(sum_edge_RR, aes(x=meanDRR, y=meanPDRR, color = MAP_level)) +
   theme(text = element_text(size = 15)) +
   theme(legend.position = "bottom")
 
-ggsave("figures/final_figs/figure4_altclass.tiff", width = 7, height = 7)
+#ggsave("figures/final_figs/figure4_altclass.tiff", width = 7, height = 7)
 
 ## Fig 4 Alternative ####
 ggplot(sum_edge_RR, aes(x=meanDRR, y=meanPDRR, color = rarity_cat)) +
@@ -240,7 +240,7 @@ ggplot(sum_edge_RR, aes(x=meanDRR, y=meanPDRR, color = rarity_cat)) +
   theme(text = element_text(size = 15)) +
   theme(legend.position = "bottom")
 
-ggsave("figures/final_figs/figure4_alt_altclass.tiff", width = 9, height = 4)
+#ggsave("figures/final_figs/figure4_alt_altclass.tiff", width = 9, height = 4)
 
 #88CCEE,#CC6677,#DDCC77,#117733,#332288,#AA4499,#44AA99,#999933,#882255,#661100,#6699CC,#888888
 
