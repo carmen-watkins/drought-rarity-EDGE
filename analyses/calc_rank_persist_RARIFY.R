@@ -28,6 +28,10 @@ controls <- edge_all %>%
 ## take the rank of the mean (NOT the mean of the rank)
 ## keep the 0's
 rank_mean <- controls %>%
+  ## RARIFY!! 
+  group_by(year, site, block, plot, species) %>% 
+  slice_sample(n=2) %>% ## select 2 of the observations for each subplot
+  ungroup() %>%
   group_by(site, species) %>% ## take the mean of a species at a site right away
   ## this averages over all the subplots, including 0-filled subs
   summarise(mean.ctrl.cov = mean(max.cover)) %>%
@@ -38,6 +42,10 @@ rank_mean <- controls %>%
 
 # Persistence ####
 persist_site <- controls %>%
+  group_by(year, site, block, plot, species) %>% ## take the mean of a species at a site right away
+  ## this averages over all the subplots, including 0-filled subs
+  slice_sample(n=2) %>%
+  ungroup() %>%
   group_by(site, species, year) %>%
   summarise(pres.abs.site = ifelse(sum(pres.abs)>0, 1,0)) %>% ## present at site?
   ungroup() %>%
@@ -45,27 +53,7 @@ persist_site <- controls %>%
   summarise(persistence.site = sum(pres.abs.site)/n())
 
 # Merge Rank & Persist ####
-rank_persist <- left_join(persist_site, rank_mean, by = c("site", "species"))
+rank_persist_RARIFY <- left_join(persist_site, rank_mean, by = c("site", "species"))
 
 # Clean Env ####
 rm(controls, persist_site, rank_mean)
-
-
-
-rank_persist$site = factor(rank_persist$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
-
-ggplot(rank_persist, aes(x=percrank, y=mean.ctrl.cov)) +
-  geom_point() +
-  facet_wrap(~site, ncol = 2, nrow = 3) +
-  scale_x_reverse() +
-  theme_bw() +
-  geom_vline(xintercept = 0.5, linetype = "dashed", color = "gray") +
-  geom_vline(xintercept = 0.75, linetype = "dashed", color = "red") +
-  xlab("Percent Rank") +
-  ylab("Mean Species Cover")
-
-ggsave("figures/Nov2024_meeting/updated_RAC.png", width = 8, height = 6)
-
-
-
-

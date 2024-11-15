@@ -1,17 +1,5 @@
-# Header #### 
-## Script name: Classify Rank, Persistence with Zero filled data
-##
-## Purpose of script: Classify each species at each site by its rank and persistence at the site using data from control plots in the EDGE experiment.
-##
-## Author: Carmen Watkins
-##
-## Email: cebel2@uoregon.edu
 
-# Set up env ####
-## read in cleaned cover data
-source("data-prep/cleaning_fill_zeros_at_subplot_edge.R") 
-
-library(ggpubr)
+source("data-prep/sensitivity_analysis_cleaning_keep_unknowns.R")
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -48,24 +36,4 @@ persist_site <- controls %>%
 rank_persist <- left_join(persist_site, rank_mean, by = c("site", "species"))
 
 # Clean Env ####
-rm(controls, persist_site, rank_mean)
-
-
-
-rank_persist$site = factor(rank_persist$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
-
-ggplot(rank_persist, aes(x=percrank, y=mean.ctrl.cov)) +
-  geom_point() +
-  facet_wrap(~site, ncol = 2, nrow = 3) +
-  scale_x_reverse() +
-  theme_bw() +
-  geom_vline(xintercept = 0.5, linetype = "dashed", color = "gray") +
-  geom_vline(xintercept = 0.75, linetype = "dashed", color = "red") +
-  xlab("Percent Rank") +
-  ylab("Mean Species Cover")
-
-ggsave("figures/Nov2024_meeting/updated_RAC.png", width = 8, height = 6)
-
-
-
-
+rm(controls, persist_site, rank_mean, test, test2, testsub, testws2, weirdsubs, weirdsubs2)

@@ -8,7 +8,7 @@
 ## Email: cebel2@uoregon.edu
 
 # Set up ####
-source("analyses/calculate_response_ratio.R") 
+source("analyses/new_response_ratio_calcs_zero_filled.R") 
 source("analyses/color_palettes.R")
 
 library(viridisLite)
@@ -30,16 +30,17 @@ unique(edge_RR$species)
 
 # Data Mods ####
 ## Summarise ####
-sum_edge_RR = edge_RR %>%
-  
-  mutate(spatial = ifelse(rank > 0.75, "Abundant", "Scarce"),
-         temporal = ifelse(persistence > 0.5, "Core", "Transient"),
+edge_RR_cats = edge_RR %>%
+  mutate(spatial = ifelse(percrank > 0.75, "Abundant", "Scarce"),
+         temporal = ifelse(persistence.site > 0.5, "Core", "Transient"),
          rarity_cat = paste0(temporal, ", ", spatial),
          MAP_level = ifelse(site %in% c("KNZ", "HYS"), "High", 
                             ifelse(site %in% c("CHY", "SGS"), "Intermediate", "Low"))) 
 
 ## arrange rarity categories
-sum_edge_RR$rarity_cat = factor(sum_edge_RR$rarity_cat, levels = c("Transient, Abundant", "Transient, Scarce", "Core, Abundant", "Core, Scarce"))
+edge_RR_cats$rarity_cat = factor(edge_RR_cats$rarity_cat, levels = c("Transient, Abundant", "Transient, Scarce", "Core, Abundant", "Core, Scarce"))
+
+edge_RR_cats$site = factor(edge_RR_cats$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
 edge_RR$site = factor(edge_RR$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
@@ -54,12 +55,12 @@ category_sums = sum_edge_RR %>%
   mutate(perc = num/tot)
 
 # Figure 2 ####
-ggplot(sum_edge_RR, aes(x = rank, y=persistence))+
+ggplot(edge_RR, aes(x = percrank, y=persistence.site))+
   geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
   #geom_vline(xintercept = 0.5, color = "lightgray") +
   geom_vline(xintercept = 0.75, color = "red", linetype = "dashed") +
   geom_point(size = 1.5) +
-  facet_wrap(~MAP_level, ncol = 3, nrow = 1) +
+  facet_wrap(~site, ncol = 2, nrow = 3) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
@@ -70,7 +71,7 @@ ggplot(sum_edge_RR, aes(x = rank, y=persistence))+
   scale_x_reverse() +
   scale_y_reverse()
 
-#ggsave("figures/final_figs/figure2_altclass.tiff", width = 8.25, height = 3)
+ggsave("figures/Nov2024_meeting/figure2_site.png", width = 6.5, height = 8)
 
 ## check correlations ####
 cor(sum_edge_RR[sum_edge_RR$site == "KNZ",]$rank, sum_edge_RR[sum_edge_RR$site == "KNZ",]$persistence, method = c("pearson"))
@@ -270,7 +271,7 @@ ggarrange(siterankD3, sitepersD3, siterankR3, sitepersR3,
 #ggsave("figures/final_figs/supp/figures5.tiff", width = 10, height = 8.5)
 
 # Figure 4 ####
-ggplot(sum_edge_RR, aes(x=meanDRR, y=meanPDRR, color = MAP_level)) +
+ggplot(edge_RR_cats, aes(x=resp.ratio.site_D, y=resp.ratio.site_PD, color = MAP_level)) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
   geom_point(size = 2) +
@@ -286,10 +287,10 @@ ggplot(sum_edge_RR, aes(x=meanDRR, y=meanPDRR, color = MAP_level)) +
   theme(text = element_text(size = 15)) +
   theme(legend.position = "bottom")
 
-#ggsave("figures/final_figs/figure4_altclass.tiff", width = 7, height = 7)
+ggsave("figures/Nov2024_meeting/figure4_zero_filled.png", width = 7, height = 7)
 
 ## Fig 4 Alternative ####
-ggplot(sum_edge_RR, aes(x=meanDRR, y=meanPDRR, color = rarity_cat)) +
+ggplot(edge_RR_cats, aes(x=resp.ratio.site_D, y=resp.ratio.site_PD, color = rarity_cat)) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
   geom_point(size = 2) +
@@ -305,7 +306,7 @@ ggplot(sum_edge_RR, aes(x=meanDRR, y=meanPDRR, color = rarity_cat)) +
   theme(text = element_text(size = 15)) +
   theme(legend.position = "bottom")
 
-#ggsave("figures/final_figs/figure4_alt_altclass.tiff", width = 9, height = 4)
+ggsave("figures/Nov2024_meeting/figure4_alt_zero_filled.png", width = 9, height = 4)
 
 #88CCEE,#CC6677,#DDCC77,#117733,#332288,#AA4499,#44AA99,#999933,#882255,#661100,#6699CC,#888888
 
