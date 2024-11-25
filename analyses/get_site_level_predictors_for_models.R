@@ -69,9 +69,6 @@ ggplot(site_pred_final, aes(x=site, y=mean_ppt, color = site)) +
   scale_color_manual(values = pal)
 
 
-
-
-
 ## cov of dominant / total cov
 
 ## should this be done at plot level?

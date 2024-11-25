@@ -8,7 +8,11 @@ library(lmerTest)
 library(viridisLite)
 library(visreg)
 library(rgl)
+library(ggpubr)
+
 source("analyses/new_response_ratio_calcs_zero_filled.R") 
+
+source("analyses/get_site_level_predictors_for_models.R")
 
 ## scale variables
 site_pred_scaled = site_pred_final %>%
@@ -17,14 +21,27 @@ site_pred_scaled = site_pred_final %>%
          mean_ppt_across = mean(mean_ppt),
          sd_ppt = sd(mean_ppt),
          z_precip = (mean_ppt - mean_ppt_across)/sd_ppt,
-         z_temp = (MAT.C - mean_temp)/sd_temp)
+         z_temp = (MAT.C - mean_temp)/sd_temp, 
+         dom.rounded = round(BP.dom.site, digits = 3))
 
 edge_RR_preds = left_join(edge_RR, site_pred_scaled, by = "site")
 
 ## plot site level MAT and mean precip
-ggplot(site_pred_scaled, aes(x=MAT.C, y=mean_ppt, color = site)) +
+ppt_temp = ggplot(site_pred_scaled, aes(x=MAT.C, y=mean_ppt, color = site)) +
   geom_point(size = 3) +
-  scale_color_manual(values = pal)
+  scale_color_manual(values = pal) + 
+  xlab("Mean Annual Temp") +
+  ylab("Mean Growing Season Precip (mm)") +
+  labs(color = "Site")
+
+dom = ggplot(site_pred_scaled, aes(x=site, y=BP.dom.site, color = site)) +
+  geom_point(size = 3) +
+  scale_color_manual(values = pal) +
+  xlab("Site") +
+  ylab("Mean Berger-Parker Dominance")
+
+ggarrange(ppt_temp, dom, ncol = 2, nrow = 1, common.legend = TRUE, legend = "bottom")
+ggsave("figures/Nov2024_postmeeting/site_predictors.png", width = 5, height = 4)
 
 ## create df's for modeling 
 DRR = edge_RR_preds %>%
@@ -40,8 +57,29 @@ m1_rd = lmer(resp.ratio.site_D ~ percrank + z_temp*z_precip + BP.dom.site + perc
 summary(m1_rd)
 anova(m1_rd)
 
-visreg(m1_rd, "percrank", by = "BP.dom.site")
+visreg(m1_rd, "percrank", type = "conditional", by = "BP.dom.site", breaks = 6, ylab = "f(Spatial Rarity)", xlab = "Spatial Rarity") 
+
+
+sitelabs <- c("CHY (0.31)", "HYS (0.38)", "KNZ (0.39)", "SGS (0.42)", "SBL (0.54)", "SBK (0.67)")
+names(supp.labs) <- c("OJ", "VC")
+
+visreg(m1_rd, "percrank", type = "conditional", by = "BP.dom.site", breaks = 6, gg = TRUE)  +
+  xlab("Spatial Rarity") +
+  ylab("f(Spatial Rarity)")
+
+ggsave("figures/Nov2024_postmeeting/rarity_by_site_dom.png", width = 9, height = 3)
+
+
+visreg(m1_rd, "percrank", type = "conditional", by = "z_precip", breaks = 6)
+
+ggsave("figures/Nov2024_postmeeting/rarity_by_precip.png", width = 9, height = 3)
+
+visreg(m1_rd, "percrank", type = "conditional")
+ggsave("figures/Nov2024_postmeeting/rarity_main_effect.png", width = 9, height = 3)
+
 visreg(m1_rd, "percrank", by = "z_precip")
+
+sort(unique(DRR$BP.dom.site))
 
 
 ### explore interactions ####

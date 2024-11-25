@@ -1,7 +1,7 @@
 # Header #### 
-## Script name: Clean EDGE Data
+## Script name: Clean cover data, fill zeros
 ##
-## Purpose of script: Clean & standardize cover data at each EDGE site so that it's ready for analyses and sites can be combined into one dataframe.
+## Purpose of script: Clean & standardize cover data at each EDGE site so that it's ready for analyses and sites can be combined into one dataframe. Additionally, fill zeros into unrecorded subplots to account for spatial rarity more accurately.
 ##
 ## Author: Carmen Watkins
 ##
