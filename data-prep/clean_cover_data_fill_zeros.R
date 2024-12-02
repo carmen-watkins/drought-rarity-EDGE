@@ -71,6 +71,15 @@ sev_temp <- sev_edge %>%
   filter(treatment != "D", ## remove monsoon timing treatment 
          !kartez %in% rm_kartez) ## remove unknowns/empty species
 
+
+
+
+
+
+
+
+
+
 ### clean species ####
 ## find species with genus id present, but no sp epithet id
 unk_epithet = sev_temp %>%
@@ -198,6 +207,7 @@ sev_comb = rbind(sbk_sub, sbl_sub) %>%
 ### check unknowns ####
 sort(unique(north_edge$Species))
 
+## check observations with codes
 unk_codes = c("UNKFCHY1", "UNKFCHY2", "UNKFCHY3", "UNKFCHY4", "UNKFCHY5", "UNKFCHY6", "UNKFCHY7", "UNKFCHY8", "UNKFHYS1", "UNKFHYS2", "UNKFHYS3", "UNKFHYS4","UNKFHYS5", "UNKFHYS7", "UNKFHYS8", "UNKFKNZ1", "UNKFKNZ2", "UNKFKNZ3", "UNKFSGS1", "UNKFSGS2", "UNKFSGS3", "UNKGRHYS1", "UNKGRHYS2","UNKHYS")
 
 north_unk_codes = north_edge %>%
@@ -205,6 +215,7 @@ north_unk_codes = north_edge %>%
 
 ## okay the codes of these seem to be UNK = unknown; F or GR for forb or grass? then site code; then numbers 1+ for the number of unknowns.
 
+#### RM BATCH 1 ####
 ## remove unknowns
 rm_no_info = c("oxytopis_like_legume", "seedling_unknown", "UK_Fuzzy_Aster", "UK_Tall_Phlox", "unk_Alien", "unk_alternate_leaf_forb", "unk_alternate_strong_midvein_hairy_margin", "UNK_Aster_rosette", "unk_Clover", "unk_fall_opposite_leaf", "unk_forb_soft_velvet", "unk_juicy_forb", "unk_Lepidium_like_forb", "unk_Milky_waxy", "unk_opposite_leaf", "Unk_overlapping_alt",  "unk_Primrose_like", "unk_Red_edged_forb", "unk_rush_unknown",  "unk_Three_Leaf_Unknown_forb", "UNKFCHY1", "UNKFCHY2", "UNKFCHY3", "UNKFCHY4", "UNKFCHY5", "UNKFCHY6", "UNKFCHY7", "UNKFCHY8", "UNKFHYS1", "UNKFHYS2", "UNKFHYS3", "UNKFHYS4","UNKFHYS5", "UNKFHYS7", "UNKFHYS8", "UNKFKNZ1", "UNKFKNZ2", "UNKFKNZ3",  "unkforb_opp_Lvs", "UNKFSGS1", "UNKFSGS2", "UNKFSGS3", "UNKGRHYS1", "UNKGRHYS2","UNKHYS", "unknown", "Unknown_dry_sad","unknown_forb", "Unknown_forb", "unknown_forb_tooth", "Unknown_grass", "Unknown_linear_lvs", "Unknown_milky_waxy", "Unknown_pilos_forb", "unknown_pinnately_lobed", "Unknown_rosette", "Unknown_Seedling", "unknown_shiny_alternate", "unknown_short_alternate", "Unknown_whorled_linear", "Unknown_woody", "UNKTRKNZ1", "UNKTRKNZ2", "blob_unknown", "Ulmus_sp.", "NA_NA", "Ulmus_americana", "unk_mustard_unknown")
 
@@ -246,6 +257,7 @@ sort(unique(unk_epithetN$genus))
 ## "Festuca" panicum, unk
 
 #### asclep ####
+##### DECISION PENDING ####
 asclep = north_temp %>%
   filter(genus == "Asclepias") %>% #, site == "HYS", species != "Asclepias_seedling") %>%
   group_by(site, year, species, block, plot) %>%
@@ -274,7 +286,6 @@ ggplot(asclepHYS, aes(x=year, y=plot, color = species)) +
   facet_wrap(~species, ncol = 6, nrow = 1) 
 
 ## plots, 1,7,8,17,28 all have 'Asclepias_sp'
-## doesn't seem like an easy way to separate it out; will have to just remove Asclepias_sp
 
 #### astrag ####
 astrag = north_temp %>%
@@ -332,6 +343,10 @@ cirsium = north_temp %>%
   summarise(num.obs = n())
 
 table(cirsium$site, cirsium$species)
+
+ggplot(cirsium, aes(x=year, y=plot, color = species)) +
+  geom_point(size = 3) +
+  facet_grid(site~species) 
 
 ## Cirsium sp seems to show up only at KNZ
 cirsiumKNZ = north_temp %>%
@@ -394,7 +409,7 @@ table(oenoth$site, oenoth$species)
 ggplot(oenoth, aes(x=year, y=plot, color = species)) +
   geom_point(size = 3) +
   facet_grid(site~species)
-ggsave("figures/Nov2024_postmeeting/oenoth_unknowns.png", width = 12, height = 8)
+##ggsave("figures/Nov2024_postmeeting/oenoth_unknowns.png", width = 12, height = 8)
 
 #### oroban ####
 oroban = north_temp %>%
@@ -456,7 +471,74 @@ panic = north_temp %>%
 table(panic$site, panic$species)
 ## remove panicum_unknown as there are only 2 observations but two other species are ID'ed to species level
 
+#### some info sp ####
+some_info_sp = north_temp %>%
+  filter(species %in% unk_some_info) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
 
+table(some_info_sp$site, some_info_sp$species)
+
+## huge_penstemon: change huge_penstemon to Penstemon_albidus @ CHY
+## panicum_unknown: remove panicum_unknown, as decided above
+## UK_onagraceac: remove UK_onagraceac; ID'ed to family level, not genus
+## unk_Artemisia_ludoviciana: remove unk_Artemisia_ludoviciana; no other Artemisia_ludoviciana found at CHY
+## unk_astragalus_oxytropis: remove unk_astragalus_oxytropis from CHY; most astragalus are ID'ed to species here and am already removing Astragalus_sp
+## keep unk_Eriogonum_Hays and merge with Eriogonum_effusum into Eriogonum sp as there is only one obs ID'ed to sp of effusum and 5 obs of unk_Eriogonum
+## change unk_Oenothera and unk_oenotheria to Oenothera_suffrutescens at CHY
+## keep unk_Oxytropis_sp. at CHY as there is only one species of Oxytropis here
+## unk_Stipa_veridas: remove unk_Stipa_veridas, there is only Hesperostipa_comata at sites
+## unk_Tall_astragulus: unk_Tall_astragulus found only at SGS where things were mostly lumped into ASOX; lump in with these if keeping ASOX or remove if not
+## Unknown_Cirsium: only one cirsium sp foudn at HYS; lump Unknown Cirsium into this
+## Unknown_ericoides_small: remove; no genus ericoides
+## Unknown_Erysimum: remove, no other Erysimum at CHY
+
+penstem = north_temp %>%
+  filter(genus %in% c("Penstemon")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(penstem$site, penstem$species)
+
+artemesia = north_temp %>%
+  filter(genus %in% c("Artemesia")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(artemesia$site, artemesia$species)
+
+eriogo = north_temp %>%
+  filter(genus %in% c("Eriogonum")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(eriogo$site, eriogo$species)
+
+oxytrop = north_temp %>%
+  filter(genus == "Oxytropis")%>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(oxytrop$site, oxytrop$species)
+
+stipa = north_temp %>%
+  filter(genus == "Hesperostipa")%>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(stipa$site, stipa$species)
+
+ericoides = north_temp %>%
+  filter(genus == "Ericoides")%>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(ericoides$site, ericoides$species)
+
+erysi = north_temp %>%
+  filter(genus == "Erysimum")%>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(erysi$site, erysi$species)
+
+#### RM BATCH 2 ####
+rm_batch2 = c("Asclepias_seedling",
+  
+  "panicum_unknown", "UK_onagraceac", "unk_Artemisia_ludoviciana", "unk_astragalus_oxytropis", "unk_Stipa_veridas", "Unknown_ericoides_small", "Unknown_Erysimum")
 
 ### quantify unknowns ####
 north_unknowns = north_edge %>%
