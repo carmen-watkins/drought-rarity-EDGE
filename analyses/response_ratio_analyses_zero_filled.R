@@ -89,9 +89,9 @@ cor(sum_edge_RR[sum_edge_RR$MAP_level == "Low",]$rank, sum_edge_RR[sum_edge_RR$M
 
 
 # Figure 3 ####
-rankD3 <- ggplot(edge_RR, aes(x= percrank, y=resp.ratio.site_D)) +
+rankD3 <- ggplot(edge_RR, aes(x= percrank, y=resp.ratio.site_D4)) +
   geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.5, linewidth = 2) +
+ # geom_smooth(aes(color = site), method = "lm", alpha = 0.5, linewidth = 2) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
