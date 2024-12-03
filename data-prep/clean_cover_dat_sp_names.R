@@ -112,7 +112,7 @@ table(glandularia$kartez, glandularia$plot)
 ## will stick with lumping all as GLBI2
 
 ### clean sp ####
-sbl_sp = sb %>%
+sbl_sp = sbl %>%
   
   ## lump all astragalus species as Astragalus_sp
   mutate(spcode = ifelse(genus == "Astragalus", "ASTSP", spcode),
@@ -396,7 +396,7 @@ table(astrag$year, astrag$species)
 ggplot(astrag, aes(x=year, y=plot, color = species)) +
   geom_point(size = 3) +
   facet_wrap(~species)
-## all 3 co-occur; lump together
+## remove Astragalus_sp
 
 chenop = chy_temp %>%
   filter(genus %in% c("Chenopodium")) %>%
@@ -410,15 +410,18 @@ festuca = chy_temp %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
 table(festuca$year, festuca$species)
-## only one observation
+## only one observation, can leave as is
 
 oenoth = chy_temp %>%
   filter(genus %in% c("Oenothera")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
 table(oenoth$year, oenoth$species)
-table(oenoth$year, oenoth$plot)
-## only one Oenothera species at HYS - could lump the two unknowns into this one? 
+
+ggplot(oenoth, aes(x=year, y=plot, color = species)) +
+  geom_point(size = 3) +
+  facet_wrap(~species)
+## remove Oenothera_sp.
 
 oroban = chy_temp %>%
   filter(genus %in% c("Orobanche")) %>%
@@ -451,27 +454,179 @@ table(sporob$year, sporob$species)
 unks = chy_temp %>%
   filter(genus %in% c("Unknown", "unk"))
 table(unks$year, unks$species)
-
 ## unk_Artemisia_ludoviciana unk_astragalus_oxytropis unk_Oxytropis_sp. unk_Stipa_veridas Unknown_Erysimum
+
+artemesia = chy_temp %>%
+  filter(genus %in% c("Artemesia", "Artemisia")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(artemesia$year, artemesia$species)
+## no Artemisia_ludoviciana at all; remove 'unk_Artemisia_ludoviciana'
+
+astrag_oxy = chy_temp %>%
+  filter(genus %in% c("Astragalus", "Oxytropis")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(astrag_oxy$year, astrag_oxy$species)
+table(astrag_oxy$year, astrag_oxy$plot)
+
+ggplot(astrag_oxy, aes(x=year, y=plot, color = species)) +
+  geom_point(size = 3)+
+  geom_hline(yintercept = 17) +
+  facet_wrap(~species) +
+  geom_vline(xintercept = 2018) +
+  geom_vline(xintercept = 2019) +
+  geom_vline(xintercept = 2021)
+
+unkASOX = unks %>%
+  filter(species %in% c("unk_astragalus_oxytropis", "unk_Oxytropis_sp.")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(unkASOX$year, unkASOX$species)
+table(unkASOX$year, unkASOX$plot)
+
+ggplot(unkASOX, aes(x=year, y=plot, color = species)) +
+  geom_point(size = 3)
+
+## this really seems like it could be the same thing as Oxytropis_lambertii in plot 17, which was found 2016 & 2017; unk_astragalus_oxytropis was found in same plot in 2018 & 2019; unk_oxytropis_sp was found in same plot in 2021...
+## remove for now, but consider lumping
+### DECISION HERE ####
+
+stipa = chy_temp %>%
+  filter(genus %in% c("Nassella", "Stipa")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(stipa$year, stipa$species)
+table(stipa$year, stipa$plot)
+
+ggplot(stipa, aes(x=year, y=plot, color = species)) +
+  geom_point(size = 3) +
+  #geom_hline(yintercept = 17) +
+  facet_wrap(~species) 
+
+unkSt = unks %>%
+  filter(species == "unk_Stipa_veridas") %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(unkSt$year, unkSt$plot)
+## remove unk_Stipa_veridas, not in the same plot as Nassella viridula
+
+erysim = chy_temp %>%
+  filter(genus %in% c("Erysimum")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(erysim$year, erysim$species)
+## no sp in this genus here
+## remove Unknown_Erysimum
+
+## "huge_penstemon"   
+penstem = chy_temp %>%
+  filter(genus %in% c("Penstemon", "huge")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(penstem$year, penstem$species)
+## only one penstemon species
+
+ggplot(penstem, aes(x=year, y=plot, color = species)) +
+  geom_point(size = 3)
+## lump this into Penstemon_albidus
 
 ### clean sp ####
 chy_sp = chy_temp %>%
-  filter(!species %in% c("Astragalus_sp.")) %>%
+  filter(!species %in% c("Astragalus_sp.", "Oenothera_sp.", "unk_Artemisia_ludoviciana", "unk_astragalus_oxytropis", "unk_Oxytropis_sp.", "unk_Stipa_veridas", "Unknown_Erysimum")) %>%
+  
+  ## fix penstemon
+  mutate(genus = ifelse(species %in% c("huge_penstemon"), "Penstemon", genus),
+          spcode = ifelse(species %in% c("huge_penstemon"), "PENALB", spcode),
+          species = ifelse(species %in% c("huge_penstemon"), "Penstemon_albidus", species))
 
-  mutate(
-    
-         
-         ## lump oenothera
-         genus = ifelse(species %in% c("unk_Oenothera", "unk_oenotheria", "Oenothera_suffrutescens"), "Oenothera", genus),
-         spcode = ifelse(species %in% c("unk_Oenothera", "unk_oenotheria", "Oenothera_suffrutescens"), "OENSP", spcode),
-         species = ifelse(species %in% c("unk_Oenothera", "unk_oenotheria", "Oenothera_suffrutescens"), "Oenothera_sp", species)
-         
-  )
-
-sort(unique(hys_sp$species))
-sort(unique(hys_sp$genus))
-sort(unique(hys_sp$sp.ep))
-
+sort(unique(chy_sp$species))
+sort(unique(chy_sp$genus))
+sort(unique(chy_sp$sp.ep))
 
 ## SGS ####
+sort(unique(sgs$species))
+## to remove right away 
+## remove trees + unknowns with no identifying genus info
+sgs_rm1 = c("unk_Alien", "unk_Lepidium_like_forb", "unk_Red_edged_forb", "UNKFSGS2", "UNKFSGS3", "Unknown_grass", "Unknown_milky_waxy")
 
+sgs_temp = sgs %>%
+  filter(!species %in% sgs_rm1)
+
+sort(unique(sgs_temp$genus))
+sort(unique(sgs_temp$sp.ep))
+
+## find species with genus id present, but no sp epithet id
+sgs_unk_epithet = sgs_temp %>%
+  filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling", "unknown", "sp", "small", "Hays", "ASOX", "astragalus", "unk") | genus %in% c("unk"))
+
+sort(unique(sgs_unk_epithet$genus))
+# "ASOX"        "Chenopodium" "Euphorbia"   "Oenothera"   "Orobanche"  "unk"
+
+astrag = sgs_temp %>%
+  filter(genus %in% c("Astragalus", "ASOX", "unk", "Oxytropis")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(astrag$year, astrag$species)
+
+ggplot(astrag, aes(x=year, y=plot, color = species)) +
+  geom_point(size = 3) +
+  facet_wrap(~species)
+## will have to lump all of these together
+
+chenop = sgs_temp %>%
+  filter(genus %in% c("Chenopodium")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(chenop$year, chenop$species)
+## already lumped at genus level
+
+euphorb = sgs_temp %>%
+  filter(genus %in% c("Euphorbia")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(euphorb$year, euphorb$species)
+## only one observation, can leave as is
+
+oenoth = sgs_temp %>%
+  filter(genus %in% c("Oenothera")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(oenoth$year, oenoth$species)
+
+ggplot(oenoth, aes(x=year, y=plot, color = species)) +
+  geom_point(size = 3) +
+  facet_wrap(~species)
+## seems like oenothera sp was eventually ID'ed as Oenothera_albicaulis, lump all together
+
+oroban = sgs_temp %>%
+  filter(genus %in% c("Orobanche")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(oroban$year, oroban$species)
+## already lumped at genus level
+
+unks = sgs_temp %>%
+  filter(genus %in% c("Unknown", "unk"))
+table(unks$year, unks$species)
+## unk_Tall_astragulus
+## already decided to lump this one with ASOX
+
+### clean sp ####
+sgs_sp = sgs_temp %>%
+  
+  ## lump astragalus and oxytropis
+  mutate(spcode = ifelse(genus %in% c("Astragalus", "ASOX", "unk", "Oxytropis"), "ASOX", spcode),
+         species = ifelse(genus %in% c("Astragalus", "ASOX", "unk", "Oxytropis"), "Astragalus_Oxytropis_sp", species),
+         genus = ifelse(genus %in% c("Astragalus", "ASOX", "unk", "Oxytropis"), "Astragalus_Oxytropis", genus),
+
+         ## lump oenothera
+         spcode = ifelse(genus %in% c("Oenothera"), "OENSP", spcode),
+         species = ifelse(genus %in% c("Oenothera"), "Oenothera_sp", species))
+
+sort(unique(sgs_sp$species))
+sort(unique(sgs_sp$genus))
+sort(unique(sgs_sp$sp.ep))
+
+# Clean Env ####
+rm(amaran, artemesia, asclep, astrag, astrag_oxy, chenop, chloris, chy, chy_rm1, chy_temp, chy_unk_epithet, cirsium, croton, eleoch, eriogo, erysim, euphorb, festuca, glandularia, hys, hys_rm1, hys_temp, hys_unk_epithet, knz, knz_rm1, knz_unk_epithet, melilo, oenoth, oroban, panic, paron, penstem, sbk, sbk_unk_epithet, sbl, sbl_unk_epithet, sgs, sgs_rm1, sgs_temp, sgs_unk_epithet, silene, sphaer, sporob, stipa, triodan, unkASOX, unkC, unkO, unks, unkSt)

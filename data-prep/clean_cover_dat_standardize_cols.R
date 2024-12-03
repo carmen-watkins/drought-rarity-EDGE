@@ -30,7 +30,6 @@ sev_edge <- read.csv("data/sev_download/sev298_NPP_edge_biomass.csv")
 # unique(sev_edge$year)
     ## 2012 = pre-treatment year
     ## according to meta-data drought was applied 2013-2019
-
 sev_temp <- sev_edge %>%
   mutate(site = ifelse(site == "EDGE_black", "SBK", "SBL"), ## fix site code
          subplot = quad, ## rename quad as subplot to match north sites
@@ -40,7 +39,8 @@ sev_temp <- sev_edge %>%
          treatment.year = ifelse(year == 2012, "pre-treatment", 
                                  ifelse((2012 < year) & (year < 2020), "drought", "recovery"))) %>%
   filter(treatment != "D") %>% ## remove monsoon timing treatment 
-  mutate(across(c(spcode), toupper))
+  mutate(across(c(spcode), toupper)) %>%
+  select(-date, -web, -transect, -quad, -family, -LifeHistory, -PhotoPath, -FunctionalGroup, -volume, -biomass.BM, -biomass.BIM, -SiteCluster, -MetStation, -season.precip, -GDD, -SPEI.comp)
 
 ## North Sites ####
 north_temp <- north_edge %>%
@@ -67,7 +67,8 @@ north_temp <- north_edge %>%
          experiment.year = year - 2013, ## 2013 is pre-treat year
          treatment.year = ifelse(year == 2013, "pre-treatment", 
                                  ifelse((2013 < year) & (year < 2018), "drought", "recovery"))) %>%
-  mutate(across(c(spcode), toupper))
+  mutate(across(c(spcode), toupper)) %>%
+  select(-kartez, -Spcode, -Species, -spepcode, -genuscode, -Site, -Plot, -Block, -Trt, -Subplot, -Year)
 
 # Split ####
 ## split by sites to clean species names individually

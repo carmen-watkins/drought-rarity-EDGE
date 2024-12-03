@@ -1,5 +1,5 @@
 # Header #### 
-## Script name: Classify Rank, Persistence with Zero filled data
+## Script name: Classify Rank & Persistence with zero filled data
 ##
 ## Purpose of script: Classify each species at each site by its rank and persistence at the site using data from control plots in the EDGE experiment.
 ##
@@ -9,9 +9,7 @@
 
 # Set up env ####
 ## read in cleaned cover data
-source("data-prep/cleaning_fill_zeros_at_subplot_edge.R") 
-
-library(ggpubr)
+source("data-prep/clean_cover_dat_fill_zeros.R")
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -29,7 +27,7 @@ controls <- edge_all %>%
 ## keep the 0's
 rank_mean <- controls %>%
   group_by(site, species) %>% ## take the mean of a species at a site right away
-  ## this averages over all the subplots, including 0-filled subs
+  ## this averages over all the subplots, including 0-filled subs; also averages across all years
   summarise(mean.ctrl.cov = mean(max.cover)) %>%
   ungroup() %>%
   group_by(site) %>%
@@ -45,13 +43,15 @@ persist_site <- controls %>%
   summarise(persistence.site = sum(pres.abs.site)/n())
 
 # Merge Rank & Persist ####
-rank_persist <- left_join(persist_site, rank_mean, by = c("site", "species"))
+rank_persist <- left_join(persist_site, rank_mean, by = c("site", "species")) %>%
+  mutate(spatial_rarity = 1 - percrank,
+         temporal_rarity = 1 - persistence.site)
 
 # Clean Env ####
 rm(controls, persist_site, rank_mean)
 
-
-
+# Rank abundance curve ####
+## set site as a factor
 rank_persist$site = factor(rank_persist$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
 ggplot(rank_persist, aes(x=percrank, y=mean.ctrl.cov)) +
@@ -64,8 +64,4 @@ ggplot(rank_persist, aes(x=percrank, y=mean.ctrl.cov)) +
   xlab("Percent Rank") +
   ylab("Mean Species Cover")
 
-ggsave("figures/Nov2024_meeting/updated_RAC.png", width = 8, height = 6)
-
-
-
-
+#ggsave("figures/Nov2024_meeting/updated_RAC.png", width = 8, height = 6)

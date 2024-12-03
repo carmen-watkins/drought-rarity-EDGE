@@ -15,14 +15,8 @@
 ## read in cleaned data
 source("data-prep/classify_rank_persistence.R")
 
+## load packages
 library(ggpubr)
-
-## double check
-SEVcheck = edge_all %>%
-  filter(site %in% c("SBK", "SBL"), 
-         treatment.year == "recovery")
-
-sort(unique(SEVcheck$year))
 
 # Resp Ratio ####
 ## Drought ####
