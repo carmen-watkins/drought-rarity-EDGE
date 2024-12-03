@@ -21,7 +21,7 @@ library(xtable)
 source("analyses/calc_response_ratio.R") 
 
 ## load site level predictors
-source("analyses/prep_model_predictors.R")
+source("data-prep/prep_model_predictors.R")
 
 ## join data
 edge_RR_preds = left_join(edge_RR, site_pred_scaled, by = "site")
@@ -71,11 +71,15 @@ md6s = lmer(resp.ratio.site_D6 ~ spatial_rarity + z_temp*z_precip + BP.dom.site 
 summary(md6s)
 anova(md6s)
 
+print(xtable(anova(md6s)))
+
 ### Temporal Rarity ####
 md6t = lmer(resp.ratio.site_D6 ~ temporal_rarity + z_temp*z_precip + BP.dom.site + temporal_rarity:z_precip + temporal_rarity:BP.dom.site + (temporal_rarity|site), data = DRR6)
 
 summary(md6t)
 anova(md6t)
+
+print(xtable(anova(md6t)))
 
 # Post-Drought ####
 ## full ####
