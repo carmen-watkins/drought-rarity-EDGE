@@ -68,6 +68,13 @@ sbk_sp = sbk %>%
          species = ifelse(genus == "Sporobolus", "Sporobolus_sp", species),
          kartez = ifelse(genus == "Sporobolus", "SPORO", kartez))
 
+### quantify unknowns ####
+sbk_unks = sbk %>%
+  filter(species == "Sphaeralcea_NA" | kartez %in% c("UNKNOWN"))
+
+unique(sbk_unks$species)
+nrow(sbk_unks)
+
 ## SBL ####
 sort(unique(sbl$species))
 sort(unique(sbl$genus))
@@ -206,6 +213,14 @@ knz_sp = knz %>%
 sort(unique(knz_sp$species))
 sort(unique(knz_sp$genus))
 sort(unique(knz_sp$sp.ep))
+
+### quantify unknowns ####
+knz_unks = knz %>%
+  filter(species %in% knz_rm1 | species %in% c("panicum_unknown", "Unknown_ericoides_small"),
+         !species %in% c("Ulmus_americana", "Ulmus_sp."))
+
+length(unique(knz_unks$species))
+nrow(knz_unks)
 
 ## HYS ####
 sort(unique(hys$species))
@@ -366,6 +381,14 @@ sort(unique(hys_sp$sp.ep))
 #check = hys_sp %>%
   #filter(sp.ep == "unknown")
 ## the unknown species is a lumped Astragalus, all ok
+
+### quantify unknowns ####
+hys_unks = hys %>%
+  filter(species %in% hys_rm1 | species %in% c("Unknown_Cirsium", "Asclepias_seedling", "Asclepias_sp."),
+         !species %in% c("Ulmus_americana", "Ulmus_sp."))
+
+length(unique(hys_unks$species))
+nrow(hys_unks)
 
 ## CHY ####
 sort(unique(chy$species))
@@ -544,6 +567,13 @@ sort(unique(chy_sp$species))
 sort(unique(chy_sp$genus))
 sort(unique(chy_sp$sp.ep))
 
+### quantify unknowns ####
+chy_unks = chy %>%
+  filter(species %in% chy_rm1 | species %in% c("Astragalus_sp.", "Oenothera_sp.", "unk_Artemisia_ludoviciana", "unk_astragalus_oxytropis", "unk_Oxytropis_sp.", "unk_Stipa_veridas", "Unknown_Erysimum"))
+
+length(unique(chy_unks$species))
+nrow(chy_unks)
+
 ## SGS ####
 sort(unique(sgs$species))
 ## to remove right away 
@@ -627,6 +657,14 @@ sgs_sp = sgs_temp %>%
 sort(unique(sgs_sp$species))
 sort(unique(sgs_sp$genus))
 sort(unique(sgs_sp$sp.ep))
+
+### quantify unknowns ####
+sgs_unks = sgs %>%
+  filter(species %in% sgs_rm1)
+
+length(unique(sgs_unks$species))
+nrow(sgs_unks)
+
 
 # Clean Env ####
 rm(amaran, artemesia, asclep, astrag, astrag_oxy, chenop, chloris, chy, chy_rm1, chy_temp, chy_unk_epithet, cirsium, croton, eleoch, eriogo, erysim, euphorb, festuca, glandularia, hys, hys_rm1, hys_temp, hys_unk_epithet, knz, knz_rm1, knz_unk_epithet, melilo, oenoth, oroban, panic, paron, penstem, sbk, sbk_unk_epithet, sbl, sbl_unk_epithet, sgs, sgs_rm1, sgs_temp, sgs_unk_epithet, silene, sphaer, sporob, stipa, triodan, unkASOX, unkC, unkO, unks, unkSt)

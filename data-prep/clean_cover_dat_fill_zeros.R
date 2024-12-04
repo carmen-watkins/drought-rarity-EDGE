@@ -14,7 +14,8 @@ source("data-prep/clean_cover_dat_sp_names.R")
 ## SBL ####
 sbl_fill = sbl_sp %>%
   group_by(site, treatment, block, plot, subplot, year, experiment.year, treatment.year, species, spcode, kartez) %>% 
-  ## get max cover
+  
+  ## get max cover by season
   summarise(max.cover = max(cover)) %>%
   
   ## change from E -> D for more intuitive notation
@@ -29,7 +30,8 @@ sbl_fill = sbl_sp %>%
 ## SBK ####
 sbk_fill = sbk_sp %>%
   group_by(site, treatment, block, plot, subplot, year, experiment.year, treatment.year, species, spcode, kartez) %>% 
-  ## get max cover
+  
+  ## get max cover by season
   summarise(max.cover = max(cover)) %>%
   
   ## change from E -> D for more intuitive notation
@@ -45,8 +47,8 @@ sbk_fill = sbk_sp %>%
 ## separate and fill with 0's  
 knz_fill = knz_sp %>%
   select(-sp.ep, -spcode, -genus) %>%
-  ## there are duplicate rows, very likely from lumping certain genera
   
+  ## there are duplicate rows, very likely from lumping certain genera; within a subplot, add cover of lumped species
   group_by(year, experiment.year, treatment.year, site, block, plot, subplot,  treatment, species) %>%
   summarise(max.cover2 = sum(max.cover)) %>%
   ungroup() %>%
@@ -58,8 +60,8 @@ knz_fill = knz_sp %>%
 ## HYS ####
 hys_fill = hys_sp %>%
   select(-sp.ep, -spcode, -genus) %>%
-  ## there are duplicate rows, very likely from lumping certain genera
   
+  ## there are duplicate rows, very likely from lumping certain genera; within a subplot, add cover of lumped species
   group_by(year, experiment.year, treatment.year, site, block, plot, subplot,  treatment, species) %>%
   summarise(max.cover2 = sum(max.cover)) %>%
   ungroup() %>%
@@ -71,8 +73,8 @@ hys_fill = hys_sp %>%
 ## CHY ####
 chy_fill = chy_sp %>%
   select(-sp.ep, -spcode, -genus) %>%
-  ## there are duplicate rows, very likely from lumping certain genera
   
+  ## there are duplicate rows, very likely from lumping certain genera; within a subplot, add cover of lumped species
   group_by(year, experiment.year, treatment.year, site, block, plot, subplot,  treatment, species) %>%
   summarise(max.cover2 = sum(max.cover)) %>%
   ungroup() %>%
@@ -84,8 +86,8 @@ chy_fill = chy_sp %>%
 ## SGS ####
 sgs_fill = sgs_sp %>%
   select(-sp.ep, -spcode, -genus) %>%
-  ## there are duplicate rows, very likely from lumping certain genera
   
+  ## there are duplicate rows, very likely from lumping certain genera; within a subplot, add cover of lumped species
   group_by(year, experiment.year, treatment.year, site, block, plot, subplot,  treatment, species) %>%
   summarise(max.cover2 = sum(max.cover)) %>%
   ungroup() %>%

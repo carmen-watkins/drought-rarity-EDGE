@@ -107,22 +107,29 @@ mpds_first = lmer(resp.ratio.site_PDfirst ~ spatial_rarity + z_temp*z_precip + B
 summary(mpds_first)
 anova(mpds_first)
 
+print(xtable(anova(mpds_first)))
+
 ### Temporal Rarity ####
 mpdt_first = lmer(resp.ratio.site_PDfirst ~ temporal_rarity + z_temp*z_precip + BP.dom.site + temporal_rarity:z_precip + temporal_rarity:BP.dom.site + (temporal_rarity|site), data = PDRRfirst)
 
 summary(mpdt_first)
 anova(mpdt_first)
 
+print(xtable(anova(mpdt_first)))
+
 ## final ####
 ### Spatial Rarity ####
 mpds_final = lmer(resp.ratio.site_PDfinal ~ spatial_rarity + z_temp*z_precip + BP.dom.site + spatial_rarity:z_precip + spatial_rarity:BP.dom.site + (spatial_rarity|site), data = PDRRfinal)
-# ISSUE ####
-## model failed to converge, negative eigen value
+
 summary(mpds_final)
 anova(mpds_final)
+
+print(xtable(anova(mpds_final)))
 
 ### Temporal Rarity ####
 mpdt_final = lmer(resp.ratio.site_PDfinal ~ temporal_rarity + z_temp*z_precip + BP.dom.site + temporal_rarity:z_precip + temporal_rarity:BP.dom.site + (temporal_rarity|site), data = PDRRfinal)
 
 summary(mpdt_final)
 anova(mpdt_final)
+
+print(xtable(anova(mpdt_final)))
