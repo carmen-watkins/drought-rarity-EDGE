@@ -45,16 +45,26 @@ PDRRfinal = edge_RR_preds %>%
 # Drought ####
 ## 4-year ####
 ### Spatial Rarity ####
-md4s = lmer(resp.ratio.site_D4 ~ spatial_rarity + z_temp*z_precip + BP.dom.site + spatial_rarity:z_precip + spatial_rarity:BP.dom.site + (spatial_rarity|site), data = DRR4)
+## start with most conservative model
+md4s = lmer(resp.ratio.site_D4 ~ spatial_rarity + z_temp*z_precip + dom.rounded + spatial_rarity:z_precip + spatial_rarity:dom.rounded + (spatial_rarity|site), data = DRR4)
 
+## summarise and create table
 summary(md4s)
 anova(md4s)
-
 print(xtable(anova(md4s)))
+print(xtable(summary(md4s)$coefficients))
 
+## try alternative model with random intercept but no random slope
 md4s_alt = lmer(resp.ratio.site_D4 ~ spatial_rarity + z_temp*z_precip + BP.dom.site + spatial_rarity:z_precip + spatial_rarity:BP.dom.site + (1|site), data = DRR4)
 summary(md4s_alt)
 anova(md4s_alt)
+
+## try model with precip specified for particular interval
+md4s_pi = lmer(resp.ratio.site_D4 ~ spatial_rarity + z_temp*z_precipDRR4 + BP.dom.site + spatial_rarity:z_precipDRR4 + spatial_rarity:BP.dom.site + (spatial_rarity|site), data = DRR4)
+
+summary(md4s_pi)
+anova(md4s_pi)
+print(xtable(anova(md4s_pi)))
 
 ### Temporal Rarity ####
 md4t = lmer(resp.ratio.site_D4 ~ temporal_rarity + z_temp*z_precip + BP.dom.site + temporal_rarity:z_precip + temporal_rarity:BP.dom.site + (temporal_rarity|site), data = DRR4)
@@ -63,6 +73,7 @@ summary(md4t)
 anova(md4t)
 
 print(xtable(anova(md4t)))
+print(xtable(summary(md4t)$coefficients))
 
 ## 6-year ####
 ### Spatial Rarity ####
@@ -91,6 +102,12 @@ summary(mpds_full)
 anova(mpds_full)
 
 print(xtable(anova(mpds_full)))
+print(xtable(summary(mpds_full)$coefficients))
+
+mpds_fullalt = lmer(resp.ratio.site_PDfull ~ spatial_rarity + z_temp*z_precip + BP.dom.site + spatial_rarity:z_precip + spatial_rarity:BP.dom.site + (1|site), data = PDRRfull)
+
+summary(mpds_fullalt)
+anova(mpds_fullalt)
 
 ### Temporal Rarity ####
 mpdt_full = lmer(resp.ratio.site_PDfull ~ temporal_rarity + z_temp*z_precip + BP.dom.site + temporal_rarity:z_precip + temporal_rarity:BP.dom.site + (temporal_rarity|site), data = PDRRfull)
@@ -99,6 +116,7 @@ summary(mpdt_full)
 anova(mpdt_full)
 
 print(xtable(anova(mpdt_full)))
+print(xtable(summary(mpdt_full)$coefficients))
 
 ## first ####
 ### Spatial Rarity ####

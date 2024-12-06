@@ -38,3 +38,10 @@ ggarrange(a, b, c, nrow = 1, ncol = 3, common.legend = TRUE, legend = "right", l
 ggsave("figures/Dec2024/site_predictors.png", width = 11, height = 4)
 
 rm(a, b, c)
+
+sites_tab = site_pred_scaled %>%
+  select(site, grassland.type, mean_ppt, sd_ppt, MAT.C, dom.rounded)
+
+sites_tab$site = factor(sites_tab$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+
+xtable(sites_tab)

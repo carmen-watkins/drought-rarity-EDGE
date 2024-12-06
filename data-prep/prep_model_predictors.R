@@ -54,7 +54,24 @@ site_pred_scaled = site_pred_final %>%
          sd_ppt = sd(mean_ppt),
          z_precip = (mean_ppt - mean_ppt_across)/sd_ppt,
          z_temp = (MAT.C - mean_temp)/sd_temp, 
-         dom.rounded = round(BP.dom.site, digits = 3))
+         dom.rounded = round(BP.dom.site, digits = 3),
+         
+         ## scale ppt intervals
+         meanDRR4 = mean(pptDRR4),
+         sdDRR4 = sd(pptDRR4),
+         meanPDRRfull = mean(pptPDRRfull),
+         sdPDRRfull = sd(pptPDRRfull),
+         meanPDRRfinal = mean(pptPDRRfinal),
+         sdPDRRfinal = sd(pptPDRRfinal),
+         meanPDRRfirst = mean(pptPDRRfirst),
+         sdPDRRfirst = sd(pptPDRRfirst),
+         
+         z_precipDRR4 = (pptDRR4 - meanDRR4)/sdDRR4,
+         z_precipPDRRfull = (pptPDRRfull - meanPDRRfull)/sdPDRRfull,
+         z_precipPDRRfinal = (pptPDRRfinal - meanPDRRfinal)/sdPDRRfinal,
+         z_precipPDRRfirst = (pptPDRRfirst - meanPDRRfirst)/sdPDRRfirst
+         
+         )
 
 # Clean Env ####
 rm(site_pred, site_pred_final, BP_dominance, controls, MAP, site_ppt, dom, ppt_temp, edge_all, rank_persist)
