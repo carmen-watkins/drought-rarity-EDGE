@@ -16,6 +16,7 @@ sort(unique(sbk$species))
 sort(unique(sbk$genus))
 sort(unique(sbk$kartez)) 
 ## "UNKNOWN", "EMPTY" present, remove
+sort(unique(sbk$sp.epithet))
 
 ## find species with genus id present, but no sp epithet id
 sbk_unk_epithet = sbk %>%
@@ -27,11 +28,13 @@ unique(sbk_unk_epithet$genus)
 
 astrag = sbk %>%
   filter(genus == "Astragalus") %>%
-  group_by(site, species, year) %>%
+  group_by(site, species, year, block, plot) %>%
   summarise(num.obs = n())
 ## seems like astragalus was perhaps not identified by species until 2016
 ## lump "Astragalus_missouriensis", "Astragalus_NA", and "Astragalus_nuttallianus" all as "Astragalus_sp"
 ## kartez to ASTRA
+table(astrag$species, astrag$plot)
+table(astrag$species, astrag$year)
 
 sphaer = sbk %>%
   filter(genus == "Sphaeralcea") %>%
@@ -51,6 +54,9 @@ sporob = sbk %>%
 ## kartez to SPORO
 ## can only determine species by reproductive structures, so if no seedheads in a year sp.epithet is marked as NA
 table(sporob$species, sporob$plot)
+table(sporob$species, sporob$year)
+
+unique(sporob$species)
 
 ### clean sp ####
 sbk_sp = sbk %>%
@@ -82,7 +88,7 @@ sort(unique(sbl$kartez))
 
 ## find species with genus id present, but no sp epithet id
 sbl_unk_epithet = sbl %>%
-  filter(is.na(sp.epithet))
+  filter(is.na(sp.epithet) | sp.epithet %in% c("sp.", "sp. ", "Seedling", "seedling", "unknown", "sp", "small"))
 
 unique(sbl_unk_epithet$genus)
 ## 2 genera with unidentified sp epithets
@@ -107,6 +113,7 @@ sporob = sbl %>%
 ## kartez to SPORO
 ## can only determine species by reproductive structures, so if no seedheads in a year sp.epithet is marked as NA
 table(sporob$species, sporob$plot)
+table(sporob$species, sporob$year)
 
 glandularia = sbl %>%
   filter(genus == "Glandularia") %>%
@@ -145,8 +152,11 @@ sort(unique(knz$sp.ep))
 ## remove trees + unknowns with no identifying genus info
 knz_rm1 = c("blob_unknown", "Ulmus_americana", "Ulmus_sp.", "unk_rush_unknown", "UNKFKNZ1", "UNKFKNZ2", "Unknown_Seedling", "UNKTRKNZ1", "UNKTRKNZ2")
 
+knz_temp = knz %>%
+  filter(!species %in% knz_rm1)
+
 ## find species with genus id present, but no sp epithet id
-knz_unk_epithet = knz %>%
+knz_unk_epithet = knz_temp %>%
   filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling", "unknown", "sp", "small"))
 
 unique(knz_unk_epithet$genus)
@@ -164,38 +174,42 @@ cirsium = knz %>%
   summarise(num.obs = n())
 table(cirsium$site, cirsium$species)
 ## just 2 observations; lump these together
+table(cirsium$species, cirsium$year)
+table(cirsium$species, cirsium$plot)
 
 eleoch = knz %>%
   filter(genus %in% c("Eleocharis")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(eleoch$site, eleoch$species)
+table(eleoch$species, eleoch$year)
+table(eleoch$species, eleoch$plot)
 ## only Eleocharis_sp obs; leave as is
 
 euphorb = knz %>%
   filter(genus %in% c("Euphorbia")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(euphorb$site, euphorb$species)
+table(euphorb$species, euphorb$year)
+table(euphorb$species, euphorb$plot)
 ## lump all as euphorbia species since majority are already lumped
 
 panic = knz %>%
   filter(genus %in% c("panicum", "Panicum")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(panic$year, panic$species)
+table(panic$species, panic$year)
+table(panic$species, panic$plot)
 ## remove panicum_unknown as there are only 2 observations but two other species are ID'ed to species level
 
-unks = knz %>%
+unks = knz_temp %>%
   filter(genus %in% c("Unknown", "unk"))
 table(unks$year, unks$species)
 ## unk_rush_unknown & Unknown_Seedling already marked for removal
 ## Unknown_ericoides_small should be removed, ericoides is not a genus
 
 ### clean sp ####
-knz_sp = knz %>%
-  filter(!species %in% knz_rm1,
-         !species %in% c("panicum_unknown", "Unknown_ericoides_small")) %>%
+knz_sp = knz_temp %>%
+  filter(!species %in% c("panicum_unknown", "Unknown_ericoides_small")) %>%
   
   ## lump cirsium
   mutate(spcode = ifelse(genus %in% c("Circium", "Cirsium"), "CIRSP", spcode),
@@ -245,16 +259,32 @@ asclep = hys_temp %>%
   filter(genus == "Asclepias") %>% 
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(asclep$year, asclep$species)
+table(asclep$species, asclep$year)
+table(asclep$species, asclep$plot)
 ### DECISION HERE ####
 ## lump all or remove Asclepias_sp. observations? 
 ## removing unknowns for now
+## REMOVE
+
+ggplot(asclep, aes(x=year, y=plot, color = species)) +
+  geom_point() +
+  facet_wrap(~species, nrow = 1, ncol = 6)
+
+virid_sp = asclep %>%
+  filter(species %in% c("Asclepias_sp.", "Asclepias_viridis"))
+
+ggplot(virid_sp, aes(x=year, y=plot, color = species)) +
+  geom_jitter()
+
+table(virid_sp$plot, virid_sp$species)
+
 
 chenop = hys_temp %>%
   filter(genus %in% c("Chenopodium")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
 table(chenop$year, chenop$species)
+table(chenop$species, chenop$plot)
 ## already lumped at genus level
 
 chloris = hys_temp %>%
@@ -268,40 +298,47 @@ euphorb = hys_temp %>%
   filter(genus %in% c("Euphorbia", "Euphorbiadavidii")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(euphorb$year, euphorb$species)
+table(euphorb$species, euphorb$year)
+table(euphorb$species, euphorb$plot)
 ## lump all as euphorbia species since majority are already lumped
 
 melilo = hys_temp %>%
   filter(genus %in% c("Melilotus")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(melilo$year, melilo$species)
+table(melilo$species, melilo$year)
+table(melilo$species, melilo$plot)
+
 ## already lumped at genus level
 
 triodan = hys_temp %>%
   filter(genus %in% c("Triodanis")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(triodan$year, triodan$species)
+table(triodan$species, triodan$year)
 ## already lumped at genus level
 
 croton = hys_temp %>%
   filter(genus %in% c("Croton")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(croton$year, croton$species)
+table(croton$species, croton$year)
 ## already lumped at genus level
 
 astrag = hys_temp %>%
   filter(genus %in% c("Astragalus")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(astrag$year, astrag$species)
+table(astrag$species, astrag$year)
+table(astrag$species, astrag$plot)
 ## mostly Astragalus_sp, one Astragalus_unknown, some split out to a speicfic species; lump all of these
 
 unks = hys_temp %>%
-  filter(genus %in% c("Unknown", "unk"))
-table(unks$year, unks$species)
+  filter(genus %in% c("Unknown", "unk")) %>%
+  group_by(site, year, species, block, plot) %>%
+  summarise(num.obs = n())
+table(unks$species, unks$year)
+table(unks$species, unks$plot)
 
 ## unk_Eriogonum_Hays unk_Oenothera unk_oenotheria Unknown_Cirsium
 
@@ -309,24 +346,28 @@ eriogo = hys_temp %>%
   filter(genus %in% c("Eriogonum")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(eriogo$year, eriogo$species)
+table(eriogo$species, eriogo$year)
+table(eriogo$species, eriogo$plot)
 ## only one eriogonum observation otherwise; lump the unk_Eriogonum_Hays into this
 
 oenoth = hys_temp %>%
   filter(genus %in% c("Oenothera")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(oenoth$year, oenoth$species)
-table(oenoth$year, oenoth$plot)
+table(oenoth$species, oenoth$year)
+table(oenoth$species, oenoth$plot)
 ## only one Oenothera species at HYS - could lump the two unknowns into this one? 
 
 unkO = unks %>%
   filter(species %in% c("unk_Oenothera", "unk_oenotheria"))
 table(unkO$year, unkO$plot)
+table(unkO$species, unkO$year)
 ## one of the unknowns shows up in the same plot as an Oenothera_suffratescens
 
 ### DECISION HERE ####
-## lump for now, but run by someone else
+## lump for now? but run by someone else
+## could also remove
+## remove
 
 cirsium = hys_temp %>%
   filter(genus %in% c("Circium", "Cirsium")) %>%
@@ -343,8 +384,7 @@ table(unkC$year, unkC$plot)
 ## the one unknown Cirsium was found in 2021, when multiple C. undulatum were found as well. 
 ## the unknown was found in a different plot than other observed C. undulatum individuals.
 
-### DECISION HERE ####
-## either remove the unknown observation or keep as its own species
+## remove the unknown
 
 
 ### clean sp ####
@@ -413,7 +453,7 @@ astrag = chy_temp %>%
   filter(genus %in% c("Astragalus")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(astrag$year, astrag$species)
+table(astrag$species, astrag$year)
 ## Astragalus_sp is least prevalent, remove
 
 ggplot(astrag, aes(x=year, y=plot, color = species)) +
@@ -425,7 +465,7 @@ chenop = chy_temp %>%
   filter(genus %in% c("Chenopodium")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(chenop$year, chenop$species)
+table(chenop$species, chenop$year)
 ## already lumped at genus level
 
 festuca = chy_temp %>%
@@ -439,7 +479,7 @@ oenoth = chy_temp %>%
   filter(genus %in% c("Oenothera")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(oenoth$year, oenoth$species)
+table(oenoth$species, oenoth$year)
 
 ggplot(oenoth, aes(x=year, y=plot, color = species)) +
   geom_point(size = 3) +
@@ -491,6 +531,7 @@ astrag_oxy = chy_temp %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
 table(astrag_oxy$year, astrag_oxy$species)
+
 table(astrag_oxy$year, astrag_oxy$plot)
 
 ggplot(astrag_oxy, aes(x=year, y=plot, color = species)) +
@@ -511,9 +552,9 @@ table(unkASOX$year, unkASOX$plot)
 ggplot(unkASOX, aes(x=year, y=plot, color = species)) +
   geom_point(size = 3)
 
-## this really seems like it could be the same thing as Oxytropis_lambertii in plot 17, which was found 2016 & 2017; unk_astragalus_oxytropis was found in same plot in 2018 & 2019; unk_oxytropis_sp was found in same plot in 2021...
+## the unk_astragalus_oxytropis and unk_Oxytropis_sp. really seems like they could be the same thing as Oxytropis_lambertii in plot 17, which was found 2016 & 2017; unk_astragalus_oxytropis was found in same plot in 2018 & 2019; unk_oxytropis_sp was found in same plot in 2021...
 ## remove for now, but consider lumping
-### DECISION HERE ####
+## final decision; remove!!
 
 stipa = chy_temp %>%
   filter(genus %in% c("Nassella", "Stipa")) %>%
@@ -524,7 +565,6 @@ table(stipa$year, stipa$plot)
 
 ggplot(stipa, aes(x=year, y=plot, color = species)) +
   geom_point(size = 3) +
-  #geom_hline(yintercept = 17) +
   facet_wrap(~species) 
 
 unkSt = unks %>%
@@ -547,7 +587,8 @@ penstem = chy_temp %>%
   filter(genus %in% c("Penstemon", "huge")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(penstem$year, penstem$species)
+table(penstem$species, penstem$year)
+table(penstem$species, penstem$plot)
 ## only one penstemon species
 
 ggplot(penstem, aes(x=year, y=plot, color = species)) +
@@ -556,7 +597,10 @@ ggplot(penstem, aes(x=year, y=plot, color = species)) +
 
 ### clean sp ####
 chy_sp = chy_temp %>%
-  filter(!species %in% c("Astragalus_sp.", "Oenothera_sp.", "unk_Artemisia_ludoviciana", "unk_astragalus_oxytropis", "unk_Oxytropis_sp.", "unk_Stipa_veridas", "Unknown_Erysimum")) %>%
+  filter(!species %in% c("Astragalus_sp.", "unk_astragalus_oxytropis", "unk_Oxytropis_sp.",
+                         "Festuca_unknown",
+                         "Oenothera_sp.",
+                         "unk_Artemisia_ludoviciana",  "unk_Stipa_veridas", "Unknown_Erysimum")) %>%
   
   ## fix penstemon
   mutate(genus = ifelse(species %in% c("huge_penstemon"), "Penstemon", genus),
@@ -569,7 +613,7 @@ sort(unique(chy_sp$sp.ep))
 
 ### quantify unknowns ####
 chy_unks = chy %>%
-  filter(species %in% chy_rm1 | species %in% c("Astragalus_sp.", "Oenothera_sp.", "unk_Artemisia_ludoviciana", "unk_astragalus_oxytropis", "unk_Oxytropis_sp.", "unk_Stipa_veridas", "Unknown_Erysimum"))
+  filter(species %in% chy_rm1 | species %in% c("Astragalus_sp.", "unk_astragalus_oxytropis", "unk_Oxytropis_sp.", "Festuca_unknown", "Oenothera_sp.", "unk_Artemisia_ludoviciana",  "unk_Stipa_veridas", "Unknown_Erysimum"))
 
 length(unique(chy_unks$species))
 nrow(chy_unks)
@@ -597,7 +641,7 @@ astrag = sgs_temp %>%
   filter(genus %in% c("Astragalus", "ASOX", "unk", "Oxytropis")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(astrag$year, astrag$species)
+table(astrag$species, astrag$year)
 
 ggplot(astrag, aes(x=year, y=plot, color = species)) +
   geom_point(size = 3) +
@@ -608,21 +652,22 @@ chenop = sgs_temp %>%
   filter(genus %in% c("Chenopodium")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(chenop$year, chenop$species)
+table(chenop$species, chenop$year)
 ## already lumped at genus level
 
 euphorb = sgs_temp %>%
   filter(genus %in% c("Euphorbia")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(euphorb$year, euphorb$species)
+table(euphorb$species, euphorb$year)
 ## only one observation, can leave as is
 
 oenoth = sgs_temp %>%
   filter(genus %in% c("Oenothera")) %>%
   group_by(site, year, species, block, plot) %>%
   summarise(num.obs = n())
-table(oenoth$year, oenoth$species)
+table(oenoth$species, oenoth$year)
+table(oenoth$species, oenoth$plot)
 
 ggplot(oenoth, aes(x=year, y=plot, color = species)) +
   geom_point(size = 3) +
