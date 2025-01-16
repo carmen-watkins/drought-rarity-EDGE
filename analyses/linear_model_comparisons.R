@@ -7,6 +7,9 @@
 ##
 ## Email: cebel2@uoregon.edu
 
+## Notes
+## saving this script to save the model comparisons for future reference. 
+
 # Set up ####
 library(performance)
 library(parameters)
