@@ -87,20 +87,20 @@ cor(edge_RR[edge_RR$site == "SBK",]$spatial_rarity, edge_RR[edge_RR$site == "SBK
 # Figure 3 ####
 SR_drought <- ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
   geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1.75) +
+  #geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab(" ") +
   ylab("Drought Response Ratio") +
-  labs(color = "Relative MAP") +
+  labs(color = "Site") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 15))
 
 SR_postdrought <- ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull)) +
   geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1.75) +
+ # geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab("Spatial Rarity") +
@@ -110,8 +110,8 @@ SR_postdrought <- ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull
 
 TR_drought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4)) +
   geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1.75) +
+  #geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab(" ") +
@@ -121,8 +121,8 @@ TR_drought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4)) +
 
 TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull)) +
   geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1.75) +
+ # geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab("Temporal Rarity") +
@@ -152,48 +152,5 @@ ggplot(edge_RR_cats, aes(x=resp.ratio.site_D, y=resp.ratio.site_PD, color = MAP_
   theme(text = element_text(size = 15)) +
   theme(legend.position = "bottom")
 
-ggsave("figures/Nov2024_meeting/figure4_zero_filled.png", width = 7, height = 7)
-
-## Fig 4 Alternative ####
-ggplot(edge_RR_cats, aes(x=resp.ratio.site_D, y=resp.ratio.site_PD, color = rarity_cat)) +
-  geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
-  geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
-  geom_point(size = 2) +
-  facet_wrap(~MAP_level, nrow = 1, ncol = 3) +
-  xlab("Drought Response Ratio") +
-  ylab("Post-drought Response Ratio") +
-  labs(color = "Rarity Category") +
-  #geom_smooth(method = "lm", alpha = 1)+
-  scale_color_manual(values = c("#88CCEE", "#CC6677", "#DDCC77", "#117733")) +
-  theme_bw() +
-  theme(panel.grid = element_blank()) +
-  theme(strip.background =element_rect(fill="white")) +
-  theme(text = element_text(size = 15)) +
-  theme(legend.position = "bottom")
-
-ggsave("figures/Nov2024_meeting/figure4_alt_zero_filled.png", width = 9, height = 4)
-
-#88CCEE,#CC6677,#DDCC77,#117733,#332288,#AA4499,#44AA99,#999933,#882255,#661100,#6699CC,#888888
-
-
-ggplot(sum_edge_RR, aes(x=meanDRR, y=meanPDRR, color = rarity_cat)) +
-  geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
-  geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
-  geom_point(size = 2) +
-  # facet_wrap(~MAP_level, nrow = 1, ncol = 3) +
-  xlab("Drought Response Ratio") +
-  ylab("Post-drought Response Ratio") +
-  labs(color = "Rarity Category") +
-  geom_smooth(method = "lm", alpha = 0.2)+
-  scale_color_manual(values = c("#88CCEE", "#CC6677", "#DDCC77", "#117733")) +
-  theme_bw() +
-  theme(panel.grid = element_blank()) +
-  theme(strip.background =element_rect(fill="white")) +
-  theme(text = element_text(size = 15)) +
-  theme(legend.position = "bottom")
-
-
-
-
-
+#ggsave("figures/Nov2024_meeting/figure4_zero_filled.png", width = 7, height = 7)
 
