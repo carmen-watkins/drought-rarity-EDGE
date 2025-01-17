@@ -6,14 +6,21 @@
 # source("analyses/color_palettes.R")
 # source("analyses/response_ratio_analyses.R")
 
-source("analyses/new_response_ratio_calcs_zero_filled.R")
+source("analyses/calc_response_ratio.R") 
 
 #Read in functional group info
 FG <- read.csv(here::here("data","edge_species_info_CP_BA.csv"))
 
 #Join functional group data to species response ratio data
 edge_RR2 <- edge_RR %>%
-  left_join(FG, by = "species")
+  left_join(FG, by = "species") %>%
+  mutate(FunctionalGroup = ifelse(species %in% c("Astragalus_sp", "Eriogonum_sp", "Euphorbia_sp", "Oenothera_sp", "Asclepias_syriaca", "Cirsium_sp", "Astragalus_Oxytropis_sp"), "forb", 
+                                  ifelse(species %in% c("Sporobolus_sp"), "grass", FunctionalGroup))) %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+
+
+nacheck = edge_RR2 %>%
+  filter(is.na(FunctionalGroup))
 
 sum_edge_RR2 = edge_RR2 %>%
   # group_by(site, species, FunctionalGroup, Duration, Photo) %>%
@@ -30,24 +37,58 @@ sum_edge_RR2 = edge_RR2 %>%
          MAP_level = ifelse(site %in% c("KNZ", "HYS"), "High", 
                             ifelse(site %in% c("CHY", "SGS"), "Intermediate", "Low"))) 
 
+ggplot(edge_RR2, aes(x=spatial_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~FunctionalGroup) +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+ggplot(edge_RR2, aes(x=temporal_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~FunctionalGroup) +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+ggplot(edge_RR2, aes(x=spatial_rarity, y=resp.ratio.site_PDfull, color = FunctionalGroup)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~FunctionalGroup) +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+
 # Figure 2 with functional groups
-ggplot(sum_edge_RR2, aes(x = percrank, y=persistence.site))+
-  geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
+ggplot(edge_RR2, aes(x = spatial_rarity, y=temporal_rarity))+
+  #geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
   #geom_vline(xintercept = 0.5, color = "lightgray") +
-  geom_vline(xintercept = 0.75, color = "red", linetype = "dashed") +
+  #geom_vline(xintercept = 0.75, color = "red", linetype = "dashed") +
   geom_point(aes(color=FunctionalGroup), size = 1.5) +
-  facet_wrap(~MAP_level, ncol = 3, nrow = 1) +
+  facet_wrap(~site, ncol = 6, nrow = 1) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
   xlab("Spatial Rarity")+
   ylab("Temporal Rarity") +
   theme(legend.position = "right") +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse() +
-  scale_y_reverse() -> object
+  theme(text = element_text(size = 15))# +
+  #scale_x_reverse() +
+  #scale_y_reverse() -> object
 
-object
+#object
+
+ggplot(edge_RR2, aes(x = spatial_rarity, y=temporal_rarity, color=Duration))+
+  #geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
+  #geom_vline(xintercept = 0.5, color = "lightgray") +
+  #geom_vline(xintercept = 0.75, color = "red", linetype = "dashed") +
+  geom_point(aes(color=Duration), size = 1.5) +
+  facet_grid(~site) +
+  theme_bw() +
+  theme(panel.grid = element_blank()) +
+  theme(strip.background =element_rect(fill="white")) +
+  xlab("Spatial Rarity")+
+  ylab("Temporal Rarity") +
+  theme(legend.position = "right") +
+  theme(text = element_text(size = 15))# +
+  geom_smooth(method = "lm")
 
 
 #create density plots for each rarity metric by functional group

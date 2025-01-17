@@ -1,5 +1,5 @@
 
-source("data-prep/sensitivity_analysis_cleaning_keep_unknowns.R")
+source("analyses/sensitivity_analyses/clean_cover_dat_fill_zeros_KEEP_UNKNOWNS_sensA.R")
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -33,7 +33,9 @@ persist_site <- controls %>%
   summarise(persistence.site = sum(pres.abs.site)/n())
 
 # Merge Rank & Persist ####
-rank_persist <- left_join(persist_site, rank_mean, by = c("site", "species"))
+rank_persist <- left_join(persist_site, rank_mean, by = c("site", "species")) %>%
+  mutate(spatial_rarity = 1 - percrank,
+         temporal_rarity = 1 - persistence.site)
 
 # Clean Env ####
 rm(controls, persist_site, rank_mean, test, test2, testsub, testws2, weirdsubs, weirdsubs2)

@@ -17,8 +17,13 @@ library(car)
 library(jtools)
 library(xtable)
 
+source("analyses/calc_response_ratio.R") 
 source("data-prep/prep_model_predictors.R")
+source("analyses/color_palettes.R")
 
+## set up graphics
+theme_set(theme_classic())
+pal <- wes_palette("Royal3")
 # Model ####
 ## during drought
 knzD = lm(resp.ratio.site_D4 ~ spatial_rarity, data = edge_RR[edge_RR$site == "KNZ",])
@@ -141,6 +146,17 @@ sp_mods = rbind(mod_df, mod_dfp) %>%
 
 tmp_mods = rbind(modt_df, modt_dfp) %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+
+# Create Table ####
+sp_mods_tab = sp_mods %>%
+  select(period, site, term, estimate, std.error, statistic, p.value) %>%
+  mutate(signif = ifelse(p.value < 0.001, "***", 
+                         ifelse(p.value < 0.01 & p.value > 0.001, "**",
+                                ifelse(p.value > 0.01 & p.value < 0.05, "*", 
+                                       ifelse(p.value < 0.1 & p.value > 0.05, ".", " ")))))
+
+xtable(sp_mods_tab)
+
 
 # Plot ####
 ## Coeff plots ####

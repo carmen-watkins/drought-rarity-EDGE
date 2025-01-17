@@ -35,24 +35,6 @@ mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = edge_RR)
 summary(mmsd) ## supp table
 Anova(mmsd, type = 3) ## main table
 
-## generate latex tables
-print(xtable(summary(mmsd)$coefficients)) ## supp
-xtable(Anova(mmsd, type = 3, test.statistic = "F")) ## main
-
-mmsd_tab = as.data.frame(Anova(mmsd, type = 3, test.statistic = "F")) %>%
-  mutate(period = "Drought",
-         rarity = "Spatial")
-
-mmsd_coeff = edge_RR %>% 
-  lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = .) %>% 
-  tidy(conf.int = TRUE) 
-## this does a good job for fixed effects, less so for random effects - the variance of random effects is in the estimate column in the new df
-
-summary(mmsd)$coefficients
-summary(mmsd)$groups
-
-summary(mmsd)$effect
-
 ## VarCorr could be helpful for extracting model output
 
 ## drought, temporal ####
@@ -62,12 +44,13 @@ mmtd = lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = edge_RR)
 summary(mmtd) ## supp table
 Anova(mmtd, type = 3, test.statistic = "F") ## main table
 
+
 ## post-drought spatial ####
 mmsp = lmer(resp.ratio.site_PDfull ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsp)
 summary(mmsp) ## supp table
-Anova(mmsp, type = 3, test.statistic = "F") ## main table
+Anova(mmsp, type = 2, test.statistic = "F") ## main table
 
 ## post-drought temporal ####
 mmtp = lmer(resp.ratio.site_PDfull ~ temporal_rarity + (1|site), data = edge_RR)
@@ -75,6 +58,65 @@ mmtp = lmer(resp.ratio.site_PDfull ~ temporal_rarity + (1|site), data = edge_RR)
 #check_model(mmtp)
 summary(mmtp) ## supp table
 Anova(mmtp, type = 3, test.statistic = "F") ## main table
+
+# Create Tables ####
+## Anova ####
+### decided to use type II Anovas - for when data is unbalanced and DON'T want to consider interactions
+mmsd_tab = as.data.frame(Anova(mmsd, type = 2, test.statistic = "F")) %>%
+  mutate(period = "Drought",
+         rarity = "Spatial")
+
+mmtd_tab = as.data.frame(Anova(mmtd, type = 2, test.statistic = "F")) %>%
+  mutate(period = "Drought",
+         rarity = "Temporal")
+
+mmsp_tab = as.data.frame(Anova(mmsp, type = 2, test.statistic = "F")) %>%
+  mutate(period = "Post-Drought",
+         rarity = "Spatial")
+
+mmtp_tab = as.data.frame(Anova(mmtp, type = 2, test.statistic = "F")) %>%
+  mutate(period = "Post-Drought",
+         rarity = "Temporal")
+
+anova_df = rbind(mmsd_tab, mmtd_tab, mmsp_tab, mmtp_tab) %>%
+  rownames_to_column(var = "type") %>%
+  select(period, rarity, type, `F`, Df, Df.res, `Pr(>F)` )
+
+xtable(anova_df)
+
+## Coeff ####
+mmsd_coeff = as.data.frame(summary(mmsd)$coefficients) %>% 
+  #lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = .) %>% 
+  #tidy(conf.int = TRUE) %>%
+  mutate(period = "Drought",
+         rarity = "Spatial")
+
+mmtd_coeff = as.data.frame(summary(mmtd)$coefficients) %>% 
+  #lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = .) %>% 
+  #tidy(conf.int = TRUE) %>%
+  mutate(period = "Drought",
+         rarity = "Temporal")
+
+mmsp_coeff = as.data.frame(summary(mmsp)$coefficients)%>%
+ # lmer(resp.ratio.site_PDfull ~ spatial_rarity + (1|site), data = .) %>% 
+  #tidy(conf.int = TRUE) %>%
+  mutate(period = "Post-Drought",
+         rarity = "Spatial")
+
+mmtp_coeff = as.data.frame(summary(mmtp)$coefficients) %>%
+ # lmer(resp.ratio.site_PDfull ~ temporal_rarity + (1|site), data = .) %>% 
+#  tidy(conf.int = TRUE) %>%
+  mutate(period = "Post-Drought",
+         rarity = "Temporal")
+
+coeff_df = rbind(mmsd_coeff, mmtd_coeff, mmsp_coeff, mmtp_coeff) %>%
+  rownames_to_column(var = "type") %>%
+  select(period, rarity, type, Estimate, `Std. Error`, df, `t value`, `Pr(>|t|)`)
+
+xtable(coeff_df)
+      
+
+
 
 # Plot Fig 1 ####
 p1 = effect_plot(mmsd, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Drought Response Ratio", x.label = " ", 
