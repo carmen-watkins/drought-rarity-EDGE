@@ -82,7 +82,8 @@ anova_df = rbind(mmsd_tab, mmtd_tab, mmsp_tab, mmtp_tab) %>%
   rownames_to_column(var = "type") %>%
   select(period, rarity, type, `F`, Df, Df.res, `Pr(>F)` )
 
-xtable(anova_df)
+#write.csv(anova_df, "tables/mixed_mod_anova_table.csv")
+#xtable(anova_df)
 
 ## Coeff ####
 mmsd_coeff = as.data.frame(summary(mmsd)$coefficients) %>% 
@@ -113,10 +114,8 @@ coeff_df = rbind(mmsd_coeff, mmtd_coeff, mmsp_coeff, mmtp_coeff) %>%
   rownames_to_column(var = "type") %>%
   select(period, rarity, type, Estimate, `Std. Error`, df, `t value`, `Pr(>|t|)`)
 
-xtable(coeff_df)
-      
-
-
+#xtable(coeff_df)
+#write.csv(coeff_df, "tables/mixed_mod_coeff_table.csv", row.names = F)
 
 # Plot Fig 1 ####
 p1 = effect_plot(mmsd, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Drought Response Ratio", x.label = " ", 

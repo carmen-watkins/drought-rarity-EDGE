@@ -155,8 +155,7 @@ sp_mods_tab = sp_mods %>%
                                 ifelse(p.value > 0.01 & p.value < 0.05, "*", 
                                        ifelse(p.value < 0.1 & p.value > 0.05, ".", " ")))))
 
-xtable(sp_mods_tab)
-
+#xtable(sp_mods_tab)
 
 # Plot ####
 ## Coeff plots ####
