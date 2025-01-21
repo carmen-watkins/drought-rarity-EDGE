@@ -33,9 +33,14 @@ mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsd)
 summary(mmsd) ## supp table
-Anova(mmsd, type = 3) ## main table
+Anova(mmsd, type = 2) ## main table
 
+xint = -(-0.30282)/0.86135
 ## VarCorr could be helpful for extracting model output
+
+coef(mmsd)$site[,"(Intercept)"]
+
+confint(mmsd)
 
 ## drought, temporal ####
 mmtd = lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = edge_RR)
@@ -43,7 +48,7 @@ mmtd = lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = edge_RR)
 #check_model(mmtd)
 summary(mmtd) ## supp table
 Anova(mmtd, type = 3, test.statistic = "F") ## main table
-
+confint(mmtd)
 
 ## post-drought spatial ####
 mmsp = lmer(resp.ratio.site_PDfull ~ spatial_rarity + (1|site), data = edge_RR)
@@ -51,6 +56,7 @@ mmsp = lmer(resp.ratio.site_PDfull ~ spatial_rarity + (1|site), data = edge_RR)
 #check_model(mmsp)
 summary(mmsp) ## supp table
 Anova(mmsp, type = 2, test.statistic = "F") ## main table
+confint(mmsp)
 
 ## post-drought temporal ####
 mmtp = lmer(resp.ratio.site_PDfull ~ temporal_rarity + (1|site), data = edge_RR)
@@ -58,6 +64,7 @@ mmtp = lmer(resp.ratio.site_PDfull ~ temporal_rarity + (1|site), data = edge_RR)
 #check_model(mmtp)
 summary(mmtp) ## supp table
 Anova(mmtp, type = 3, test.statistic = "F") ## main table
+confint(mmtp)
 
 # Create Tables ####
 ## Anova ####
@@ -162,5 +169,5 @@ p4 = effect_plot(mmtp, pred = temporal_rarity, interval = TRUE, plot.points = TR
 
 ggarrange(p1, p2, p3, p4, labels = "AUTO")
 
-## ggsave("figures/Jan2025/resp_ratio_v_rarity_mmfit.png", width = 7.5, height = 7)
+## ggsave("figures/Jan2025/resp_ratio_v_rarity_mmfit.tiff", width = 7.5, height = 7)
 

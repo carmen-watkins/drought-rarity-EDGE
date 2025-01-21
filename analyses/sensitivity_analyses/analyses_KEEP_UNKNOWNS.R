@@ -1,34 +1,152 @@
-# Header ####
-## Script name: Q2 Linear Models by Site
-
-## Purpose of script: Run linear models to test the effect of rarity on response ratio separately at each site
-##
-## Author: Carmen Watkins
-##
-## Email: cebel2@uoregon.edu
+## I assume this is the unknowns models
 
 # Set up ####
+
 ## load packages
 library(broom)
 library(performance)
 library(parameters)
 library(tidyverse)
 library(car)
+library(lmerTest)
 library(jtools)
 library(xtable)
 
-source("analyses/calc_response_ratio.R") 
-source("data-prep/prep_model_predictors.R")
+source("analyses/senstivity_analyses/calc_response_ratio_KEEP_UNKNOWNS_sensA.R") 
 source("analyses/color_palettes.R")
+source("data-prep/prep_model_predictors.R")
+
 
 ## set up graphics
 theme_set(theme_classic())
 pal <- wes_palette("Royal3")
-# Model ####
+#wes_palette("Royal3")
+
+# Q1 ####
+## Model ####
+## model as way of estimating the overall effect of rarity on response ratio during drought and postdrought for spatial and temporal rarity. good that it still accounts for effect of site.
+
+### drought, spatial ####
+mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = edge_RR)
+
+#check_model(mmsd)
+summary(mmsd) ## supp table
+Anova(mmsd, type = 3) ## main table
+
+## generate latex tables
+print(xtable(summary(mmsd)$coefficients)) ## supp
+xtable(Anova(mmsd, type = 3, test.statistic = "F")) ## main
+
+mmsd_tab = as.data.frame(Anova(mmsd, type = 3, test.statistic = "F")) %>%
+  mutate(period = "Drought",
+         rarity = "Spatial")
+
+mmsd_coeff = edge_RR %>% 
+  lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = .) %>% 
+  tidy(conf.int = TRUE) 
+## this does a good job for fixed effects, less so for random effects - the variance of random effects is in the estimate column in the new df
+
+summary(mmsd)$coefficients
+summary(mmsd)$groups
+
+summary(mmsd)$effect
+
+## VarCorr could be helpful for extracting model output
+
+### drought, temporal ####
+mmtd = lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = edge_RR)
+
+#check_model(mmtd)
+summary(mmtd) ## supp table
+Anova(mmtd, type = 3, test.statistic = "F") ## main table
+
+mmtd_tab = as.data.frame(Anova(mmtd, type = 3, test.statistic = "F")) %>%
+  mutate(period = "Drought",
+         rarity = "Temporal")
+
+### post-drought spatial ####
+mmsp = lmer(resp.ratio.site_PDfull ~ spatial_rarity + (1|site), data = edge_RR)
+
+#check_model(mmsp)
+summary(mmsp) ## supp table
+Anova(mmsp, type = 3, test.statistic = "F") ## main table
+
+mmsp_tab = as.data.frame(Anova(mmsp, type = 3, test.statistic = "F")) %>%
+  mutate(period = "Post-Drought",
+         rarity = "Spatial")
+
+### post-drought temporal ####
+mmtp = lmer(resp.ratio.site_PDfull ~ temporal_rarity + (1|site), data = edge_RR)
+
+#check_model(mmtp)
+summary(mmtp) ## supp table
+Anova(mmtp, type = 3, test.statistic = "F") ## main table
+
+mmtp_tab = as.data.frame(Anova(mmtp, type = 3, test.statistic = "F")) %>%
+  mutate(period = "Post-Drought",
+         rarity = "Temporal")
+
+anova_df = rbind(mmsd_tab, mmtd_tab, mmsp_tab, mmtp_tab) %>%
+  rownames_to_column(var = "type") %>%
+  select(period, rarity, type, `F`, Df, Df.res, `Pr(>F)` )
+
+xtable(anova_df)
+
+
+## Plot Fig 1 ####
+p1 = effect_plot(mmsd, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Drought Response Ratio", x.label = " ", 
+                 colors = "#909090", 
+                 line.colors = "black") +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) +
+  ggtitle("With Unknowns")
+
+## too many sites & points for coloring points to be easily interpretable; can include supplementary figures to make this point
+#ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull)) +
+# geom_point(aes(color = site)) +
+# geom_smooth(method = "lm", color = "black") +
+#  scale_color_manual(values = pal)
+
+p2 = effect_plot(mmtd, pred = temporal_rarity, interval = TRUE, plot.points = TRUE, y.label = " ", x.label = " ", 
+                 colors = "#909090", 
+                 line.colors = "black") +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) +
+  ggtitle("")
+
+p3 = effect_plot(mmsp, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Post-Drought Response Ratio", x.label = "Spatial Rarity", 
+                 colors = "#909090", 
+                 line.colors = "black") +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13))
+
+p4 = effect_plot(mmtp, pred = temporal_rarity, interval = TRUE, plot.points = TRUE, y.label = " ", x.label = "Temporal Rarity", 
+                 colors = "#909090", 
+                 line.colors = "black") +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13))
+
+ggarrange(p1, p2, p3, p4, labels = "AUTO")
+
+## ggsave("figures/Jan2025/resp_ratio_v_rarity_mmfit.png", width = 7.5, height = 7)
+
+# Q2 ####
+## Model ####
 ## during drought
 knzD = lm(resp.ratio.site_D4 ~ spatial_rarity, data = edge_RR[edge_RR$site == "KNZ",])
 summary(knzD)
-summary(knzD)$r.squared
 hysD = lm(resp.ratio.site_D4 ~ spatial_rarity, data = edge_RR[edge_RR$site == "HYS",])
 summary(hysD)
 chyD = lm(resp.ratio.site_D4 ~ spatial_rarity, data = edge_RR[edge_RR$site == "CHY",])
@@ -54,14 +172,14 @@ summary(sblP)
 sbkP = lm(resp.ratio.site_PDfull ~ spatial_rarity, data = edge_RR[edge_RR$site == "SBK",])
 summary(sbkP)
 
-# Create DFs of Model ####
-## spatial, drought ####
+## Create DFs of Model ####
+### spatial, drought ####
 sites = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")
 
 mod_df = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA,  conf.low = NA, conf.high = NA, site = NA, period = NA)
 
 for(i in 1:length(sites)) {
-
+  
   ## select site
   s = sites[i]
   
@@ -78,7 +196,7 @@ for(i in 1:length(sites)) {
   
 }
 
-## spatial, post-drought ####
+### spatial, post-drought ####
 mod_dfp = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA,  conf.low = NA, conf.high = NA, site = NA, period = NA)
 
 for(i in 1:length(sites)) {
@@ -99,7 +217,7 @@ for(i in 1:length(sites)) {
   
 }
 
-## temporal, drought ####
+### temporal, drought ####
 modt_df = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA,  conf.low = NA, conf.high = NA, site = NA, period = NA)
 
 for(i in 1:length(sites)) {
@@ -120,7 +238,7 @@ for(i in 1:length(sites)) {
   
 }
 
-## temporal, post-drought ####
+### temporal, post-drought ####
 modt_dfp = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA,  conf.low = NA, conf.high = NA, site = NA, period = NA)
 
 for(i in 1:length(sites)) {
@@ -141,36 +259,15 @@ for(i in 1:length(sites)) {
   
 }
 
-## combine ####
+### combine ####
 sp_mods = rbind(mod_df, mod_dfp) %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
 tmp_mods = rbind(modt_df, modt_dfp) %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
-# Create Table ####
-sp_mods_tab = sp_mods %>%
-  select(period, site, term, estimate, std.error, statistic, p.value) %>%
-  mutate(signif = ifelse(p.value < 0.001, "***", 
-                         ifelse(p.value < 0.01 & p.value > 0.001, "**",
-                                ifelse(p.value > 0.01 & p.value < 0.05, "*", 
-                                       ifelse(p.value < 0.1 & p.value > 0.05, ".", " ")))))
-
-#write.csv(sp_mods_tab, "tables/site_model_output_spatial.csv")
-
-tmp_mods_tab = tmp_mods %>%
-  select(period, site, term, estimate, std.error, statistic, p.value) %>%
-  mutate(signif = ifelse(p.value < 0.001, "***", 
-                         ifelse(p.value < 0.01 & p.value > 0.001, "**",
-                                ifelse(p.value > 0.01 & p.value < 0.05, "*", 
-                                       ifelse(p.value < 0.1 & p.value > 0.05, ".", " ")))))
-
-#write.csv(tmp_mods_tab, "tables/site_model_output_temporal.csv")
-
-#xtable(sp_mods_tab)
-
-# Plot ####
-## Coeff plots ####
+## Plot ####
+### Coeff plots ####
 ### temporal, drought
 temp_slope = tmp_mods %>%
   filter(period == "Drought", term == "temporal_rarity") %>%
@@ -181,16 +278,11 @@ temp_slope = tmp_mods %>%
   scale_fill_manual(values = pal) +
   geom_vline(xintercept = 0, lty = 2) +
   labs(x = "",
-    y = "") +
+       y = "") +
   labs(fill = "Site") +
   theme(axis.text.y = element_blank(),
         axis.ticks.y = element_blank()) +
-  coord_cartesian(xlim = c(-0.8, 2.1)) +
-  #theme(axis.text.x=element_text(size=12)) +
-  #theme(#axis.text.y=element_text(size=12),
-      #  axis.title=element_text(size=13)) +
-  theme(text = element_text(size = 13))
-
+  coord_cartesian(xlim = c(-0.8, 2.1))
 
 temp_int = tmp_mods %>%
   filter(period == "Drought", term == "(Intercept)") %>%
@@ -205,9 +297,7 @@ temp_int = tmp_mods %>%
   labs(fill = "Site")  +
   coord_cartesian(xlim = c(-1, 0.4)) +
   theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank()) +
-  theme(text = element_text(size = 13))
-
+        axis.ticks.y = element_blank())
 
 ## spatial rarity, drought
 spat_slope = sp_mods %>%
@@ -219,13 +309,11 @@ spat_slope = sp_mods %>%
   scale_fill_manual(values = pal) +
   geom_vline(xintercept = 0, lty = 2) +
   labs(x = "",
-    y = "Slope") +
+       y = "Slope") +
   labs(fill = "Site") +
   theme(axis.text.y = element_blank(),
         axis.ticks.y = element_blank()) +
-  coord_cartesian(xlim = c(-0.8, 2.1)) +
-  theme(text = element_text(size = 13))
-
+  coord_cartesian(xlim = c(-0.8, 2.1))
 
 spat_int = sp_mods %>%
   filter(period == "Drought", term == "(Intercept)") %>%
@@ -240,9 +328,7 @@ spat_int = sp_mods %>%
   labs(fill = "Site") +
   coord_cartesian(xlim = c(-1, 0.4)) +
   theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank()) +
-  theme(text = element_text(size = 13))
-
+        axis.ticks.y = element_blank())
 
 ### temporal, post-drought
 temp_slopep = tmp_mods %>%
@@ -258,9 +344,7 @@ temp_slopep = tmp_mods %>%
   labs(fill = "Site") +
   theme(axis.text.y = element_blank(),
         axis.ticks.y = element_blank()) +
-  coord_cartesian(xlim = c(-0.8, 2.1)) +
-  theme(text = element_text(size = 13))
-
+  coord_cartesian(xlim = c(-0.8, 2.1))
 
 temp_intp = tmp_mods %>%
   filter(period == "Post-Drought", term == "(Intercept)") %>%
@@ -275,9 +359,7 @@ temp_intp = tmp_mods %>%
   labs(fill = "Site")  +
   coord_cartesian(xlim = c(-1, 0.4)) +
   theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank()) +
-  theme(text = element_text(size = 13))
-
+        axis.ticks.y = element_blank())
 
 ## spatial rarity, post-drought
 spat_slopep = sp_mods %>%
@@ -293,9 +375,7 @@ spat_slopep = sp_mods %>%
   labs(fill = "Site") +
   theme(axis.text.y = element_blank(),
         axis.ticks.y = element_blank()) +
-  coord_cartesian(xlim = c(-0.8, 2.1)) +
-  theme(text = element_text(size = 13))
-
+  coord_cartesian(xlim = c(-0.8, 2.1))
 
 spat_intp = sp_mods %>%
   filter(period == "Post-Drought", term == "(Intercept)") %>%
@@ -309,12 +389,10 @@ spat_intp = sp_mods %>%
   labs(fill = "Site") +
   coord_cartesian(xlim = c(-1, 0.4)) +
   theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank()) +
-  theme(text = element_text(size = 13))
+        axis.ticks.y = element_blank())
 
 
-
-### plot ####
+#### plot ####
 ggarrange(spat_slope, spat_slopep, temp_slope, temp_slopep,
           spat_int, spat_intp, temp_int, temp_intp,
           ncol = 4, nrow = 2, common.legend = TRUE, legend = "bottom", 
@@ -322,115 +400,64 @@ ggarrange(spat_slope, spat_slopep, temp_slope, temp_slopep,
 # ggsave("figures/Jan2025/site_slopes_intercepts_drought.tiff", width = 8.5, height = 5.5)
 
 
-## Coeff v Pred plots ####
-### spatial ####
-spmods_pred = left_join(sp_mods, site_pred_scaled, by = "site") %>%
-  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+### Coeff v Pred plots ####
+#### spatial ####
+spmods_pred = left_join(sp_mods, site_pred_scaled, by = "site")
+
+pD = spmods_pred %>%
+  filter(term == "spatial_rarity") %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")) %>%
   
-
-pD1 = spmods_pred %>%
-  filter(term == "spatial_rarity", period == "Drought") %>%
   ggplot(aes(x=BP.dom.site, y=estimate)) +
+  
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.009) +
+  
   geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
   scale_fill_manual(values = pal) +
-  geom_hline(yintercept = 0, linetype = "dashed")  +
-    xlab(" ") +
-  ylab(" ") +
-  labs(fill = "Site")  +
-  geom_smooth(method = "lm", alpha = 0.1, color = "black", linetype = "dashed")  +
-  theme(axis.text.x=element_text(size=12)) +
-  theme(axis.text.y=element_text(size=12),
-    axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
-
-pD2 = spmods_pred %>%
-  filter(term == "spatial_rarity", period == "Post-Drought") %>%
-  ggplot(aes(x=BP.dom.site, y=estimate)) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.009) +
-  geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
-  scale_fill_manual(values = pal) +
+  facet_wrap(~period, ncol = 1, nrow = 2) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   xlab("Site-Level Dominance") +
-  ylab(" ") +
-  labs(fill = "Site")  +
-  geom_smooth(method = "lm", alpha = 0.1, color = "black", linetype = "dashed")  +
-  theme(axis.text.x=element_text(size=12)) +
-  theme(axis.text.y=element_text(size=12),
-        axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
-  
-pT1 = spmods_pred %>%
-  filter(term == "spatial_rarity", period == "Drought") %>%
-  ggplot(aes(x=MAT.C, y=estimate)) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.25) +
-  geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
-  scale_fill_manual(values = pal) +
-  geom_hline(yintercept = 0, linetype = "dashed")  +
-  xlab(" ") +
-  ylab("Drought") +
-  labs(fill = "Site") +
-  geom_smooth(method = "lm", alpha = 0.1, color = "black")  +
-  theme(axis.text.x=element_text(size=12)) +
-  theme(axis.text.y=element_text(size=12),
-        axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
+  ylab("Spatial Rarity Slope") +
+  labs(color = "Site")  +
+  geom_smooth(method = "lm", alpha = 0.1, color = "black")
 
-pT2 = spmods_pred %>%
-  filter(term == "spatial_rarity", period == "Post-Drought") %>%
+pT = spmods_pred %>%
+  filter(term == "spatial_rarity") %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")) %>%
+  
   ggplot(aes(x=MAT.C, y=estimate)) +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.25) +
+  
   geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
   scale_fill_manual(values = pal) +
+  facet_wrap(~period, ncol = 1, nrow = 2) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   xlab("Mean Annual Temperature") +
-  ylab("Post-Drought") +
-  labs(fill = "Site") +
-  geom_smooth(method = "lm", alpha = 0.1, color = "black")  +
-  theme(axis.text.x=element_text(size=12)) +
-  theme(axis.text.y=element_text(size=12),
-        axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
-
-pP1 = spmods_pred %>%
-  filter(term == "spatial_rarity", period == "Drought") %>%
-  ggplot(aes(x=MAP.mm, y=estimate)) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 20) +
-  geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
-  scale_fill_manual(values = pal) +
-  geom_hline(yintercept = 0, linetype = "dashed")  +
-  xlab(" ") +
   ylab(" ") +
-  labs(fill = "Site") +
-  geom_smooth(method = "lm", alpha = 0.1, color = "black", linetype = "dashed")  +
-  theme(axis.text.x=element_text(size=12)) +
-  theme(axis.text.y=element_text(size=12),
-        axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
+  labs(color = "Site") +
+  geom_smooth(method = "lm", alpha = 0.1, color = "black")
 
-pP2 = spmods_pred %>%
-  filter(term == "spatial_rarity", period == "Post-Drought") %>%
+pP = spmods_pred %>%
+  filter(term == "spatial_rarity") %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")) %>%
+  
   ggplot(aes(x=MAP.mm, y=estimate)) +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 20) +
+  
   geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
   scale_fill_manual(values = pal) +
+  facet_wrap(~period, ncol = 1, nrow = 2) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   xlab("Mean Annual Precipitation") +
   ylab(" ") +
-  labs(fill = "Site") +
-  geom_smooth(method = "lm", alpha = 0.1, color = "black", linetype = "dashed")  +
-  theme(axis.text.x=element_text(size=12)) +
-  theme(axis.text.y=element_text(size=12),
-        axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
+  labs(color = "Site") +
+  geom_smooth(method = "lm", alpha = 0.1, color = "black")
 
+ggarrange(pD, pP, pT, ncol = 3, nrow = 1, common.legend = T, legend = "bottom", labels = "AUTO")
 
-ggarrange(pT1, pD1, pP1, 
-          pT2, pD2,  pP2, ncol = 3, nrow = 2, common.legend = T, legend = "bottom", labels = "AUTO")
+ggsave("figures/Jan2025/site_slopes_predictors_spatial.png", width = 7, height = 5)
 
-ggsave("figures/Jan2025/site_slopes_predictors_spatial.tiff", width = 8, height = 5.5)
-
-### temporal ####
+#### temporal ####
 tmpmods_pred = left_join(tmp_mods, site_pred_scaled, by = "site")
 
 pDt = tmpmods_pred %>%
@@ -485,4 +512,5 @@ pPt = tmpmods_pred %>%
 ggarrange(pDt, pPt, pTt, ncol = 3, nrow = 1, common.legend = T, legend = "bottom", labels = "AUTO")
 
 ggsave("figures/Jan2025/site_slopes_predictors_temporal.png", width = 7, height = 5)
+
 
