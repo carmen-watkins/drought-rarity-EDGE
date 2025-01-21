@@ -1,6 +1,89 @@
 ## Q3 does the effect post-drought fade basically
 
 ## Explore first and final 2 years of post-drought period as separate response ratios.
+mmtpi = lmer(resp.ratio.site_PDfirst ~ temporal_rarity + (1|site), data = edge_RR)
+mmtpf = lmer(resp.ratio.site_PDfinal ~ temporal_rarity + (1|site), data = edge_RR)
+
+summary(mmtpi)
+summary(mmtpf)
+
+mmspi = lmer(resp.ratio.site_PDfirst ~ spatial_rarity + (1|site), data = edge_RR)
+mmspf = lmer(resp.ratio.site_PDfinal ~ spatial_rarity + (1|site), data = edge_RR)
+
+summary(mmspi)
+summary(mmspf)
+
+# Create tables
+### decided to use type II Anovas - for when data is unbalanced and DON'T want to consider interactions
+mmspi_tab = as.data.frame(Anova(mmspi, type = 2, test.statistic = "F")) %>%
+  mutate(period = "Post-Drought Initial",
+         rarity = "Spatial")
+
+mmspf_tab = as.data.frame(Anova(mmspf, type = 2, test.statistic = "F")) %>%
+  mutate(period = "Post-Drought Final",
+         rarity = "Spatial")
+
+mmtpi_tab = as.data.frame(Anova(mmtpi, type = 2, test.statistic = "F")) %>%
+  mutate(period = "Post-Drought Initial",
+         rarity = "Temporal")
+
+mmtpf_tab = as.data.frame(Anova(mmtpf, type = 2, test.statistic = "F")) %>%
+  mutate(period = "Post-Drought Final",
+         rarity = "Temporal")
+
+anova_df_pd = rbind(mmspi_tab, mmspf_tab, mmtpi_tab, mmtpf_tab) %>%
+  rownames_to_column(var = "type") %>%
+  select(period, rarity, type, `F`, Df, Df.res, `Pr(>F)` )
+
+#write.csv(anova_df_pd, "tables/mixed_mod_anova_table_pd_separated.csv")
+
+# Plot ####
+spi = effect_plot(mmspi, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Post-Drought Response Ratio", x.label = "Spatial Rarity", 
+                  colors = "#909090", 
+                  line.colors = "black") +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) +
+  ggtitle("Initial")
+
+spf = effect_plot(mmspf, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, x.label = "Spatial Rarity", 
+                  colors = "#909090", 
+                  line.colors = "black") +
+  ylab(NULL) +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) +
+  ggtitle("Final")
+
+tpi = effect_plot(mmtpi, pred = temporal_rarity, interval = TRUE, plot.points = TRUE, x.label = "Temporal Rarity", 
+            colors = "#909090", 
+            line.colors = "black") +
+  theme_classic() +
+  ylab(NULL) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) +
+  ggtitle("Initial")
+
+tpf = effect_plot(mmtpf, pred = temporal_rarity, interval = TRUE, plot.points = TRUE, x.label = "Temporal Rarity", 
+            colors = "#909090", 
+            line.colors = "black") +
+  ylab(NULL) +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) +
+  ggtitle("Final")
+
+ggarrange(spi, spf, tpi, tpf, ncol = 4, nrow = 1)
+
+ggsave("figures/Jan2025/pd_separated_mmfig.png", width = 10, height = 3)
 
 # Create DFs of Model ####
 ## spatial, drought ####
@@ -188,7 +271,7 @@ pd = sp_mods_pdsplit %>%
   #  axis.title=element_text(size=13)) +
   theme(text = element_text(size = 13))
 
-ggarrange(pa, pb, pc, pd, common.legend = TRUE, legend = "bottom")  
+ggarrange(pc, pd, pa, pb,  common.legend = TRUE, legend = "bottom")  
 
 ggsave("figures/Jan2025/post_drought_separated.png", width = 8, height = 7)
   

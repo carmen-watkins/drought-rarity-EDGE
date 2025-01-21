@@ -1,0 +1,5 @@
+"","period","rarity","type","F","Df","Df.res","Pr(>F)"
+"1","Post-Drought Initial","Spatial","spatial_rarity",40.7015565478555,1,348.222671184519,5.65022821544946e-10
+"2","Post-Drought Final","Spatial","spatial_rarity1",32.3542180804285,1,347.70668829606,2.72777044139934e-08
+"3","Post-Drought Initial","Temporal","temporal_rarity",35.0276543247083,1,329.296651619998,8.15831174654099e-09
+"4","Post-Drought Final","Temporal","temporal_rarity1",36.029222911967,1,287.205213637256,5.85065932208837e-09
