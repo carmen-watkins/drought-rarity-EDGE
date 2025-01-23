@@ -7,11 +7,34 @@ mmtpf = lmer(resp.ratio.site_PDfinal ~ temporal_rarity + (1|site), data = edge_R
 summary(mmtpi)
 summary(mmtpf)
 
+mmtpi_tab = as.data.frame(summary(mmtpi)$coeff) %>%
+  mutate(rarity = "Temporal",
+         period = "Initial")
+mmtpf_tab = as.data.frame(summary(mmtpf)$coeff) %>%
+  mutate(rarity = "Temporal",
+         period = "Final")
+
+confint(mmtpi)
+confint(mmtpf)
+
 mmspi = lmer(resp.ratio.site_PDfirst ~ spatial_rarity + (1|site), data = edge_RR)
 mmspf = lmer(resp.ratio.site_PDfinal ~ spatial_rarity + (1|site), data = edge_RR)
 
 summary(mmspi)
 summary(mmspf)
+
+mmspi_tab = as.data.frame(summary(mmspi)$coeff) %>%
+  mutate(rarity = "Spatial",
+         period = "Initial")
+mmspf_tab = as.data.frame(summary(mmspf)$coeff) %>%
+  mutate(rarity = "Spatial",
+         period = "Final")
+
+pd_sep_coeff_tab = rbind(mmspi_tab, mmspf_tab, mmtpi_tab, mmtpf_tab) %>%
+  rownames_to_column(var = "type") %>%
+  select(rarity, period, type, Estimate, `Std. Error`, df, `t value`, `Pr(>|t|)`)
+
+write.csv(pd_sep_coeff_tab, "tables/post_drought_separated_coeff_table.csv")
 
 # Create tables
 ### decided to use type II Anovas - for when data is unbalanced and DON'T want to consider interactions

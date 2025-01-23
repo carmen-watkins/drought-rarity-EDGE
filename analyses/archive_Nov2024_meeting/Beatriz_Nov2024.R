@@ -37,11 +37,158 @@ sum_edge_RR2 = edge_RR2 %>%
          MAP_level = ifelse(site %in% c("KNZ", "HYS"), "High", 
                             ifelse(site %in% c("CHY", "SGS"), "Intermediate", "Low"))) 
 
+# CW 1/22/25 ####
+## create quick new figs for shelved analyses section
+## FG ####
 ggplot(edge_RR2, aes(x=spatial_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
   geom_point() +
   geom_smooth(method = "lm") +
   facet_wrap(~FunctionalGroup) +
-  geom_hline(yintercept = 0, linetype = "dashed")
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Drought Response Ratio") +
+  xlab("Spatial Rarity") 
+ggsave("figures/Jan2025/misc_not_included/FG_RR_v_rarity_drought_overall.png", width = 8, height = 3)
+
+ggplot(edge_RR2, aes(x=temporal_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~FunctionalGroup) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ylab("Drought Response Ratio") +
+  xlab("Temporal Rarity")
+ggsave("figures/Jan2025/misc_not_included/FG_RR_v_Trarity_drought_overall.png", width = 8, height = 3)
+
+ggplot(edge_RR2, aes(x=spatial_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_grid(site~FunctionalGroup) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ylab("Drought Response Ratio") +
+  xlab("Spatial Rarity")
+ggsave("figures/Jan2025/misc_not_included/FG_RR_v_rarity_drought.png", width = 8, height = 10)
+
+ggplot(edge_RR2, aes(x=temporal_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_grid(site~FunctionalGroup) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ylab("Drought Response Ratio") +
+  xlab("Temporal Rarity")
+ggsave("figures/Jan2025/misc_not_included/FG_RR_v_Trarity_drought.png", width = 8, height = 10)
+
+## Duration ####
+edge_RR2 %>%
+  filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
+ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~Duration) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Drought Response Ratio") +
+  xlab("Spatial Rarity") 
+ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_drought.png", width = 6, height = 3)
+
+edge_RR2 %>%
+  filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
+  ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_grid(site~Duration) +
+  coord_cartesian(ylim = c(-1, 1)) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Drought Response Ratio") +
+  xlab("Spatial Rarity") +
+  theme_bw()
+ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_drought_site.png", width = 8, height = 10)
+
+edge_RR2 %>%
+  filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
+  ggplot(aes(x=temporal_rarity, y=resp.ratio.site_D4, color = Duration)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~Duration) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Drought Response Ratio") +
+  xlab("Temporal Rarity") 
+ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Trarity_drought.png", width = 6, height = 3)
+
+
+edge_RR2 %>%
+  filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
+  ggplot(aes(x=temporal_rarity, y=resp.ratio.site_D4, color = Duration)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_grid(site~Duration) +
+  coord_cartesian(ylim = c(-1, 1)) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Drought Response Ratio") +
+  xlab("Temporal Rarity") +
+  theme_bw()
+ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Trarity_drought_site.png", width = 8, height = 10)
+
+### post-drought ####
+edge_RR2 %>%
+  filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
+  ggplot(aes(x=spatial_rarity, y=resp.ratio.site_PDfull, color = Duration)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~Duration) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Post-Drought Response Ratio") +
+  xlab("Spatial Rarity") 
+ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_postdrought.png", width = 6, height = 3)
+
+edge_RR2 %>%
+  filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
+  ggplot(aes(x=temporal_rarity, y=resp.ratio.site_PDfull, color = Duration)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~Duration) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Post-Drought Response Ratio") +
+  xlab("Temporal Rarity") 
+ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Trarity_postdrought.png", width = 6, height = 3)
+
+
+
+
+
+
+
+
+
+
+edge_RR2 %>%
+  filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
+  ggplot(aes(x=spatial_rarity, y=resp.ratio.site_PDfull, color = Duration)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~Duration) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Post-Drought Response Ratio") +
+  xlab("Spatial Rarity") 
+
+edge_RR2 %>%
+  filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
+  ggplot(aes(x=temporal_rarity, y=resp.ratio.site_PDfull, color = Duration)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~Duration) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Drought Response Ratio") +
+  xlab("Spatial Rarity") 
+
+
+
+
+
+
+
+
+
+
+
+
 
 ggplot(edge_RR2, aes(x=temporal_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
   geom_point() +

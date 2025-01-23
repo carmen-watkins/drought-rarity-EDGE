@@ -32,7 +32,7 @@ unique(edge_RR$species)
 ## Summarise ####
 edge_RR_cats = edge_RR %>%
   mutate(spatial = ifelse(spatial_rarity < 0.25, "Abundant", "Scarce"),
-         temporal = ifelse(temporal_rarity > 0.5, "Core", "Transient"),
+         temporal = ifelse(temporal_rarity < 0.5, "Core", "Transient"),
          rarity_cat = paste0(temporal, ", ", spatial),
          MAP_level = ifelse(site %in% c("KNZ", "HYS"), "High", 
                             ifelse(site %in% c("CHY", "SGS"), "Intermediate", "Low"))) 
@@ -136,7 +136,7 @@ ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
 #ggsave("figures/Jan2025/resp_ratio_v_rarity.png", width = 10, height = 8.5)
 
 # Figure 4 ####
-ggplot(edge_RR_cats, aes(x=resp.ratio.site_D, y=resp.ratio.site_PD, color = MAP_level)) +
+ggplot(edge_RR_cats, aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull, color = site)) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
   geom_point(size = 2) +
@@ -145,12 +145,12 @@ ggplot(edge_RR_cats, aes(x=resp.ratio.site_D, y=resp.ratio.site_PD, color = MAP_
   ylab("Post-drought Response Ratio") +
   labs(color = "Relative MAP") +
   #geom_smooth(method = "lm", alpha = 1)+
-  scale_color_manual(values = c(pal[1], pal[4], pal[6])) +
+  scale_color_manual(values = pal) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
   theme(text = element_text(size = 15)) +
   theme(legend.position = "bottom")
 
-#ggsave("figures/Nov2024_meeting/figure4_zero_filled.png", width = 7, height = 7)
+#ggsave("figures/Jan2025/misc_not_included/figure4_zero_filled.png", width = 7, height = 7)
 
