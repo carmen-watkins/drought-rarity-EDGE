@@ -1,5 +1,7 @@
 ## Q3 does the effect post-drought fade basically
 
+# Model ####
+## Temporal ####
 ## Explore first and final 2 years of post-drought period as separate response ratios.
 mmtpi = lmer(resp.ratio.site_PDfirst ~ temporal_rarity + (1|site), data = edge_RR)
 mmtpf = lmer(resp.ratio.site_PDfinal ~ temporal_rarity + (1|site), data = edge_RR)
@@ -17,6 +19,7 @@ mmtpf_tab = as.data.frame(summary(mmtpf)$coeff) %>%
 confint(mmtpi)
 confint(mmtpf)
 
+## Spatial ####
 mmspi = lmer(resp.ratio.site_PDfirst ~ spatial_rarity + (1|site), data = edge_RR)
 mmspf = lmer(resp.ratio.site_PDfinal ~ spatial_rarity + (1|site), data = edge_RR)
 
@@ -36,7 +39,7 @@ pd_sep_coeff_tab = rbind(mmspi_tab, mmspf_tab, mmtpi_tab, mmtpf_tab) %>%
 
 write.csv(pd_sep_coeff_tab, "tables/post_drought_separated_coeff_table.csv")
 
-# Create tables
+# Create tables ####
 ### decided to use type II Anovas - for when data is unbalanced and DON'T want to consider interactions
 mmspi_tab = as.data.frame(Anova(mmspi, type = 2, test.statistic = "F")) %>%
   mutate(period = "Post-Drought Initial",
@@ -107,6 +110,36 @@ tpf = effect_plot(mmtpf, pred = temporal_rarity, interval = TRUE, plot.points = 
 ggarrange(spi, spf, tpi, tpf, ncol = 4, nrow = 1)
 
 ggsave("figures/Jan2025/pd_separated_mmfig.png", width = 10, height = 3)
+
+## Spatial ONLY ####
+spi1 = effect_plot(mmspi, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Initial Post-Drought Response Ratio", x.label = "Spatial Rarity", 
+                  colors = "#909090", 
+                  line.colors = "black") +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) 
+
+spf2 = effect_plot(mmspf, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, x.label = "Spatial Rarity", y.label = "Final Post-Drought Response Ratio",
+                  colors = "#909090", 
+                  line.colors = "black") +
+ # ylab(NULL) +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13))
+
+ggarrange(spi1, spf2)
+ggsave("figures/Jan2025/SO_pd_separated_mmfig.png", width = 7.5, height = 3.5)
+
+
+
+
+
+
+
 
 # Create DFs of Model ####
 ## spatial, drought ####

@@ -171,3 +171,27 @@ ggarrange(p1, p2, p3, p4, labels = "AUTO")
 
 ## ggsave("figures/Jan2025/resp_ratio_v_rarity_mmfit.tiff", width = 7.5, height = 7)
 
+# Fig 1: Spatial ####
+pS1 = effect_plot(mmsd, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Drought Response Ratio", x.label = "Spatial Rarity", 
+                 colors = "#909090", 
+                 line.colors = "black") +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13))
+
+pS2 = effect_plot(mmsp, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Post-Drought Response Ratio", x.label = "Spatial Rarity", 
+                 colors = "#909090", 
+                 line.colors = "black") +
+  theme_classic() +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13))
+
+ggarrange(pS1, pS2, labels = "AUTO")
+
+ggsave("figures/Jan2025/SO_resp_ratio_v_rarity_mmfit.tiff", width = 7.5, height = 3.5)
+
+
