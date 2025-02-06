@@ -102,6 +102,23 @@ edge_RR2 %>%
   xlab("Spatial Rarity") +
   theme_bw()  +
   scale_color_manual(values = pal2)
+ggsave("figures/Jan2025/duration_RR_v_Srarity_drought_site.png", width = 6, height = 8)
+
+
+edge_RR2 %>%
+  #filter(!Duration %in% c("unknown", "annual/perennial")) %>%
+  ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4)) + #, color = Duration
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~site, ncol = 1, nrow = 6) +
+  coord_cartesian(ylim = c(-1, 1)) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Drought Response Ratio") +
+  xlab("Spatial Rarity") +
+  theme_bw()  +
+  scale_color_manual(values = pal2)
+ggsave("figures/Jan2025/RR_v_Srarity_drought_site.png", width = 3, height = 8)
+
 
 edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%

@@ -61,7 +61,7 @@ north_temp <- north_edge %>%
            sapply(head,1)) %>%
   ## remove monsoon timing treatment 
   ## remove 2012 as was drought pre-treat year
-  filter(treatment != "int", year > 2012) %>% 
+  filter(treatment != "int") %>%  #, year > 2012
   ## set treatment years
   mutate(treatment = ifelse(treatment == "chr", "D", "C"), 
          experiment.year = year - 2013, ## 2013 is pre-treat year

@@ -392,6 +392,52 @@ ggarrange(spat_slope, spat_slopep, spat_int, spat_intp, labels = "AUTO", common.
 
 ggsave("figures/Jan2025/SO_site_slopes_intercepts_drought.tiff", width = 5.5, height = 5.5)
 
+
+## Rearranged ####
+sp_mods %>%
+  filter(period == "Drought", term == "spatial_rarity") %>%
+  ggplot(aes(x = estimate, y = site)) +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+  geom_point(aes(fill = site), colour = "black", size = 3.5, pch = 21) +
+  scale_fill_manual(values = pal) +
+  geom_vline(xintercept = 0, lty = 2) +
+  labs(x = "Coeff Estimate",
+       y = "Slope") +
+  labs(fill = "Site") +
+  #theme(axis.text.y = element_blank(),
+       # axis.ticks.y = element_blank()) +
+  coord_cartesian(xlim = c(-0.8, 2.1)) +
+  theme(text = element_text(size = 13)) +
+  scale_y_discrete(limits=rev)
+
+ggsave("figures/Jan2025/SO_site_slopes_drought_FORCOMPARISONONLY.tiff", width = 3.5, height = 4)
+
+sp_mods %>%
+  filter(period == "Drought", term == "(Intercept)") %>%
+  ggplot(aes(x = estimate, y = site)) +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+  geom_point(aes(fill = site), colour = "black", size = 3.5, pch = 21) +
+  scale_fill_manual(values = pal) +
+  geom_vline(xintercept = 0, lty = 2) +
+  labs(x = "Coeff Estimate",
+       y = "Intercept") +
+  labs(fill = "Site") +
+  #theme(axis.text.y = element_blank(),
+  # axis.ticks.y = element_blank()) +
+  coord_cartesian(xlim = c(-1, 0.4)) +
+  theme(text = element_text(size = 13)) +
+  scale_y_discrete(limits=rev)
+
+ggsave("figures/Jan2025/SO_site_intercept_drought_FORCOMPARISONONLY.tiff", width = 3.5, height = 4)
+
+
+
+
+
+
+
+
+
 ## Coeff v Pred plots ####
 spmods_pred = left_join(sp_mods, site_pred_scaled, by = "site") %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))

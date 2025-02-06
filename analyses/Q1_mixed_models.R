@@ -20,6 +20,21 @@ library(xtable)
 source("analyses/calc_response_ratio.R") 
 source("analyses/color_palettes.R")
 
+## read in FG data
+FG <- read.csv(here::here("data","edge_species_info_CP_BA.csv"))
+
+#Join functional group data to species response ratio data
+edge_RR2 <- edge_RR %>%
+  left_join(FG, by = "species") %>%
+  mutate(FunctionalGroup = ifelse(species %in% c("Astragalus_sp", "Eriogonum_sp", "Euphorbia_sp", "Oenothera_sp", "Asclepias_syriaca", "Cirsium_sp", "Astragalus_Oxytropis_sp"), "forb", 
+                                  ifelse(species %in% c("Sporobolus_sp"), "grass", FunctionalGroup))) %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"),
+         Duration = ifelse(site == "KNZ" & species == "Asclepias_syriaca", "perennial", Duration),
+         Duration = ifelse(species %in% c("Astragalus_drummondii", "Astragalus_laxmanii", "Astragalus_Oxytropis_sp", "Astragalus_shortianus", "Astragalus_sp", "Astragulus_crassicarpus"), "perennial", Duration),
+         Duration = ifelse(species %in% c("Euphorbia_exstipulata", "Euphorbia_sp", "Euphorbia_sp."), "annual", Duration), 
+         Duration = ifelse(species %in% c("Sporobolus_asper", "Sporobolus_cryptandrus", "Sporobolus_heterolepis", "Sporobolus_sp", "Sporobolus_sp."), "perennial", Duration), 
+         Duration = ifelse(is.na(Duration) | Duration == "unk", "unknown", Duration))
+
 ## set up graphics
 theme_set(theme_classic())
 pal <- wes_palette("Royal3")

@@ -192,6 +192,7 @@ euphorb = knz %>%
 table(euphorb$species, euphorb$year)
 table(euphorb$species, euphorb$plot)
 ## lump all as euphorbia species since majority are already lumped
+## CHANGED DECISION 1/29/25 - Mendy noted that E. marginata is distinct; Euphorbia sp is probably 2 other species combined that were confused for each other. Leave marginata and sp distinct.
 
 panic = knz %>%
   filter(genus %in% c("panicum", "Panicum")) %>%
@@ -216,8 +217,8 @@ knz_sp = knz_temp %>%
          species = ifelse(genus %in% c("Circium", "Cirsium"), "Cirsium_sp", species),
          
          ## lump euphorbia species
-         spcode = ifelse(genus %in% c("Euphorbia"), "EUPSP", spcode),
-         species = ifelse(genus %in% c("Euphorbia"), "Euphorbia_sp", species),
+        # spcode = ifelse(genus %in% c("Euphorbia"), "EUPSP", spcode),
+         #species = ifelse(genus %in% c("Euphorbia"), "Euphorbia_sp", species),
         
          ## change ASSY to Asclepias syriaca
          species = ifelse(species == "ASSY", "Asclepias_syriaca", species),
@@ -261,10 +262,8 @@ asclep = hys_temp %>%
   summarise(num.obs = n())
 table(asclep$species, asclep$year)
 table(asclep$species, asclep$plot)
-### DECISION HERE ####
-## lump all or remove Asclepias_sp. observations? 
-## removing unknowns for now
-## REMOVE
+### DECISION HERE 
+## MENDY"S ADVICE: KEEP ASCLEPIAS_SP; KEEP ALL OTHERS SEPARATE; PROBABLY STILL GET RID OF ASCLEPIAS SEEDLING
 
 ggplot(asclep, aes(x=year, y=plot, color = species)) +
   geom_point() +
@@ -301,6 +300,7 @@ euphorb = hys_temp %>%
 table(euphorb$species, euphorb$year)
 table(euphorb$species, euphorb$plot)
 ## lump all as euphorbia species since majority are already lumped
+## LEAVE SEPARATE BASED ON MENDY'S ADVICE
 
 melilo = hys_temp %>%
   filter(genus %in% c("Melilotus")) %>%
@@ -332,6 +332,7 @@ astrag = hys_temp %>%
 table(astrag$species, astrag$year)
 table(astrag$species, astrag$plot)
 ## mostly Astragalus_sp, one Astragalus_unknown, some split out to a speicfic species; lump all of these
+## BASED ON MTG W/MENDY, LUMP ALL
 
 unks = hys_temp %>%
   filter(genus %in% c("Unknown", "unk")) %>%
@@ -364,10 +365,10 @@ table(unkO$year, unkO$plot)
 table(unkO$species, unkO$year)
 ## one of the unknowns shows up in the same plot as an Oenothera_suffratescens
 
-### DECISION HERE ####
+### DECISION HERE 
 ## lump for now? but run by someone else
-## could also remove
-## remove
+
+## MENDY'S ADVICE: LUMP 
 
 cirsium = hys_temp %>%
   filter(genus %in% c("Circium", "Cirsium")) %>%
@@ -389,11 +390,12 @@ table(unkC$year, unkC$plot)
 
 ### clean sp ####
 hys_sp = hys_temp %>%
-  filter(!species %in% c("Unknown_Cirsium", "Asclepias_seedling", "Asclepias_sp.")) %>%
+  filter(!species %in% c("Unknown_Cirsium", "Asclepias_seedling")) %>%
   
   ## lump euphorbia species
-  mutate(spcode = ifelse(genus %in% c("Euphorbia", "Euphorbiadavidii"), "EUPSP", spcode),
-         species = ifelse(genus %in% c("Euphorbia", "Euphorbiadavidii"), "Euphorbia_sp", species),
+  mutate(
+  #spcode = ifelse(genus %in% c("Euphorbia", "Euphorbiadavidii"), "EUPSP", spcode),
+   #      species = ifelse(genus %in% c("Euphorbia", "Euphorbiadavidii"), "Euphorbia_sp", species),
          
          ## lump astragalus species 
          spcode = ifelse(genus %in% c("Astragalus"), "ASTSP", spcode),
@@ -648,6 +650,8 @@ ggplot(astrag, aes(x=year, y=plot, color = species)) +
   facet_wrap(~species)
 ## will have to lump all of these together
 
+## MENDY'S FEEDBACK: MOLLISSIMUS & SHORTIANUS & OXYTROPIS OK TO LEAVE SEPARATE; LUMP REST
+
 chenop = sgs_temp %>%
   filter(genus %in% c("Chenopodium")) %>%
   group_by(site, year, species, block, plot) %>%
@@ -691,9 +695,12 @@ table(unks$year, unks$species)
 sgs_sp = sgs_temp %>%
   
   ## lump astragalus and oxytropis
-  mutate(spcode = ifelse(genus %in% c("Astragalus", "ASOX", "unk", "Oxytropis"), "ASOX", spcode),
-         species = ifelse(genus %in% c("Astragalus", "ASOX", "unk", "Oxytropis"), "Astragalus_Oxytropis_sp", species),
-         genus = ifelse(genus %in% c("Astragalus", "ASOX", "unk", "Oxytropis"), "Astragalus_Oxytropis", genus),
+  mutate(spcode = ifelse(species %in% c("ASOX", "Astragalus_fluxuosus", "Astragalus_gracilis", "Astragalus_lotiflorus", "unk_Tall_astragulus"), "ASOX", spcode),
+         
+         genus = ifelse(species %in% c("ASOX", "Astragalus_fluxuosus", "Astragalus_gracilis", "Astragalus_lotiflorus", "unk_Tall_astragulus"), "Astragalus", genus),
+         
+         species = ifelse(species %in% c("ASOX", "Astragalus_fluxuosus", "Astragalus_gracilis", "Astragalus_lotiflorus", "unk_Tall_astragulus"), "Astragalus_sp", species),
+         ## keep A. mollissimus, A. shortianus, oxytropis separate
 
          ## lump oenothera
          spcode = ifelse(genus %in% c("Oenothera"), "OENSP", spcode),
