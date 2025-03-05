@@ -1,0 +1,5 @@
+"rarity","type","F","Df","Df.res","Pr(>F)"
+"Spatial","spatial_rarity",71.409,1,704.128,0
+"Spatial","PD_period",2.137,1,704.471,0.144
+"Temporal","temporal_rarity",68.955,1,682.083,0
+"Temporal","PD_period1",1.946,1,705.101,0.163

@@ -31,14 +31,12 @@ unique(edge_RR$species)
 # Data Mods ####
 ## Summarise ####
 edge_RR_cats = edge_RR %>%
-  mutate(spatial = ifelse(spatial_rarity < 0.25, "Abundant", "Scarce"),
-         temporal = ifelse(temporal_rarity < 0.5, "Core", "Transient"),
-         rarity_cat = paste0(temporal, ", ", spatial),
-         MAP_level = ifelse(site %in% c("KNZ", "HYS"), "High", 
-                            ifelse(site %in% c("CHY", "SGS"), "Intermediate", "Low"))) 
+  mutate(spatial = ifelse(spatial_rarity < 0.25, "Sp Common", "Sp Rare"),
+         temporal = ifelse(temporal_rarity < 0.5, "Tmp Common", "Tmp Rare"),
+         rarity_cat = paste0(temporal, ", ", spatial)) 
 
 ## arrange rarity categories
-edge_RR_cats$rarity_cat = factor(edge_RR_cats$rarity_cat, levels = c("Transient, Abundant", "Transient, Scarce", "Core, Abundant", "Core, Scarce"))
+#edge_RR_cats$rarity_cat = factor(edge_RR_cats$rarity_cat, levels = c("Temporally rare, Spatially common", "Temporally rare, Spatially rare", "Temporally common, Spatially common", "Temporally common, Spatially rare"))
 
 edge_RR_cats$site = factor(edge_RR_cats$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
@@ -86,71 +84,93 @@ cor(edge_RR[edge_RR$site == "SBK",]$spatial_rarity, edge_RR[edge_RR$site == "SBK
 
 # Figure 3 ####
 SR_drought <- ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1.75) +
-  #geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab(" ") +
-  ylab("Drought Response Ratio") +
+  ylab("Drought") +
   labs(color = "Site") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 13))
 
 SR_postdrought <- ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1.75) +
- # geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab("Spatial Rarity") +
-  ylab("Post-drought Response Ratio") +
+  ylab("Post-drought") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 13))
 
 TR_drought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1.75) +
-  #geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab(" ") +
   ylab(" ") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 13))
 
 TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1.75) +
- # geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab("Temporal Rarity") +
   ylab("") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15))
+  theme(text = element_text(size = 13))
 
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-#ggsave("figures/Jan2025/resp_ratio_v_rarity.png", width = 10, height = 8.5)
+#ggsave("figures/Feb2025/resp_ratio_v_rarity.png", width = 6, height = 5.5)
 
 # Figure 4 ####
-ggplot(edge_RR_cats, aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull, color = site)) +
+ggplot(edge_RR_cats, aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
   geom_point(size = 2) +
-  facet_wrap(~rarity_cat, nrow = 2, ncol = 2) +
+  geom_point(aes(fill = rarity_cat), colour = "black", size = 2.75, pch = 21) +
+  
+  facet_wrap(~rarity_cat, nrow = 1, ncol = 4) +
   xlab("Drought Response Ratio") +
   ylab("Post-drought Response Ratio") +
-  labs(color = "Relative MAP") +
+  labs(fill = NULL) +
   #geom_smooth(method = "lm", alpha = 1)+
-  scale_color_manual(values = pal) +
+  #scale_color_manual(values = pal) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
-  theme(text = element_text(size = 15)) +
-  theme(legend.position = "bottom")
+  theme(text = element_text(size = 13)) +
+  theme(legend.position = "bottom") +
+  scale_fill_manual(values = c("#89617b", "#7294D4", "#FD6467", "#db97a9"))
 
-#ggsave("figures/Jan2025/misc_not_included/figure4_zero_filled.png", width = 7, height = 7)
+ggsave("figures/Feb2025/DRR_v_PDRR.png", width = 9, height = 3.5)
+
+Darjeeling1 = c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6"),
+
+
+
+## Spatially common only: 
+"#FD6467"
+
+## Temporally common only: 
+"#7294D4"
+
+## Both common
+"#925e73"
+
+## Both rare
+"#d9a6b9"
+
+GrandBudapest1 = c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236"),
+GrandBudapest2 = c("#E6A0C4",  "#D8A499", "#C6CDF7", "#7294D4")
 
