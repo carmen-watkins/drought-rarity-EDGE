@@ -31,6 +31,100 @@ edge_RR2 <- edge_RR %>%
          Duration = ifelse(species %in% c("Sporobolus_asper", "Sporobolus_cryptandrus", "Sporobolus_heterolepis", "Sporobolus_sp", "Sporobolus_sp."), "perennial", Duration), 
          Duration = ifelse(is.na(Duration) | Duration == "unk", "unknown", Duration))
 
+
+## Calc percentage annual vs. perennial at a site
+
+## Calc percentage annual common vs. annual rare? at each site?
+site_duration_props = edge_RR2 %>%
+  group_by(site, Duration) %>%
+  summarise(num_dur = n())%>%
+  ungroup() %>%
+  group_by(site) %>%
+  mutate(tot = sum(num_dur),
+         prop_dur = num_dur / tot)
+  
+ggplot(site_duration_props, aes(x= Duration, y= prop_dur, color = site)) +
+  geom_point()
+#E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
+
+all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
+  geom_bar(stat = 'identity') +
+  xlab(NULL) +
+  ylab("Proportion") +
+  ggtitle("All Species") +
+  scale_fill_manual(values = c("#E58606", "#5D69B1","#52BCA3", "#99C945"))
+
+site_duration_props_sctc = edge_RR2 %>%
+  filter(spatial_rarity < 0.25 & temporal_rarity < 0.25) %>%
+  group_by(site, Duration) %>%
+  summarise(num_dur = n())%>%
+  ungroup() %>%
+  group_by(site) %>%
+  mutate(tot = sum(num_dur),
+         prop_dur = num_dur / tot) 
+
+sctc = ggplot(site_duration_props_sctc, aes(x=site, y=prop_dur, fill = Duration)) +
+  geom_bar(stat = 'identity') +
+  xlab(NULL) +
+  ylab("Proportion") +
+  ggtitle("Sp & Tmp Common")  +
+  scale_fill_manual(values = c("#E58606", "#5D69B1","#52BCA3", "#99C945"))
+
+site_duration_props_srtr = edge_RR2 %>%
+  filter(spatial_rarity > 0.25 & temporal_rarity > 0.5) %>%
+  group_by(site, Duration) %>%
+  summarise(num_dur = n())%>%
+  ungroup() %>%
+  group_by(site) %>%
+  mutate(tot = sum(num_dur),
+         prop_dur = num_dur / tot)
+
+srtr = ggplot(site_duration_props_srtr, aes(x=site, y=prop_dur, fill = Duration)) +
+  geom_bar(stat = 'identity') +
+  xlab(NULL) +
+  ylab("Proportion") +
+  ggtitle("Sp & Tmp Rare") +
+  scale_fill_manual(values = c("#E58606", "#52BCA3", "#99C945"))
+
+site_duration_props_sctr = edge_RR2 %>%
+  filter(spatial_rarity < 0.25 & temporal_rarity > 0.5) %>%
+  group_by(site, Duration) %>%
+  summarise(num_dur = n())%>%
+  ungroup() %>%
+  group_by(site) %>%
+  mutate(tot = sum(num_dur),
+         prop_dur = num_dur / tot)
+
+sctr = ggplot(site_duration_props_sctr, aes(x=site, y=prop_dur, fill = Duration)) +
+  geom_bar(stat = 'identity') +
+  xlab(NULL) +
+  ylab("Proportion") +
+  ggtitle("Sp Common & Tmp Rare") +
+  scale_fill_manual(values = c("#E58606", "#52BCA3"))
+
+site_duration_props_srtc = edge_RR2 %>%
+  filter(spatial_rarity > 0.25 & temporal_rarity < 0.5) %>%
+  group_by(site, Duration) %>%
+  summarise(num_dur = n())%>%
+  ungroup() %>%
+  group_by(site) %>%
+  mutate(tot = sum(num_dur),
+         prop_dur = num_dur / tot)
+
+srtc = ggplot(site_duration_props_srtc, aes(x=site, y=prop_dur, fill = Duration)) +
+  geom_bar(stat = 'identity') +
+  xlab(NULL) +
+  ylab("Proportion") +
+  ggtitle("Sp Rare & Tmp Common") +
+  scale_fill_manual(values = c("#E58606", "#5D69B1","#52BCA3", "#99C945"))
+
+
+
+ggarrange(all, sctc, srtr, srtc, sctr, common.legend = T, labels = "AUTO", legend = "bottom")
+
+ggsave("figures/Feb2025/sp_duration_proportions.png", width = 8, height = 5)
+
+
 # Check data ####
 duration = edge_RR2 %>%
   filter(is.na(Duration) | Duration == "unk" | Duration == "annual/perennial")
@@ -77,7 +171,7 @@ edge_RR2 %>%
   ylab("Drought Response Ratio") +
   xlab("Spatial Rarity") +
   scale_color_manual(values = pal2)
-#ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_drought.png", width = 6, height = 3)
+ggsave("figures/Feb2025/duration_RR_v_Srarity_drought.png", width = 6, height = 3)
 
 edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%
@@ -86,7 +180,7 @@ edge_RR2 %>%
   geom_smooth(method = "lm") +
   facet_wrap(~Duration) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
-  ylab("Drought Response Ratio") +
+  ylab("Post-Drought Response Ratio") +
   xlab("Spatial Rarity") +
   scale_color_manual(values = pal2)
 
