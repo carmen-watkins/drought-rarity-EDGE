@@ -52,7 +52,7 @@ edge_RR$site = factor(edge_RR$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL"
   #ungroup() %>%
   #mutate(perc = num/tot)
 
-# Figure 2 ####
+# Figure S3 ####
 ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
   geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
   #geom_vline(xintercept = 0.5, color = "lightgray") +
@@ -82,7 +82,7 @@ cor(edge_RR[edge_RR$site == "SBL",]$spatial_rarity, edge_RR[edge_RR$site == "SBL
 ### SBK
 cor(edge_RR[edge_RR$site == "SBK",]$spatial_rarity, edge_RR[edge_RR$site == "SBK",]$temporal_rarity, method = c("pearson"))
 
-# Figure 3 ####
+# Figure 1 ####
 SR_drought <- ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
   geom_point(alpha = 0.9, size = 0.8, color = "grey") +
   geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
@@ -93,7 +93,8 @@ SR_drought <- ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
   ylab("Drought") +
   labs(color = "Site") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13))
+  theme(text = element_text(size = 13)) +
+  coord_cartesian(ylim = c(-1,1))
 
 SR_postdrought <- ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull)) +
   geom_point(alpha = 0.9, size = 0.8, color = "grey") +
@@ -131,16 +132,24 @@ TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDful
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-#ggsave("figures/Feb2025/resp_ratio_v_rarity.png", width = 6, height = 5.5)
+#ggsave("figures/Mar2025/Fig1_resp_ratio_v_rarity.tiff", width = 6, height = 5.5)
 
-# Figure 4 ####
-ggplot(edge_RR_cats, aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
+# Figure 2 ####
+edge_RR_cats %>%
+  mutate(rarity_2 = ifelse(rarity_cat == "Tmp Rare, Sp Common", "Common (S), Intermittent (T)",
+                           ifelse(rarity_cat == "Tmp Rare, Sp Rare", "Sparse (S), Intermittent (T)", 
+                                  ifelse(rarity_cat == "Tmp Common, Sp Common", "Common (S), Persistent (T)", "Sparse (S), Persistent (T)"))), 
+         
+         rarity_2 = fct_relevel(rarity_2, "Common (S), Intermittent (T)", "Sparse (S), Intermittent (T)", "Common (S), Persistent (T)", "Sparse (S), Persistent (T)")) %>%
+  
+  
+ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
-  geom_point(size = 2) +
-  geom_point(aes(fill = rarity_cat), colour = "black", size = 2.75, pch = 21) +
+ # geom_point(size = 2, color = "grey") +
+  geom_point(fill = "grey", colour = "black", size = 2.5, pch = 21) +
   
-  facet_wrap(~rarity_cat, nrow = 1, ncol = 4) +
+  facet_wrap(~rarity_2, nrow = 2, ncol = 2) +
   xlab("Drought Response Ratio") +
   ylab("Post-drought Response Ratio") +
   labs(fill = NULL) +
@@ -150,27 +159,7 @@ ggplot(edge_RR_cats, aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
   theme(text = element_text(size = 13)) +
-  theme(legend.position = "bottom") +
-  scale_fill_manual(values = c("#89617b", "#7294D4", "#FD6467", "#db97a9"))
+  theme(legend.position = "right") #+
+  #scale_fill_manual(values = c("#89617b", "#7294D4", "#FD6467", "#db97a9"))
 
-ggsave("figures/Feb2025/DRR_v_PDRR.png", width = 9, height = 3.5)
-
-Darjeeling1 = c("#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6"),
-
-
-
-## Spatially common only: 
-"#FD6467"
-
-## Temporally common only: 
-"#7294D4"
-
-## Both common
-"#925e73"
-
-## Both rare
-"#d9a6b9"
-
-GrandBudapest1 = c("#F1BB7B", "#FD6467", "#5B1A18", "#D67236"),
-GrandBudapest2 = c("#E6A0C4",  "#D8A499", "#C6CDF7", "#7294D4")
-
+#ggsave("figures/Mar2025/Fig2_DRR_v_PDRR.tiff", width = 6, height = 5.5)
