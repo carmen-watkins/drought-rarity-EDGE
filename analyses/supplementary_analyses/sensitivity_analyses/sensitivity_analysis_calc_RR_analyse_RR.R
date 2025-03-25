@@ -1,14 +1,8 @@
-source("analyses/sensitivity_analysis_calc_rank_persistence_keep_unknowns.R")
+source("analyses/supplementary_analyses/sensitivity_analyses/sensitivity_analysis_calc_rank_persistence_keep_unknowns.R")
 
 source("analyses/color_palettes.R")
 
-library(viridisLite)
-library(scico)
-library(cowplot)
 library(ggpubr)
-library(viridis)
-library(ggExtra)
-#library(wesanderson)
 
 ## set up graphics
 theme_set(theme_classic())
@@ -57,7 +51,7 @@ drought.SE.RII <- edge_all %>%
 
 
 
-
+## Recovery ####
 recov.SE.RII <- edge_all %>%
   filter(treatment.year == "recovery") %>% ## 0 is pre-treat year; drought was years 1-4
   group_by(site, treatment, species) %>%
@@ -111,128 +105,53 @@ edge_RR$site = factor(edge_RR$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL"
 
 
 ## test out main pattern
-rankD3 <- ggplot(edge_RR, aes(x= percrank, y=resp.ratio.site_D)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+SR_drought <- ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D)) +
+  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab(" ") +
-  ylab("Drought Response Ratio") +
-  labs(color = "Relative MAP") +
+  ylab("Drought") +
+  labs(color = "Site") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
+  theme(text = element_text(size = 13)) +
+  coord_cartesian(ylim = c(-1,1))
 
-rankR3 <- ggplot(edge_RR, aes(x=percrank, y=resp.ratio.site_PD)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+SR_postdrought <- ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PD)) +
+  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
-  xlab("Percent Rank") +
-  ylab("Post-drought Response Ratio") +
+  xlab("Spatial Rarity") +
+  ylab("Post-drought") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
+  theme(text = element_text(size = 13))
 
-persD3 <- ggplot(edge_RR, aes(x=persistence.site, y=resp.ratio.site_D)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+TR_drought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D)) +
+  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
   xlab(" ") +
   ylab(" ") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
+  theme(text = element_text(size = 13))
 
-persR3 <- ggplot(edge_RR, aes(x=persistence.site, y=resp.ratio.site_PD)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
+TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD)) +
+  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
-  xlab("Persistence") +
+  xlab("Temporal Rarity") +
   ylab("") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
+  theme(text = element_text(size = 13))
 
-meanD3 <- ggplot(edge_RR, aes(x=mean.ctrl.cov, y=resp.ratio.site_D)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_color_manual(values = pal) +
-  xlab(" ") +
-  ylab(" ") +
-  guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
+ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
+          labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-meanR3 <- ggplot(edge_RR, aes(x=mean.ctrl.cov, y=resp.ratio.site_PD)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_color_manual(values = pal) +
-  xlab("Mean Cov (space/time)") +
-  ylab("") +
-  guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
-
-logmeanD3 = ggplot(edge_RR, aes(x=log(mean.ctrl.cov), y=resp.ratio.site_D)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_color_manual(values = pal) +
-  xlab(" ") +
-  ylab(" ") +
-  guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
-
-logmeanR3 <- ggplot(edge_RR, aes(x=log(mean.ctrl.cov), y=resp.ratio.site_PD)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_color_manual(values = pal) +
-  xlab("Log Mean Cov (space/time)") +
-  ylab(" ") +
-  guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
-
-absrankD3 = ggplot(edge_RR, aes(x=absrank, y=resp.ratio.site_D)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_color_manual(values = pal) +
-  xlab(" ") +
-  ylab(" ") +
-  guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
-
-absrankR3 <- ggplot(edge_RR, aes(x=absrank, y=resp.ratio.site_PD)) +
-  geom_point(alpha = 0.9, size = 0.9, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.05, linewidth = 2) +
-  geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 2) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  scale_color_manual(values = pal) +
-  xlab("Absolute Rank") +
-  ylab(" ") +
-  guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 15)) +
-  scale_x_reverse()
-
-ggarrange(rankD3, absrankD3, persD3, meanD3, logmeanD3, rankR3, absrankR3, persR3, meanR3, logmeanR3,
-          labels = "AUTO", common.legend = T, legend = "bottom", ncol = 5, nrow=2)
-
-ggsave("figures/Nov2024_meeting/figure3_expanded_SA_UNK_incl.png", width = 16, height = 8.5)
+ggsave("figures/Mar2025/FigS5_RR_v_rarity_keep_unknowns.tiff", width = 6, height = 5.5)

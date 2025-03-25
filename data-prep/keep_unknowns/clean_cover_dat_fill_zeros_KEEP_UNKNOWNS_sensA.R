@@ -8,7 +8,7 @@
 ## Email: cebel2@uoregon.edu
 
 # Set up ####
-source("analyses/sensitivity_analyses/clean_cover_dat_spnames_KEEP_UNKNOWNS_sensA.R")
+source("data-prep/keep_unknowns/clean_cover_dat_spnames_KEEP_UNKNOWNS_sensA.R")
 
 # Fill Zeros ####
 ## SBL ####
@@ -80,7 +80,7 @@ chy_fill = chy_sp %>%
   ungroup() %>%
   
   pivot_wider(names_from = "species", values_from = "max.cover2", values_fill = 0) %>%
-  pivot_longer(Allium_textile:unk_alternate_strong_midvein_hairy_margin, names_to = "species", values_to = "max.cover") 
+  pivot_longer(Artemesia_frigida:unk_alternate_strong_midvein_hairy_margin, names_to = "species", values_to = "max.cover") 
 ## 9-years * 20 plots * 4 subplots * 79 species = 56880; this checks out for one obs per species per subplot per years
 
 ## SGS ####
@@ -93,7 +93,7 @@ sgs_fill = sgs_sp %>%
   ungroup() %>%
   
   pivot_wider(names_from = "species", values_from = "max.cover2", values_fill = 0) %>%
-  pivot_longer(Astragalus_Oxytropis_sp:Picradeniopsis_oppositifolia, names_to = "species", values_to = "max.cover")
+  pivot_longer(Bouteloua_gracilis:unk_Red_edged_forb, names_to = "species", values_to = "max.cover")
 ## 9-years * 20 plots * 4 subplots * 61 species = 43920; this checks out for one obs per species per subplot per years
 
 # Merge ####

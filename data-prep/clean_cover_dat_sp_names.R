@@ -220,6 +220,8 @@ knz_sp = knz_temp %>%
         # spcode = ifelse(genus %in% c("Euphorbia"), "EUPSP", spcode),
          #species = ifelse(genus %in% c("Euphorbia"), "Euphorbia_sp", species),
         
+        ## Based on feedback from Mendy on 1/29/2025, don't lump Euphorbia sp at KNZ; Euphorbia marginata is distinct; Euphorbia sp is probably 2 sp
+        
          ## change ASSY to Asclepias syriaca
          species = ifelse(species == "ASSY", "Asclepias_syriaca", species),
          genus = ifelse(genus == "ASSY", "Asclepias", genus),
@@ -397,12 +399,14 @@ hys_sp = hys_temp %>%
   #spcode = ifelse(genus %in% c("Euphorbia", "Euphorbiadavidii"), "EUPSP", spcode),
    #      species = ifelse(genus %in% c("Euphorbia", "Euphorbiadavidii"), "Euphorbia_sp", species),
          
+    ##keep euphorbia separate based on advice from Mendy 1/29/25
+    
          ## lump astragalus species 
          spcode = ifelse(genus %in% c("Astragalus"), "ASTSP", spcode),
          species = ifelse(genus %in% c("Astragalus"), "Astragalus_sp", species),
          
          ## asclepias??
-            ## remove unknowns for now
+            ## keep asclepias_sp
          
          ## lump eriogonum species
          genus = ifelse(species %in% c("unk_Eriogonum_Hays", "Eriogonum_effusum"), "Eriogonum", genus),

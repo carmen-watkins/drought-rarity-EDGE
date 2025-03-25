@@ -1,5 +1,5 @@
 
-source("analyses/sensitivity_analyses/clean_cover_dat_fill_zeros_KEEP_UNKNOWNS_sensA.R")
+source("data-prep/keep_unknowns/clean_cover_dat_fill_zeros_KEEP_UNKNOWNS_sensA.R")
 
 ## create a function to calculate standard error
 calcSE<-function(x){
