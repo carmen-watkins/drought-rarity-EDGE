@@ -107,8 +107,8 @@ BUDA,Poaceae,Buchloe,dactyloides,C4,grass
 CAREX,Cyperaceae,Carex,sp.,C3,sedge
 FORB,UNK,UNK,UNK,UNK,forb
 PASM,Poaceae,Pascopyrum,smithii,C3,grass
-SCSC,Poaceae,Schizachyrium,scoparium,C4,grass
-SONU,Poaceae,Sorghastrum,nutans,C4,grass
+SCSC,Poaceae,Schizachyrium,scoparium,C3,grass
+SONU,Poaceae,Sorghastrum,nutans,C3,grass
 SPAS,Poaceae,Sporobolus,asper,C4,grass
 STCO,Poaceae,Stipa,comata,C3,grass
 WOODY,UNK,UNK,UNK,UNK,shrub

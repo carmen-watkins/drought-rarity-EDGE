@@ -13,7 +13,8 @@ source("analyses/calc_response_ratio.R")
 library(wesanderson)
 
 tmppal2 = wes_palette("Darjeeling2", type = "discrete")
-pal2 = c(tmppal2[3], "#94c0c1") #tmppal2[4])
+tmppal3 = wes_palette("Chevalier1")
+pal2 = c(tmppal2[3], "#94c0c1", tmppal3[1]) #tmppal2[4])
 
 
 #Read in functional group info
