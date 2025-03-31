@@ -553,11 +553,11 @@ pPt = tmpmods_pred %>%
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13))
 
-ggarrange(pT1, pD1, pP1,
-          pTt, pDt, pPt,
+ggarrange(pP1, pT1, pD1, 
+          pPt, pTt, pDt, 
     ncol = 3, nrow = 2, common.legend = T, legend = "bottom", labels = "AUTO")
 
-ggsave("figures/Jan2025/site_slopes_predictors_drought_both_rarity.png", width = 8.5, height = 6)
+ggsave("figures/Mar2025/Fig3_site_slopes_predictors_drought_both_rarity.tiff", width = 8.5, height = 6)
 
 
 ### post-drought ####
