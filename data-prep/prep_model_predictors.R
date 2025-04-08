@@ -40,7 +40,8 @@ BP_dominance = controls %>%
             dom.cov = max(mean.cov.plot),
             BP.dom = dom.cov/tot.cov) %>%
   group_by(site) %>%
-  summarise(BP.dom.site = mean(BP.dom))
+  summarise(BP.dom.site = mean(BP.dom), 
+            se.dom.site = calcSE(BP.dom))
 
 # Merge ####
 site_pred = left_join(MAP, BP_dominance, by = "site")

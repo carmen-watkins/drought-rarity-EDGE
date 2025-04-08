@@ -1,6 +1,17 @@
 
+library(cowplot)
+
+source("data-prep/prep_model_predictors.R")
+source("analyses/color_palettes.R")
+
+## set up graphics
+theme_set(theme_classic())
+pal <- wes_palette("Royal3")
+
+
 ## quick models to test whether site level predictors can predict sloeps of rarity - response ratio relationship
 
+# Table ####
 ## make site table
 head(site_pred_scaled)
 
@@ -8,9 +19,6 @@ site_tab = site_pred_scaled %>%
   select(site, grassland.type, MAP.mm, MAT.C, BP.dom.site)
 
 #write.csv(site_tab, "tables/site_info.csv")
-
-
-head(sp_mods)
 
 # Models ####
 ## Spatial, Drought ####

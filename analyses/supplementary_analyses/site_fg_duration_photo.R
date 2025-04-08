@@ -29,7 +29,7 @@ pal4 = wes_palette("Moonrise2")
 
 pal2 = c(tmppal2[3], "#94c0c1", tmppal3[1], pal4[1]) #tmppal2[4])
 
-"#D69C4E" "#94c0c1" "#E6A0C4" "#798E87"
+#"#D69C4E" "#94c0c1" "#E6A0C4" "#798E87"
 
 
 # SBK ####

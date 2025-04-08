@@ -140,7 +140,7 @@ edge_RR_cats %>%
                            ifelse(rarity_cat == "Tmp Rare, Sp Rare", "Sparse (S), Intermittent (T)", 
                                   ifelse(rarity_cat == "Tmp Common, Sp Common", "Common (S), Persistent (T)", "Sparse (S), Persistent (T)"))), 
          
-         rarity_2 = fct_relevel(rarity_2, "Common (S), Intermittent (T)", "Sparse (S), Intermittent (T)", "Common (S), Persistent (T)", "Sparse (S), Persistent (T)")) %>%
+         rarity_2 = fct_relevel(rarity_2, "Common (S), Persistent (T)", "Sparse (S), Persistent (T)",  "Common (S), Intermittent (T)", "Sparse (S), Intermittent (T)")) %>%
   
   
 ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
