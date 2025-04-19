@@ -472,7 +472,7 @@ pT1 = spmods_pred %>%
   scale_fill_manual(values = pal) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   xlab(" ") +
-  ylab("Spatial Rarity Slope") +
+  ylab(" ") +
   labs(fill = "Site") +
   geom_smooth(method = "lm", alpha = 0.1, color = "black")  +
   theme(axis.text.x=element_text(size=12)) +
@@ -488,7 +488,7 @@ pP1 = spmods_pred %>%
   scale_fill_manual(values = pal) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   xlab(" ") +
-  ylab(" ") +
+  ylab("Spatial Rarity Slope") +
   labs(fill = "Site") +
   geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", linetype = "dashed")  +
   theme(axis.text.x=element_text(size=12)) +
@@ -527,7 +527,7 @@ pTt = tmpmods_pred %>%
   #facet_wrap(~period, ncol = 1, nrow = 2) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   xlab("Mean Annual Temperature") +
-  ylab("Temporal Rarity Slope") +
+  ylab(" ") +
   labs(color = "Site") +
   geom_smooth(method = "lm", alpha = 0.1, color = "black") +
   coord_cartesian(ylim = c(-1, 2.8))  +
@@ -545,7 +545,7 @@ pPt = tmpmods_pred %>%
   #facet_wrap(~period, ncol = 1, nrow = 2) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   xlab("Mean Annual Precipitation") +
-  ylab("") +
+  ylab("Temporal Rarity Slope") +
   labs(color = "Site") +
   geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", linetype = "dashed") +
   coord_cartesian(ylim = c(-1, 2.8))  +
@@ -557,7 +557,7 @@ ggarrange(pP1, pT1, pD1,
           pPt, pTt, pDt, 
     ncol = 3, nrow = 2, common.legend = T, legend = "bottom", labels = "AUTO")
 
-ggsave("figures/Mar2025/Fig3_site_slopes_predictors_drought_both_rarity.tiff", width = 8.5, height = 6)
+ggsave("figures/Mar2025/Fig4_site_slopes_predictors_drought_both_rarity.tiff", width = 8.5, height = 6)
 
 
 ### post-drought ####
