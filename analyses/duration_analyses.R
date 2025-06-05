@@ -149,6 +149,22 @@ ggarrange(lh_sd, lh_td, lh_spd, lh_tpd, nrow = 2, ncol = 2, common.legend = TRUE
 
 ## ggsave("figures/Mar2025/FigS6_duration_RR_v_rarity.tiff", width = 10, height = 6)
 
+## Talk Figure ####
+edge_RR2 %>%
+  filter(!Duration %in% c("unknown", "annual/perennial")) %>%
+  ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~Duration) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  ylab("Drought Response Ratio") +
+  xlab("Spatial Rarity") +
+  theme(text = element_text(size = 16)) +
+  scale_color_manual(values = pal2) +
+  labs(color = "Life History")
+
+ggsave("figures/dissertation_talk/duration.png", width = 8, height = 4)
+
 ## Fig S8 ####
 all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
   geom_bar(stat = 'identity') +
