@@ -1,14 +1,25 @@
 
+## load response ratio data, so can verify which are 1 or -1
+source("analyses/calc_response_ratio.R") 
+
+
+## load data with years attached so can filter to 'pre-treatment' species
+source("data-prep/clean_cover_dat_fill_zeros.R")
+
+## filter to pre-treatment years
 pre_trt = edge_all %>%
   filter(year < 2014) 
 
-source("data-prep/clean_cover_dat_fill_zeros.R")
 
 ## Check 1's and -1's ####
+## select all species with a 1 or -1 value in drought or post-drought
+checksp1 = edge_RR %>%
+  
+  filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & resp.ratio.site_PDfull %in% c(1, -1, NaN)) %>%
+  
+  #filter(resp.ratio.site_D4 %in% c(1, -1) | resp.ratio.site_PDfull %in% c(1, -1)) %>%
+  select(site, species, resp.ratio.site_D4, resp.ratio.site_PDfull, spatial_rarity, temporal_rarity)
 
-checksp1 = edge_RR2 %>%
-  filter(resp.ratio.site_D4 %in% c(1, -1) | resp.ratio.site_PDfull %in% c(1, -1)) %>%
-  select(site, species, resp.ratio.site_D4, resp.ratio.site_PDfull, spatial_rarity, temporal_rarity, FunctionalGroup, Duration)
 
 ## KNZ
 knz_check = checksp1 %>%
@@ -16,21 +27,23 @@ knz_check = checksp1 %>%
 
 sort(unique(knz_check$species))
 
+## sum number of times each species appeared in the pre-treatment data
 knz_PT = pre_trt %>%
   filter(site == "KNZ") %>%
   group_by(species, treatment)%>%
   summarise(pres.abs.sum = sum(pres.abs)) 
 
+## filter pre-treatment data by the species that need to be checked as they have a 1 or -1 value RR
 Ktmp = knz_PT %>%
   filter(species %in% c(unique(knz_check$species))) %>%
   group_by(species) %>%
   summarise(PA = sum(pres.abs.sum))
   
 Kkeep = Ktmp %>%
-  filter(PA > 1)
+  filter(PA >= 1)
 
 Kdrop = Ktmp %>%
-  filter(PA < 2)
+  filter(PA < 1)
 
 ## HYS ####
 hys_check = checksp1 %>%
@@ -49,10 +62,10 @@ Htmp = hys_PT %>%
   summarise(PA = sum(pres.abs.sum))
 
 Hkeep = Htmp %>%
-  filter(PA > 1)
+  filter(PA >= 1)
 
 Hdrop = Htmp %>%
-  filter(PA < 2)
+  filter(PA < 1)
 
 ## CHY ####
 chy_check = checksp1 %>%
@@ -71,10 +84,10 @@ Ctmp = chy_PT %>%
   summarise(PA = sum(pres.abs.sum))
 
 Ckeep = Ctmp %>%
-  filter(PA > 1)
+  filter(PA >= 1)
 
 Cdrop = Ctmp %>%
-  filter(PA < 2)
+  filter(PA < 1)
 
 ## SGS ####
 sgs_check = checksp1 %>%
@@ -93,10 +106,10 @@ SGtmp = sgs_PT %>%
   summarise(PA = sum(pres.abs.sum))
 
 SGkeep = SGtmp %>%
-  filter(PA > 1)
+  filter(PA >= 1)
 
 SGdrop = SGtmp %>%
-  filter(PA < 2)
+  filter(PA < 1)
 
 ## SBL ####
 sbl_check = checksp1 %>%
@@ -116,10 +129,10 @@ SLtmp = sbl_PT %>%
   summarise(PA = sum(pres.abs.sum))
 
 SLkeep = SLtmp %>%
-  filter(PA > 1)
+  filter(PA >= 1)
 
 SLdrop = SLtmp %>%
-  filter(PA < 2)
+  filter(PA < 1)
 
 ## SBK ####
 sbk_check = checksp1 %>%
@@ -139,8 +152,8 @@ SKtmp = sbk_PT %>%
   summarise(PA = sum(pres.abs.sum))
 
 SKkeep = SKtmp %>%
-  filter(PA > 1)
+  filter(PA >= 1)
 
 SKdrop = SKtmp %>%
-  filter(PA < 2)
+  filter(PA < 1)
 

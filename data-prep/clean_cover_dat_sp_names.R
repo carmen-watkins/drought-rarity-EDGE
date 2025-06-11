@@ -430,7 +430,7 @@ sort(unique(hys_sp$sp.ep))
 
 ### quantify unknowns ####
 hys_unks = hys %>%
-  filter(species %in% hys_rm1 | species %in% c("Unknown_Cirsium", "Asclepias_seedling", "Asclepias_sp."),
+  filter(species %in% hys_rm1 | species %in% c("Unknown_Cirsium", "Asclepias_seedling"), #, "Asclepias_sp."),
          !species %in% c("Ulmus_americana", "Ulmus_sp."))
 
 length(unique(hys_unks$species))

@@ -1,0 +1,9 @@
+"period","rarity","type","Estimate","Std. Error","df","t value","Pr(>|t|)"
+"Drought","Spatial","(Intercept)",-0.299,0.086,8.756,-3.472,0.007
+"Drought","Spatial","spatial_rarity",0.891,0.101,411.495,8.825,0
+"Drought","Temporal","(Intercept)1",-0.22,0.072,9.584,-3.062,0.013
+"Drought","Temporal","temporal_rarity",0.659,0.084,414.42,7.88,0
+"Post-Drought","Spatial","(Intercept)2",-0.265,0.073,11.752,-3.637,0.004
+"Post-Drought","Spatial","spatial_rarity1",0.865,0.093,465.417,9.281,0
+"Post-Drought","Temporal","(Intercept)3",-0.163,0.065,12.95,-2.507,0.026
+"Post-Drought","Temporal","temporal_rarity1",0.599,0.081,469.138,7.422,0
