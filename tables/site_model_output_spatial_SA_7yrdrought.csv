@@ -1,0 +1,5 @@
+"","period","site","term","estimate","std.error","statistic","p.value","signif"
+"1","Drought","SBL","(Intercept)",-0.029,0.125,-0.23,0.819," "
+"2","Drought","SBL","spatial_rarity",0.899,0.244,3.687,0,"***"
+"3","Drought","SBK","(Intercept)",-0.563,0.144,-3.912,0,"***"
+"4","Drought","SBK","spatial_rarity",1.611,0.275,5.863,0,"***"
