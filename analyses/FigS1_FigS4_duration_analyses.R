@@ -1,5 +1,5 @@
 # Header ####
-## Script name: 
+## Script name: Duration Analyses
 ##
 ## Purpose of script: 
 ##
@@ -18,8 +18,9 @@ pal2 = c(tmppal2[3], "#94c0c1", tmppal3[1]) #tmppal2[4])
 
 
 #Read in functional group info
-FG <- read.csv(here::here("data","edge_species_info_CP_BA.csv"))
+FG = read.csv(here::here("data","edge_species_info_CP_BA.csv"))
 
+# Prep Data ####
 #Join functional group data to species response ratio data
 edge_RR2 <- edge_RR %>%
   left_join(FG, by = "species") %>%
@@ -35,10 +36,7 @@ edge_RR2 <- edge_RR %>%
          Photo = ifelse(site == "KNZ" & species == "Eleocharis_sp.", "c3", Photo),
          Photo = ifelse(site == "KNZ" & species == "Juncus_interior", "c3", Photo))
 
-
-#mutate(,
- #      Photo = ifelse(species == "Juncus_interior", "c3", Photo))
-
+## check unknowns
 photo_unks = edge_RR2 %>%
   filter(FunctionalGroup == "grass", is.na(Photo) | Photo == "unk")
 
@@ -47,7 +45,7 @@ photo_unks = edge_RR2 %>%
 
 ## Calc percentage annual vs. perennial at a site
 
-## Calc percentage annual common vs. annual rare? at each site?
+## Calc proportion of annual common vs. annual species at each site?
 site_duration_props = edge_RR2 %>%
   group_by(site, Duration) %>%
   summarise(num_dur = n())%>%
@@ -94,9 +92,8 @@ eriog = FG %>%
 
 ## KNZ, Asclepias syriaca is unknown, but I think this is a perennial; Cirsium also unknown
 
-
 # Plot ####
-## Fig S6 ####
+## Fig S4 ####
 lh_sd = edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%
   ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
@@ -163,9 +160,9 @@ edge_RR2 %>%
   scale_color_manual(values = pal2) +
   labs(color = "Life History")
 
-ggsave("figures/dissertation_talk/duration.png", width = 8, height = 4)
+#ggsave("figures/dissertation_talk/duration.png", width = 8, height = 4)
 
-## Fig S8 ####
+## Fig S1 ####
 all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
   geom_bar(stat = 'identity') +
   xlab(NULL) +
@@ -253,7 +250,7 @@ ggarrange(all, sctc, srtr, srtc, sctr, common.legend = T, labels = "AUTO", legen
 
 ## ggsave("figures/Mar2025/FigS8_sp_duration_proportions.tiff", width = 8, height = 5)
 
-## Fig S9 ####
+## Exploratory C3/C4 Fig ####
 all2 = edge_RR2 %>%
   filter(FunctionalGroup == "grass") %>%
   group_by(site, Photo) %>%
@@ -291,9 +288,7 @@ cpg = edge_RR2 %>%
 
 ggarrange(all2, cpg, common.legend = TRUE, legend = "bottom", labels = "AUTO")
 
-ggsave("figures/Mar2025/FigS9_sp_duration_proportions.tiff", width = 7, height = 3.5)
-
-
+#ggsave("figures/Mar2025/FigS9_sp_duration_proportions.tiff", width = 7, height = 3.5)
 
 edge_RR2 %>%
   filter(spatial_rarity >= 0.25 & temporal_rarity < 0.5) %>%
@@ -361,6 +356,6 @@ edge_RR2 %>%
   xlab("Spatial Rarity") +
   theme_bw()  +
   scale_color_manual(values = pal2)
-ggsave("figures/Jan2025/duration_RR_v_Srarity_drought_site.png", width = 6, height = 8)
+#ggsave("figures/Jan2025/duration_RR_v_Srarity_drought_site.png", width = 6, height = 8)
 
  
