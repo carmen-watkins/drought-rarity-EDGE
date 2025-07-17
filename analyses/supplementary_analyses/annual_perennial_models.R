@@ -16,6 +16,9 @@ library(lmerTest)
 
 library(jtools)
 library(xtable)
+library(lme4)
+
+source("analyses/supplementary_analyses/FigS1_FigS4_duration_analyses.R")
 
 ## clean up data 
 edge3 = edge_RR2 %>%
@@ -32,6 +35,8 @@ Anova(ms, type = 3, test.statistic = "F")
 ms2 = lmer(resp.ratio.site_D4 ~ spatial_rarity+Duration + (1|site), data = edge3)
 
 anova(ms, ms2)
+## ms (model with the interaction) is the significantly better model.
+
 
 ## Post-Drought ####
 msp = lmer(resp.ratio.site_PDfull ~ spatial_rarity*Duration + (1|site), data = edge3)
@@ -53,14 +58,15 @@ ms_tab = as.data.frame(Anova(ms, type = 3, test.statistic = "F")) %>%
          rarity = "Spatial")
 
 msp_tab = as.data.frame(Anova(msp, type = 3, test.statistic = "F")) %>%
-  mutate(period = "Drought",
+  mutate(period = "Post-Drought",
          rarity = "Spatial")
 
 duration_anova_df = rbind(ms_tab, msp_tab) %>%
   rownames_to_column(var = "type") %>%
-  select(period, rarity, type, `F`, Df, Df.res, `Pr(>F)` )
+  select(period, rarity, type, `F`, Df, Df.res, `Pr(>F)` ) %>%
+  mutate_if(is.numeric, round, digits = 3)
 
-write.csv(duration_anova_df, "tables/mixed_models_duration_spatial.csv")
+write.csv(duration_anova_df, "tables/TabS3_mixed_models_duration_spatial.csv", row.names = F)
 
 
 # Site level models ####
@@ -116,32 +122,4 @@ duration_tab = rbind(duration_mod_df, duration_mod_df_pd) %>%
                                        ifelse(p.value < 0.1 & p.value > 0.05, ".", " ")))))
 
 
-write.csv(duration_tab, "tables/duration_site_level_lms.csv", row.names = F)
-
-
-
-
-
-
-
-
-knzDd = lm(resp.ratio.site_D4 ~ spatial_rarity*Duration, data = edge3[edge3$site == "KNZ",])
-summary(knzDd)
-
-hysDd = lm(resp.ratio.site_D4 ~ spatial_rarity+Duration, data = edge3[edge3$site == "HYS",])
-summary(hysDd)
-
-chyDd = lm(resp.ratio.site_D4 ~ spatial_rarity*Duration, data = edge_RR3[edge_RR3$site == "CHY",])
-summary(chyDd)
-
-sgsDd = lm(resp.ratio.site_D4 ~ spatial_rarity+Duration, data = edge_RR3[edge_RR3$site == "SGS",])
-summary(sgsDd)
-
-sblDd = lm(resp.ratio.site_D4 ~ spatial_rarity+Duration, data = edge_RR3[edge_RR3$site == "SBL",])
-summary(sblDd)
-
-sbkDd = lm(resp.ratio.site_D4 ~ spatial_rarity+Duration, data = edge_RR3[edge_RR3$site == "SBK",])
-summary(sbkDd)
-
-sbkd = lm(resp.ratio.site_D4 ~ spatial_rarity, data = edge_RR3[edge_RR3$site == "SBK",])
-summary(sbkd)
+#write.csv(duration_tab, "tables/duration_site_level_lms.csv", row.names = F)

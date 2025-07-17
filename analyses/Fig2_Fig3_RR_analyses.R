@@ -288,3 +288,14 @@ ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
   #scale_fill_manual(values = c("#89617b", "#7294D4", "#FD6467", "#db97a9"))
 
 #ggsave("figures/Mar2025/Fig2_DRR_v_PDRR.tiff", width = 6, height = 5.5)
+
+## get number of samples in Common, Intermittent category
+cats_sum = edge_RR_cats %>%
+  group_by(rarity_cat) %>%
+  summarise(numcat = n())
+
+CI_cat = edge_RR_cats %>%
+  mutate(rarity_2 = ifelse(rarity_cat == "Tmp Rare, Sp Common", "Common (S), Intermittent (T)",
+                           ifelse(rarity_cat == "Tmp Rare, Sp Rare", "Sparse (S), Intermittent (T)", 
+                                  ifelse(rarity_cat == "Tmp Common, Sp Common", "Common (S), Persistent (T)", "Sparse (S), Persistent (T)")))) %>%
+  group_by(rarity_cat)
