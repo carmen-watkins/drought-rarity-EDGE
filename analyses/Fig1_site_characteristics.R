@@ -120,5 +120,4 @@ p1 = ggarrange(ppt, temp, dom, ncol = 3, common.legend = TRUE, legend = "right",
 p2 = plot_grid(sctc, cpg, labels = c("(d)", "(e)"), rel_widths = c(1.1, 1))
 plot_grid(p1, p2, ncol = 1)
 
-ggsave("figures/final/Fig1_site_char.tiff", width = 10, height = 6.75)
-
+#ggsave("figures/final/Fig1_site_char.tiff", width = 10, height = 6.75)

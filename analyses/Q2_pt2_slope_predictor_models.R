@@ -9,7 +9,7 @@ theme_set(theme_classic())
 pal <- wes_palette("Royal3")
 
 
-## quick models to test whether site level predictors can predict sloeps of rarity - response ratio relationship
+## quick models to test whether site level predictors can predict slopes of rarity - response ratio relationship
 
 # Table ####
 ## make site table

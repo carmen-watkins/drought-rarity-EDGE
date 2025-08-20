@@ -11,13 +11,7 @@
 source("analyses/calc_response_ratio.R") 
 source("analyses/color_palettes.R")
 
-#library(viridisLite)
-#library(scico)
-#library(cowplot)
 library(ggpubr)
-#library(viridis)
-#library(ggExtra)
-#library(wesanderson)
 
 ## set up graphics
 theme_set(theme_classic())
@@ -26,7 +20,6 @@ wes_palette("Royal3")
 
 ## get number of unique species in analyses
 unique(edge_RR$species)
-## 293
 
 # Data Mods ####
 ## Summarise ####
@@ -35,27 +28,15 @@ edge_RR_cats = edge_RR %>%
          temporal = ifelse(temporal_rarity < 0.5, "Tmp Common", "Tmp Rare"),
          rarity_cat = paste0(temporal, ", ", spatial)) 
 
-## arrange rarity categories
-#edge_RR_cats$rarity_cat = factor(edge_RR_cats$rarity_cat, levels = c("Temporally rare, Spatially common", "Temporally rare, Spatially rare", "Temporally common, Spatially common", "Temporally common, Spatially rare"))
-
+## arrange sites
 edge_RR_cats$site = factor(edge_RR_cats$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
 edge_RR$site = factor(edge_RR$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
-## Summary DF ####
-#category_sums = edge_RR %>%
- # group_by(MAP_level, rarity_cat) %>%
-  #summarise(num = n()) %>%
-  #ungroup() %>%
-#  group_by(MAP_level) %>%
- # mutate(tot = sum(num)) %>%
-  #ungroup() %>%
-  #mutate(perc = num/tot)
-
 # Figure S3 ####
+## MS Figure ####
 ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
   geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
-  #geom_vline(xintercept = 0.5, color = "lightgray") +
   geom_vline(xintercept = 0.25, color = "red", linetype = "dashed") +
   geom_point(size = 1.5) +
   facet_wrap(~site, ncol = 6, nrow = 1) +
@@ -70,11 +51,7 @@ ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
 
 ## Talk Figure ####
 ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
-  #geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
-  #geom_vline(xintercept = 0.5, color = "lightgray") +
-  #geom_vline(xintercept = 0.25, color = "red", linetype = "dashed") +
   geom_point(size = 1.5) +
-  #facet_wrap(~site, ncol = 6, nrow = 1) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
@@ -84,14 +61,12 @@ ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
   theme(text = element_text(size = 16)) +
   geom_abline(slope = 1, intercept = 0)
 
-ggsave("figures/dissertation_talk/trare_srare_nolines.png", width = 5, height = 4)
+## ggsave("figures/dissertation_talk/trare_srare_nolines.png", width = 5, height = 4)
 
 ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
   geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
-  #geom_vline(xintercept = 0.5, color = "lightgray") +
   geom_vline(xintercept = 0.25, color = "red", linetype = "dashed") +
   geom_point(size = 1.5) +
-  #facet_wrap(~site, ncol = 6, nrow = 1) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
@@ -100,7 +75,8 @@ ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
   theme(legend.position = "right") +
   theme(text = element_text(size = 16)) +
   geom_abline(slope = 1, intercept = 0)
-ggsave("figures/dissertation_talk/trare_srare_lines.png", width = 5, height = 4)
+
+## ggsave("figures/dissertation_talk/trare_srare_lines.png", width = 5, height = 4)
 
 
 ## check correlations ####
@@ -117,7 +93,8 @@ cor(edge_RR[edge_RR$site == "SBL",]$spatial_rarity, edge_RR[edge_RR$site == "SBL
 ### SBK
 cor(edge_RR[edge_RR$site == "SBK",]$spatial_rarity, edge_RR[edge_RR$site == "SBK",]$temporal_rarity, method = c("pearson"))
 
-# Figure 1 ####
+# Figure 2 ####
+## MS Figure ####
 SR_drought <- ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
   geom_point(alpha = 0.9, size = 0.8, color = "grey") +
   geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
@@ -167,12 +144,11 @@ TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDful
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = c("(a)", "(b)", "(c)", "(d)"), common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-#ggsave("figures/final/Fig2_resp_ratio_v_rarity.tiff", width = 6, height = 5.5)
+## ggsave("figures/final/Fig2_resp_ratio_v_rarity.tiff", width = 6, height = 5.5)
 
 ## Talk Figure ####
 ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
   geom_point(alpha = 0.9, size = 0.8, color = "grey") +
- # geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
@@ -184,7 +160,7 @@ ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
   coord_cartesian(ylim = c(-1,1)) +
   theme(legend.position="bottom")
 
-ggsave("figures/dissertation_talk/drr_sr.png", width = 6, height = 4.75)
+## ggsave("figures/dissertation_talk/drr_sr.png", width = 6, height = 4.75)
 
 ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
   geom_point(alpha = 0.9, size = 0.8, color = "grey") +
@@ -200,7 +176,7 @@ ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
   coord_cartesian(ylim = c(-1,1)) +
   theme(legend.position="right")
 
-ggsave("figures/dissertation_talk/drr_sr_site_lines.png", width = 7, height = 4.75)
+## ggsave("figures/dissertation_talk/drr_sr_site_lines.png", width = 7, height = 4.75)
 
 ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4)) +
   geom_point(alpha = 0.9, size = 0.8, color = "grey") +
@@ -212,8 +188,8 @@ ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4)) +
   ylab("Drought Response Ratio") +
   guides(color=guide_legend(ncol=1,byrow=TRUE)) +
   theme(text = element_text(size = 20))
-ggsave("figures/dissertation_talk/drr_tr.png", width = 6, height = 4.75)
 
+## ggsave("figures/dissertation_talk/drr_tr.png", width = 6, height = 4.75)
 
 ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4)) +
   geom_point(alpha = 0.9, size = 0.8, color = "grey") +
@@ -227,9 +203,7 @@ ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4)) +
   guides(color=guide_legend(ncol=1,byrow=TRUE)) +
   theme(text = element_text(size = 20))
 
-ggsave("figures/dissertation_talk/drr_tr_site_lines.png", width = 7, height = 4.75)
-
-
+## ggsave("figures/dissertation_talk/drr_tr_site_lines.png", width = 7, height = 4.75)
 
 ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull)) +
   geom_point(alpha = 0.9, size = 0.8, color = "grey") +
@@ -243,8 +217,7 @@ ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull)) +
   guides(color=guide_legend(ncol=1,byrow=TRUE)) +
   theme(text = element_text(size = 20))
 
-ggsave("figures/dissertation_talk/pdrr_sr_site_lines.png", width = 7, height = 4.75)
-
+## ggsave("figures/dissertation_talk/pdrr_sr_site_lines.png", width = 7, height = 4.75)
 
 ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull)) +
   geom_point(alpha = 0.9, size = 0.8, color = "grey") +
@@ -257,9 +230,10 @@ ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull)) +
   labs(color = "Site") +
   guides(color=guide_legend(ncol=1,byrow=TRUE)) +
   theme(text = element_text(size = 20))
-ggsave("figures/dissertation_talk/pdrr_tr_site_lines.png", width = 7, height = 4.75)
 
-# Figure 2 ####
+## ggsave("figures/dissertation_talk/pdrr_tr_site_lines.png", width = 7, height = 4.75)
+
+# Figure 3 ####
 edge_RR_cats %>%
   mutate(rarity_2 = ifelse(rarity_cat == "Tmp Rare, Sp Common", "Common (S), Intermittent (T)",
                            ifelse(rarity_cat == "Tmp Rare, Sp Rare", "Sparse (S), Intermittent (T)", 
@@ -267,28 +241,24 @@ edge_RR_cats %>%
          
          rarity_2 = fct_relevel(rarity_2, "Common (S), Persistent (T)", "Sparse (S), Persistent (T)",  "Common (S), Intermittent (T)", "Sparse (S), Intermittent (T)")) %>%
   
-  
 ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
- # geom_point(size = 2, color = "grey") +
   geom_point(fill = "grey", colour = "black", size = 2.5, pch = 21) +
   
   facet_wrap(~rarity_2, nrow = 2, ncol = 2) +
   xlab("Drought Response Ratio") +
   ylab("Post-drought Response Ratio") +
   labs(fill = NULL) +
-  #geom_smooth(method = "lm", alpha = 1)+
-  #scale_color_manual(values = pal) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
   theme(text = element_text(size = 13)) +
-  theme(legend.position = "right") #+
-  #scale_fill_manual(values = c("#89617b", "#7294D4", "#FD6467", "#db97a9"))
+  theme(legend.position = "right") 
 
-ggsave("figures/final/Fig3_DRR_v_PDRR.tiff", width = 6, height = 5.5)
+## ggsave("figures/final/Fig3_DRR_v_PDRR.tiff", width = 6, height = 5.5)
 
+## summarise categories ####
 CIsp = edge_RR_cats %>%
   filter(rarity_cat == "Tmp Rare, Sp Common")
 
