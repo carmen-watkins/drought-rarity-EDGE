@@ -41,42 +41,39 @@ edge_RR2 <- edge_RR %>%
 # Figures ####
 ## Fig 1 ####
 ppt = site_pred_scaled %>%
-  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")) %>%
+  mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   ggplot(aes(x=site, y=MAP.mm, fill = site)) +
-  # geom_point() +
-  # geom_errorbar(aes(ymin = mean_ppt - se_ppt, ymax = mean_ppt + se_ppt), width = 0.2) +
   geom_bar(stat = "identity") +
-  #geom_point(aes(fill = site), colour = "black", size = 3, pch = 21) +
-  scale_fill_manual(values = pal) +
+  scale_fill_manual(values = rev(pal)) +
   ylab("Mean Annual Precip (mm)") +
   xlab(" ") +
   theme(text = element_text(size = 15)) +
   labs(fill = "Site")
 
 temp = site_pred_scaled %>%
-  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")) %>%
+  mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   ggplot(aes(x=site, y=MAT.C, fill = site)) +
-  #geom_point(aes(fill = site), colour = "black", size = 3, pch = 21) +
   geom_bar(stat = "identity") +
-  scale_fill_manual(values = pal) +
+  scale_fill_manual(values = rev(pal)) +
   ylab("Mean Annual Temp (C)") +
   xlab(" ") +
   theme(text = element_text(size = 15)) +
   labs(fill = "Site")
 
 dom = site_pred_scaled %>%
-  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")) %>%
+  mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   ggplot(aes(x=site, y=BP.dom.site, fill = site)) +
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = BP.dom.site - se.dom.site, ymax = BP.dom.site + se.dom.site), width = 0.2) +
   #geom_point(aes(fill = site), colour = "black", size = 3, pch = 21) +
-  scale_fill_manual(values = pal)  +
+  scale_fill_manual(values = rev(pal))  +
   theme(text = element_text(size = 15)) +
   ylab("Mean Plot Dominance") +
   xlab(" ") +
   labs(fill = "Site")
 
 sctc = edge_RR2 %>%
+  mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
   group_by(site, Duration) %>%
   summarise(num_dur = n())%>%
@@ -99,6 +96,7 @@ sctc = edge_RR2 %>%
   ggtitle("Common, Persistent Species")
 
 cpg = edge_RR2 %>%
+  mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
   filter(FunctionalGroup == "grass") %>%
   group_by(site, Photo) %>%
@@ -118,8 +116,8 @@ cpg = edge_RR2 %>%
   scale_fill_manual(values = c("#a7a7a7","#f2f2f2")) +
   ggtitle("Common, Persistent Grasses")
 
-p1 = ggarrange(ppt, temp, dom, ncol = 3, common.legend = TRUE, legend = "right", labels = "AUTO")
-p2 = plot_grid(sctc, cpg, labels = c("D", "E"), rel_widths = c(1.1, 1))
+p1 = ggarrange(ppt, temp, dom, ncol = 3, common.legend = TRUE, legend = "right", labels = c("(a)", "(b)", "(c)"))
+p2 = plot_grid(sctc, cpg, labels = c("(d)", "(e)"), rel_widths = c(1.1, 1))
 plot_grid(p1, p2, ncol = 1)
 
 ggsave("figures/final/Fig1_site_char.tiff", width = 10, height = 6.75)

@@ -165,9 +165,9 @@ TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDful
   theme(text = element_text(size = 13))
 
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
-          labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
+          labels = c("(a)", "(b)", "(c)", "(d)"), common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-#ggsave("figures/Mar2025/Fig1_resp_ratio_v_rarity.tiff", width = 6, height = 5.5)
+#ggsave("figures/final/Fig2_resp_ratio_v_rarity.tiff", width = 6, height = 5.5)
 
 ## Talk Figure ####
 ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
@@ -287,7 +287,10 @@ ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
   theme(legend.position = "right") #+
   #scale_fill_manual(values = c("#89617b", "#7294D4", "#FD6467", "#db97a9"))
 
-#ggsave("figures/Mar2025/Fig2_DRR_v_PDRR.tiff", width = 6, height = 5.5)
+ggsave("figures/final/Fig3_DRR_v_PDRR.tiff", width = 6, height = 5.5)
+
+CIsp = edge_RR_cats %>%
+  filter(rarity_cat == "Tmp Rare, Sp Common")
 
 ## get number of samples in Common, Intermittent category
 cats_sum = edge_RR_cats %>%

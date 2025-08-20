@@ -445,6 +445,7 @@ spmods_pred = left_join(sp_mods, site_pred_scaled, by = "site") %>%
 tmpmods_pred = left_join(tmp_mods, site_pred_scaled, by = "site") %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
+# FIGURE 4 #####
 ### drought ####
 #### spatial ####
 ## spatial, dominance
@@ -555,9 +556,9 @@ pPt = tmpmods_pred %>%
 
 ggarrange(pP1, pT1, pD1, 
           pPt, pTt, pDt, 
-    ncol = 3, nrow = 2, common.legend = T, legend = "bottom", labels = "AUTO")
+    ncol = 3, nrow = 2, common.legend = T, legend = "bottom", labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"))
 
-ggsave("figures/Mar2025/Fig4_site_slopes_predictors_drought_both_rarity.tiff", width = 8.5, height = 6)
+ggsave("figures/final/Fig4_site_slopes_predictors_drought_both_rarity.tiff", width = 8.5, height = 6.15)
 
 
 ### post-drought ####
