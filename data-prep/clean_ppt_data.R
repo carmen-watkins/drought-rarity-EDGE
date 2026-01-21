@@ -1,7 +1,8 @@
 # Header #### 
 ## Script name: Clean Precipitation Data
 ##
-## Purpose of script: Clean precip data and calculate the mean over the time series to use as a predictor variable in models
+## Purpose of script: Clean precip data and calculate the mean over the time 
+## series to use as a predictor variable in models
 ##
 ## Author: Carmen Watkins
 ##
@@ -125,4 +126,7 @@ ppt_intervals = rbind(sev_all, north_all) %>%
 site_ppt = left_join(ppt_intervals, site_ppt_avg, by = "site")
 
 # Clean up ####
-rm(precip, sev_ppt, sev_ppt2, north_ppt, north_DRR4, north_PDRRfinal, north_PDRRfirst, north_PDRRfull, north_all, sev_all, sev_DRR4, sev_DRR7, sev_PDRRfinal, sev_PDRRfull, sev_PDRRfirst, st1, st2, st3, t1, t2, ppt_intervals, site_ppt_avg, north_temporal, sev_temporal)
+rm(precip, sev_ppt, sev_ppt2, north_ppt, north_DRR4, north_PDRRfinal, 
+   north_PDRRfirst, north_PDRRfull, north_all, sev_all, sev_DRR4, sev_DRR7, 
+   sev_PDRRfinal, sev_PDRRfull, sev_PDRRfirst, st1, st2, st3, t1, t2, 
+   ppt_intervals, site_ppt_avg)

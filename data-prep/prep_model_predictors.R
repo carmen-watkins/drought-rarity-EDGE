@@ -5,7 +5,6 @@
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
 
 # Set up env ####
 ## read in cleaned cover data
@@ -75,4 +74,5 @@ site_pred_scaled = site_pred_final %>%
          )
 
 # Clean Env ####
-rm(site_pred, site_pred_final, BP_dominance, controls, MAP, site_ppt, dom, ppt_temp, edge_all, rank_persist)
+rm(site_pred, site_pred_final, BP_dominance, controls, MAP, site_ppt, 
+   edge_all, rank_persist)
