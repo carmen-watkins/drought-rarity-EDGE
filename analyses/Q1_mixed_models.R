@@ -139,7 +139,7 @@ coeff_df = rbind(mmsd_coeff, mmtd_coeff, mmsp_coeff, mmtp_coeff) %>%
 #xtable(coeff_df)
 #write.csv(coeff_df, "tables/mixed_mod_coeff_table.csv", row.names = F)
 
-# Plot Fig 1 ####
+# Plot Old Fig 1 version ####
 p1 = effect_plot(mmsd, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Drought Response Ratio", x.label = " ", 
                  colors = "#909090", 
                  line.colors = "black") +
@@ -186,7 +186,7 @@ ggarrange(p1, p2, p3, p4, labels = "AUTO")
 
 ## ggsave("figures/Jan2025/resp_ratio_v_rarity_mmfit.tiff", width = 7.5, height = 7)
 
-# Fig 1: Spatial ####
+# Old Fig 1 version: Spatial ####
 pS1 = effect_plot(mmsd, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Drought Response Ratio", x.label = "Spatial Rarity", 
                  colors = "#909090", 
                  line.colors = "black") +
@@ -207,6 +207,6 @@ pS2 = effect_plot(mmsp, pred = spatial_rarity, interval = TRUE, plot.points = TR
 
 ggarrange(pS1, pS2, labels = "AUTO")
 
-ggsave("figures/Jan2025/SO_resp_ratio_v_rarity_mmfit.tiff", width = 7.5, height = 3.5)
+#ggsave("figures/Jan2025/SO_resp_ratio_v_rarity_mmfit.tiff", width = 7.5, height = 3.5)
 
 

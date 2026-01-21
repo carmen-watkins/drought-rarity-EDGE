@@ -1,11 +1,11 @@
 # Header ####
 ## Script name: Q2 Linear Models by Site
 
-## Purpose of script: Run linear models to test the effect of rarity on response ratio separately at each site
+## Purpose of script: Run linear models to test the effect of rarity on response 
+## ratio separately at each site
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
 
 # Set up ####
 ## load packages
@@ -19,17 +19,20 @@ library(xtable)
 
 source("analyses/calc_response_ratio.R") 
 source("data-prep/prep_model_predictors.R")
-source("analyses/color_palettes.R")
+#source("analyses/color_palettes.R")
 
 ## set up graphics
 theme_set(theme_classic())
-pal <- wes_palette("Royal3")
+pal = c("#03274E", "#3B5378", "#7F5F70",
+        "#CE685E", "#E5AA7F", "#FCD484")
 
 # Model ####
 ## spatial, drought ####
 sites = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK")
 
-mod_df = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA,  conf.low = NA, conf.high = NA, site = NA, period = NA)
+mod_df = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, 
+                    p.value = NA,  conf.low = NA, conf.high = NA, site = NA, 
+                    period = NA)
 
 for(i in 1:length(sites)) {
 
@@ -50,7 +53,9 @@ for(i in 1:length(sites)) {
 }
 
 ## spatial, post-drought ####
-mod_dfp = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA,  conf.low = NA, conf.high = NA, site = NA, period = NA)
+mod_dfp = data.frame(term = NA, estimate = NA, std.error = NA, 
+                     statistic = NA, p.value = NA,  conf.low = NA, 
+                     conf.high = NA, site = NA, period = NA)
 
 for(i in 1:length(sites)) {
   
@@ -71,7 +76,9 @@ for(i in 1:length(sites)) {
 }
 
 ## temporal, drought ####
-modt_df = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA,  conf.low = NA, conf.high = NA, site = NA, period = NA)
+modt_df = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, 
+                     p.value = NA,  conf.low = NA, conf.high = NA, site = NA, 
+                     period = NA)
 
 for(i in 1:length(sites)) {
   
@@ -92,7 +99,9 @@ for(i in 1:length(sites)) {
 }
 
 ## temporal, post-drought ####
-modt_dfp = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, p.value = NA,  conf.low = NA, conf.high = NA, site = NA, period = NA)
+modt_dfp = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, 
+                      p.value = NA,  conf.low = NA, conf.high = NA, site = NA, 
+                      period = NA)
 
 for(i in 1:length(sites)) {
   
@@ -125,7 +134,8 @@ sp_mods_tab = sp_mods %>%
   mutate(signif = ifelse(p.value < 0.001, "***", 
                          ifelse(p.value < 0.01 & p.value > 0.001, "**",
                                 ifelse(p.value > 0.01 & p.value < 0.05, "*", 
-                                       ifelse(p.value < 0.1 & p.value > 0.05, ".", " ")))))
+                                       ifelse(p.value < 0.1 & p.value > 0.05, 
+                                              ".", " ")))))
 
 #write.csv(sp_mods_tab, "tables/site_model_output_spatial.csv")
 
@@ -134,9 +144,11 @@ tmp_mods_tab = tmp_mods %>%
   mutate(signif = ifelse(p.value < 0.001, "***", 
                          ifelse(p.value < 0.01 & p.value > 0.001, "**",
                                 ifelse(p.value > 0.01 & p.value < 0.05, "*", 
-                                       ifelse(p.value < 0.1 & p.value > 0.05, ".", " ")))))
+                                       ifelse(p.value < 0.1 & p.value > 0.05, 
+                                              ".", " ")))))
 
 #write.csv(tmp_mods_tab, "tables/site_model_output_temporal.csv")
 
 # Clean Env ####
-rm(chy_unks, hys_unks, knz_temp, knz_unks, sbk_unks, sgs_unks, virid_sp, tmp_mods_tab, sp_mods_tab)
+rm(chy_unks, hys_unks, knz_temp, knz_unks, sbk_unks, sgs_unks, virid_sp, 
+   tmp_mods_tab, sp_mods_tab, mod_df, mod_dfp, modt_df, modt_dfp, tmp)
