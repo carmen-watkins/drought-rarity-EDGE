@@ -1,12 +1,11 @@
-
 # Header ####
-## Script name: Fig 4
+## Script name: Fig 4 Slope Predictor
 
-## Purpose of script: Run linear models to test the effect of rarity on response ratio separately at each site
+## Purpose of script: Create figures of linear model coefficients from linear 
+## models that test the effect of rarity on response ratio separately at each site
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
 
 # Set Up ####
 source("analyses/Q2_pt1_linear_models_by_site.R")
@@ -31,7 +30,8 @@ pD1 = spmods_pred %>%
   xlab(" ") +
   ylab(" ") +
   labs(fill = "Site")  +
-  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", linetype = "dashed")  +
+  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
+              linetype = "dashed")  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
@@ -65,7 +65,8 @@ pP1 = spmods_pred %>%
   xlab(" ") +
   ylab("Spatial Rarity Slope") +
   labs(fill = "Site") +
-  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", linetype = "dashed")  +
+  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
+              linetype = "dashed")  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
@@ -86,7 +87,8 @@ pDt = tmpmods_pred %>%
   xlab("Site-Level Dominance") +
   ylab(" ") +
   labs(color = "Site")  +
-  geom_smooth(method = "lm", alpha = 0.1, color = "black", linetype = "dashed") +
+  geom_smooth(method = "lm", alpha = 0.1, color = "black", 
+              linetype = "dashed") +
   coord_cartesian(ylim = c(-1, 2.8))  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
@@ -124,7 +126,8 @@ pPt = tmpmods_pred %>%
   xlab("Mean Annual Precipitation") +
   ylab("Temporal Rarity Slope") +
   labs(color = "Site") +
-  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", linetype = "dashed") +
+  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
+              linetype = "dashed") +
   coord_cartesian(ylim = c(-1, 2.8))  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
@@ -133,10 +136,12 @@ pPt = tmpmods_pred %>%
 ## combine panels & plot
 ggarrange(pP1, pT1, pD1, 
           pPt, pTt, pDt, 
-          ncol = 3, nrow = 2, common.legend = T, legend = "bottom", labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"))
+          ncol = 3, nrow = 2, common.legend = T, legend = "bottom", 
+          labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"))
 
 ## save
-## ggsave("figures/final/Fig4_site_slopes_predictors_drought_both_rarity.tiff", width = 8.5, height = 6.15)
+ggsave("figures/review_figs/Fig4_site_slopes_predictors_drought_both_rarity.tiff", 
+       width = 8.5, height = 6.15)
 
 # Fig S9: Coeff plots ####
 ### temporal, drought
@@ -276,9 +281,8 @@ ggarrange(spat_slope, spat_slopep, temp_slope, temp_slopep,
           spat_int, spat_intp, temp_int, temp_intp,
           ncol = 4, nrow = 2, common.legend = TRUE, legend = "bottom", 
           labels = "AUTO")
-# ggsave("figures/Jan2025/site_slopes_intercepts_drought.tiff", width = 8.5, height = 5.5)
-
-
+#ggsave("figures/review_figs/site_slopes_intercepts_drought.tiff", 
+ #      width = 8.5, height = 5.5)
 
 
 # Fig S10 (post-drought) ####
@@ -393,4 +397,6 @@ ggarrange(pT2, pD2, pP2,
           pTt2, pDt2, pPt2,
           ncol = 3, nrow = 2, common.legend = T, legend = "bottom", labels = "AUTO")
 
-## ggsave("figures/Jan2025/site_slopes_predictors_postdrought_both_rarity.png", width = 8.5, height = 6)
+#ggsave("figures/review_figs/site_slopes_predictors_postdrought_both_rarity.png", 
+ #      width = 8.5, height = 6)
+
