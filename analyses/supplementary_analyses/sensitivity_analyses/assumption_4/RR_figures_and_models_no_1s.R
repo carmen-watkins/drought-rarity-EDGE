@@ -1,15 +1,33 @@
+# Header ####
+##
+## Script name: RR figs and models for no 1's
+##
+## Purpose of script: create figures and run models to test whether removing 
+## observations that were gained/lost but NOT present in pre-treatment years 
+## changes the pattern.
+##
+## Author: Carmen Watkins
 
-
+# Set up ####
+## load packages
 library(performance)
 library(parameters)
 library(tidyverse)
 library(car)
 library(lmerTest)
-
 library(jtools)
 library(xtable)
 
+## load data
+source("analyses/supplementary_analyses/sensitivity_analyses/assumption_4/filter_1s.R")
 
+theme_set(theme_classic())
+pal = c("#03274E", "#3B5378", "#7F5F70",
+        "#CE685E", "#E5AA7F", "#FCD484")
+
+## Prep Data ####
+## filter out species with response ratio's of 1 or -1 that were not present
+## in the pre-treatment data at a site
 filtered_RR = edge_RR %>%
   filter(!(species %in% c(Kdrop$species) & site == "KNZ"),
          !(species %in% c(Hdrop$species) & site == "HYS"),
@@ -18,8 +36,11 @@ filtered_RR = edge_RR %>%
          !(species %in% c(SLdrop$species) & site == "SBL"),
          !(species %in% c(SKdrop$species) & site == "SBK"))
 
-filtered_RR$site = factor(filtered_RR$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+## order sites by precip
+filtered_RR$site = factor(filtered_RR$site, levels = c("KNZ", "HYS", "CHY", 
+                                                       "SGS", "SBL", "SBK"))
 
+## plot
 filtered_RR %>%
 ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4)) +
   geom_point() +
@@ -31,10 +52,11 @@ ggplot(filtered_RR, aes(x=spatial_rarity, y=resp.ratio.site_D4)) +
   facet_wrap(~site)
 
 
-
-SR_drought <- ggplot(filtered_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
-  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+# Fig S6 ####
+SR_drought = ggplot(filtered_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4, 
+                                     color = site)) +
+  geom_point(alpha = 0.9, size = 0.6) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
@@ -45,9 +67,10 @@ SR_drought <- ggplot(filtered_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) 
   theme(text = element_text(size = 13)) +
   coord_cartesian(ylim = c(-1,1))
 
-SR_postdrought <- ggplot(filtered_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull)) +
-  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+SR_postdrought = ggplot(filtered_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull,
+                                         color = site)) +
+  geom_point(alpha = 0.9, size = 0.6) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
@@ -56,9 +79,10 @@ SR_postdrought <- ggplot(filtered_RR, aes(x=spatial_rarity, y=resp.ratio.site_PD
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13))
 
-TR_drought <- ggplot(filtered_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4)) +
-  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+TR_drought = ggplot(filtered_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4, 
+                                     color = site)) +
+  geom_point(alpha = 0.9, size = 0.6) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
@@ -67,9 +91,10 @@ TR_drought <- ggplot(filtered_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4)) 
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13))
 
-TR_postdrought <- ggplot(filtered_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull)) +
-  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+TR_postdrought = ggplot(filtered_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull,
+                                         color = site)) +
+  geom_point(alpha = 0.9, size = 0.6) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
@@ -79,13 +104,17 @@ TR_postdrought <- ggplot(filtered_RR, aes(x=temporal_rarity, y=resp.ratio.site_P
   theme(text = element_text(size = 13))
 
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
-          labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
-ggsave("figures/final/supplement/FigS11_resp_ratio_v_rarity.tiff", width = 6, height = 5.5)
+          labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, 
+          nrow=2)
+## ggsave("figures/review_figs/FigS6_resp_ratio_v_rarity_no1s.tiff", 
+     ##  width = 6, height = 5.5)
 
 
 
 # Model ####
-## model as way of estimating the overall effect of rarity on response ratio during drought and postdrought for spatial and temporal rarity. good that it still accounts for effect of site.
+## model as way of estimating the overall effect of rarity on response ratio 
+## during drought and postdrought for spatial and temporal rarity. good that 
+## it still accounts for effect of site.
 
 ## drought, spatial ####
 mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = filtered_RR)
@@ -120,7 +149,8 @@ confint(mmtp)
 
 # Create Tables ####
 ## Anova ####
-### decided to use type II Anovas - for when data is unbalanced and DON'T want to consider interactions
+### decided to use type II Anovas - for when data is unbalanced and DON'T want 
+## to consider interactions
 mmsd_tab = as.data.frame(Anova(mmsd, type = 2, test.statistic = "F")) %>%
   mutate(period = "Drought",
          rarity = "Spatial")
@@ -172,33 +202,8 @@ mmtp_coeff = as.data.frame(summary(mmtp)$coefficients) %>%
 
 coeff_df = rbind(mmsd_coeff, mmtd_coeff, mmsp_coeff, mmtp_coeff) %>%
   rownames_to_column(var = "type") %>%
-  select(period, rarity, type, Estimate, `Std. Error`, df, `t value`, `Pr(>|t|)`) %>%
+  select(period, rarity, type, Estimate, `Std. Error`, df, `t value`, 
+         `Pr(>|t|)`) %>%
   mutate_if(is.numeric, round, digits = 3)
 
-write.csv(coeff_df, "tables/mixed_mod_coeff_table_SA_remove_1s.csv", row.names = F)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# write.csv(coeff_df, "tables/mixed_mod_coeff_table_SA_remove_1s.csv", row.names = F)

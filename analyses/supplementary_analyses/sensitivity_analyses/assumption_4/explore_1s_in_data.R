@@ -1,7 +1,14 @@
+# Header ####
+## Script name: Explore 1's in data 
+##
+## Purpose of script: explore species that are gained or lost (RR of 1 or -1)
+## in data. This is just an exploratory script, does not end up in MS.
+##
+## Author: Carmen Watkins
 
-source("data-prep/clean_cover_dat_fill_zeros.R")
+# Set Up ####
+source("analyses/supplementary_analyses/sensitivity_analyses/assumption_4/filter_1s")
 SKsp = unique(SKdrop$species)
-
 
 # SBK ####
 names(edge_all)
@@ -23,7 +30,8 @@ SBK = edge_all %>%
 
 
 sbk_check2 = sbk_check %>%
-  filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & resp.ratio.site_PDfull %in% c(1, -1, NaN))
+  filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & 
+           resp.ratio.site_PDfull %in% c(1, -1, NaN))
 
 
 checks = SBK %>%

@@ -1,7 +1,15 @@
+# Header ####
+## Script name: Filter 1's
+##
+## Purpose of script: Filter species with response ratio values of 1 and -1 from
+## data that were not present in pre-treatment year, for sensitivity analysis 
+## to test whether these highly transient species were not driving patterns 
+## in the data
+##
+## Author: Carmen Watkins
 
 ## load response ratio data, so can verify which are 1 or -1
 source("analyses/calc_response_ratio.R") 
-
 
 ## load data with years attached so can filter to 'pre-treatment' species
 source("data-prep/clean_cover_dat_fill_zeros.R")
@@ -10,15 +18,13 @@ source("data-prep/clean_cover_dat_fill_zeros.R")
 pre_trt = edge_all %>%
   filter(year < 2014) 
 
-
 ## Check 1's and -1's ####
 ## select all species with a 1 or -1 value in drought or post-drought
 checksp1 = edge_RR %>%
-  
-  filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & resp.ratio.site_PDfull %in% c(1, -1, NaN)) %>%
-  
-  #filter(resp.ratio.site_D4 %in% c(1, -1) | resp.ratio.site_PDfull %in% c(1, -1)) %>%
-  select(site, species, resp.ratio.site_D4, resp.ratio.site_PDfull, spatial_rarity, temporal_rarity)
+  filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & 
+           resp.ratio.site_PDfull %in% c(1, -1, NaN)) %>%
+  select(site, species, resp.ratio.site_D4, resp.ratio.site_PDfull,
+         spatial_rarity, temporal_rarity)
 
 
 ## KNZ
@@ -33,7 +39,8 @@ knz_PT = pre_trt %>%
   group_by(species, treatment)%>%
   summarise(pres.abs.sum = sum(pres.abs)) 
 
-## filter pre-treatment data by the species that need to be checked as they have a 1 or -1 value RR
+## filter pre-treatment data by the species that need to be checked as they
+## have a 1 or -1 value RR
 Ktmp = knz_PT %>%
   filter(species %in% c(unique(knz_check$species))) %>%
   group_by(species) %>%
