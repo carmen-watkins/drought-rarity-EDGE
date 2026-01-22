@@ -1,29 +1,33 @@
+# Header #### 
+## Script name: Calc RR, Analyse RR, KEEP UNKNOWNS 
+##
+## Purpose of script: Calculate the Response Ratio from data with unknown species
+## kept in. Create response ratio figures and run response ratio models to compare
+## to outputs from main text results.
+##
+## Author: Carmen Watkins
+##
 
 # Set up ####
+## load packages
 library(performance)
 library(parameters)
 library(tidyverse)
 library(car)
 library(lmerTest)
-
 library(jtools)
 library(xtable)
 library(ggpubr)
 
-
-source("analyses/supplementary_analyses/sensitivity_analyses/sensitivity_analysis_calc_rank_persistence_keep_unknowns.R")
-
-source("analyses/color_palettes.R")
-
-
+## load data
+source("analyses/supplementary_analyses/sensitivity_analyses/assumption_1/calc_rank_persistence_KEEP_UNKNOWNS.R")
 
 ## set up graphics
 theme_set(theme_classic())
-pal <- wes_palette("Royal3")
-wes_palette("Royal3")
+pal = c("#03274E", "#3B5378", "#7F5F70",
+        "#CE685E", "#E5AA7F", "#FCD484")
 
-
-# Resp Ratio ####
+# Calc Resp Ratio ####
 ## Drought ####
 ### 4-year ####
 drought.SE.RII <- edge_all %>%
@@ -110,17 +114,17 @@ edge_RR <- left_join(RR.tog, rank_persist, by = c("site", "species"))
 
 
 # Clean up ####
-rm(edge_all, drought.SE.RII, recov.SE.RII, RR.tog, edge_w_zeros, rank_persist, SEVcheck)
+rm(edge_all, drought.SE.RII, recov.SE.RII, RR.tog, rank_persist)
 
 
-# Check RESults ####
+# Check Results ####
 edge_RR$site = factor(edge_RR$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
-
+## Fig S4 ####
 ## test out main pattern
-SR_drought <- ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D)) +
-  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+SR_drought = ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D, color = site)) +
+  geom_point(alpha = 0.9, size = 0.6) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
@@ -131,9 +135,9 @@ SR_drought <- ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D)) +
   theme(text = element_text(size = 13)) +
   coord_cartesian(ylim = c(-1,1))
 
-SR_postdrought <- ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PD)) +
-  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+SR_postdrought = ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PD, color = site)) +
+  geom_point(alpha = 0.9, size = 0.6) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
@@ -142,9 +146,9 @@ SR_postdrought <- ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PD)) +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13))
 
-TR_drought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D)) +
-  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+TR_drought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D, color = site)) +
+  geom_point(alpha = 0.9, size = 0.6) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
@@ -153,9 +157,9 @@ TR_drought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D)) +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13))
 
-TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD)) +
-  geom_point(alpha = 0.9, size = 0.8, color = "grey") +
-  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 0.75) +
+TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD, color = site)) +
+  geom_point(alpha = 0.9, size = 0.6) +
+  geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_color_manual(values = pal) +
@@ -167,7 +171,7 @@ TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD)) 
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-ggsave("figures/Mar2025/FigS5_RR_v_rarity_keep_unknowns.tiff", width = 6, height = 5.5)
+## ggsave("figures/review_figs/FigS4_RR_v_rarity_keep_unknowns.tiff", width = 6, height = 5.5)
 
 # Check Models ####
 ## drought, spatial ####
@@ -199,8 +203,6 @@ mmtp = lmer(resp.ratio.site_PD ~ temporal_rarity + (1|site), data = edge_RR)
 summary(mmtp) ## supp table
 Anova(mmtp, type = 3, test.statistic = "F") ## main table
 confint(mmtp)
-
-
 
 # Create Tables ####
 ## Anova ####
@@ -262,5 +264,5 @@ coeff_df = rbind(mmsd_coeff, mmtd_coeff, mmsp_coeff, mmtp_coeff) %>%
   mutate_if(is.numeric, round, digits = 3)
 
 #xtable(coeff_df)
-write.csv(coeff_df, "tables/mixed_mod_coeff_table_SA_Keep_Unknowns.csv", row.names = F)
+## write.csv(coeff_df, "tables/mixed_mod_coeff_table_SA_Keep_Unknowns.csv", row.names = F)
 

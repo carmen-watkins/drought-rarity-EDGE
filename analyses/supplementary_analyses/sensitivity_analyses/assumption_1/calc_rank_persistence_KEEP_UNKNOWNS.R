@@ -1,3 +1,11 @@
+# Header #### 
+## Script name: Sensitivity 
+##
+## Purpose of script: Calculate rank and persistence values for each species
+## UNKNOWN VALUES KEPT IN
+##
+## Author: Carmen Watkins
+##
 
 source("data-prep/keep_unknowns/clean_cover_dat_fill_zeros_KEEP_UNKNOWNS_sensA.R")
 
@@ -38,4 +46,4 @@ rank_persist <- left_join(persist_site, rank_mean, by = c("site", "species")) %>
          temporal_rarity = 1 - persistence.site)
 
 # Clean Env ####
-rm(controls, persist_site, rank_mean, test, test2, testsub, testws2, weirdsubs, weirdsubs2)
+rm(controls, persist_site, rank_mean)
