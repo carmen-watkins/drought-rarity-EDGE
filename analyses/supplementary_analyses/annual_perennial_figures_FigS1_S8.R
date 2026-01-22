@@ -7,8 +7,6 @@
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
-
 
 # Set up ####
 source("analyses/calc_response_ratio.R") 
@@ -64,7 +62,8 @@ edge_RR2 <- edge_RR %>%
 photo_unks = edge_RR2 %>%
   filter(FunctionalGroup == "grass", is.na(Photo) | Photo == "unk")
 
-## NAs are Sporobolus sp from SEV sites; from SEV species list, all 8 Sporobolus sp are C4; so safe to put htese as C4
+## NAs are Sporobolus sp from SEV sites; from SEV species list, all 8 
+##Sporobolus sp are C4; so safe to put htese as C4
 
 
 ## Calc percentage annual vs. perennial at a site
@@ -91,14 +90,18 @@ astrag = FG %>%
 ## perennial
 
 astrag_dat = edge_RR %>%
-  filter(species %in% c("Astragalus_drummondii", "Astragalus_laxmanii", "Astragalus_Oxytropis_sp", "Astragalus_shortianus", "Astragalus_sp", "Astragulus_crassicarpus"))
+  filter(species %in% c("Astragalus_drummondii", "Astragalus_laxmanii", 
+                        "Astragalus_Oxytropis_sp", "Astragalus_shortianus", 
+                        "Astragalus_sp", "Astragulus_crassicarpus"))
 
 sporob = FG %>%
   filter(genus == "sporobolus")
 ## perennial
 
 sporobdat = edge_RR %>%
-  filter(species %in% c("Sporobolus_asper", "Sporobolus_cryptandrus", "Sporobolus_heterolepis", "Sporobolus_sp", "Sporobolus_sp."))
+  filter(species %in% c("Sporobolus_asper", "Sporobolus_cryptandrus", 
+                        "Sporobolus_heterolepis", "Sporobolus_sp",
+                        "Sporobolus_sp."))
 
 sort(unique(edge_RR$species))
 
@@ -166,7 +169,8 @@ lh_tpd = edge_RR2 %>%
   theme(text = element_text(size = 13)) +
   scale_color_manual(values = pal2)
 
-ggarrange(lh_sd, lh_td, lh_spd, lh_tpd, nrow = 2, ncol = 2, common.legend = TRUE, legend = "bottom", labels = "AUTO")
+ggarrange(lh_sd, lh_td, lh_spd, lh_tpd, nrow = 2, ncol = 2, common.legend = TRUE, 
+          legend = "bottom", labels = "AUTO")
 
 ## ggsave("figures/review_figs/FigS8_duration_RR_v_rarity.tiff", width = 10, height = 6)
 
@@ -270,7 +274,8 @@ srtc = edge_RR2 %>%
   ggtitle("Sparse & Persistent") +
   scale_fill_manual(values = c("#D69C4E", "#E6A0C4","#94c0c1", "#798E87"))
 
-ggarrange(all, sctc, srtr, srtc, sctr, common.legend = T, labels = "AUTO", legend = "bottom")
+ggarrange(all, sctc, srtr, srtc, sctr, common.legend = T, labels = "AUTO", 
+          legend = "bottom")
 
 ## ggsave("figures/Mar2025/FigS8_sp_duration_proportions.tiff", width = 8, height = 5)
 
@@ -291,7 +296,9 @@ all2 = edge_RR2 %>%
   labs(fill = "Photosynthesis Pathway") +
   theme(text = element_text(size = 13)) +
   ggtitle("All Grasses") +
-  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], wes_palette("BottleRocket2")[1], wes_palette("Darjeeling1")[3]))
+  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], 
+                               wes_palette("BottleRocket2")[1],
+                               wes_palette("Darjeeling1")[3]))
 
 cpg = edge_RR2 %>%
   filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
@@ -308,7 +315,9 @@ cpg = edge_RR2 %>%
   xlab("Site") +
   theme(text = element_text(size = 13)) +
   ggtitle("Common, Persistent Grasses") +
-  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], wes_palette("BottleRocket2")[1], wes_palette("Darjeeling1")[3]))
+  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], 
+                               wes_palette("BottleRocket2")[1], 
+                               wes_palette("Darjeeling1")[3]))
 
 ggarrange(all2, cpg, common.legend = TRUE, legend = "bottom", labels = "AUTO")
 
@@ -329,7 +338,9 @@ edge_RR2 %>%
   xlab("Site") +
   theme(text = element_text(size = 13)) +
   ggtitle("Sparse, Persistent Grasses") +
-  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], wes_palette("BottleRocket2")[1], wes_palette("Darjeeling1")[3]))
+  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], 
+                               wes_palette("BottleRocket2")[1], 
+                               wes_palette("Darjeeling1")[3]))
 
 
 edge_RR2 %>%
@@ -347,7 +358,9 @@ edge_RR2 %>%
   xlab("Site") +
   theme(text = element_text(size = 13)) +
   ggtitle("Sparse, Intermittent Grasses") +
-  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], wes_palette("BottleRocket2")[1], wes_palette("Darjeeling1")[3]))
+  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], 
+                               wes_palette("BottleRocket2")[1], 
+                               wes_palette("Darjeeling1")[3]))
 
 
 edge_RR2 %>%
@@ -365,7 +378,8 @@ edge_RR2 %>%
   xlab("Site") +
   theme(text = element_text(size = 13)) +
   ggtitle("Common, Intermittent Grasses") +
-  scale_fill_manual(values = c(wes_palette("BottleRocket2")[1], wes_palette("Darjeeling1")[3]))
+  scale_fill_manual(values = c(wes_palette("BottleRocket2")[1], 
+                               wes_palette("Darjeeling1")[3]))
 
 ## Site level ann/perenn ####
 edge_RR2 %>%
