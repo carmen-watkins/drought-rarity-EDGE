@@ -1,7 +1,9 @@
 # Header ####
 ## Script name: Duration Analyses
 ##
-## Purpose of script: 
+## Purpose of script: ## Calc proportion of annual common vs. annual species at
+## each site
+
 ##
 ## Author: Carmen Watkins
 ##
@@ -24,17 +26,39 @@ FG = read.csv(here::here("data","edge_species_info_CP_BA.csv"))
 #Join functional group data to species response ratio data
 edge_RR2 <- edge_RR %>%
   left_join(FG, by = "species") %>%
-  mutate(FunctionalGroup = ifelse(species %in% c("Astragalus_sp", "Eriogonum_sp", "Euphorbia_sp", "Oenothera_sp", "Asclepias_syriaca", "Cirsium_sp", "Astragalus_Oxytropis_sp"), "forb", 
-                                  ifelse(species %in% c("Sporobolus_sp"), "grass", FunctionalGroup))) %>%
+  mutate(FunctionalGroup = ifelse(species %in% c("Astragalus_sp", "Eriogonum_sp", 
+                                                 "Euphorbia_sp", "Oenothera_sp", 
+                                                 "Asclepias_syriaca", "Cirsium_sp", 
+                                                 "Astragalus_Oxytropis_sp"), "forb", 
+                                  ifelse(species %in% c("Sporobolus_sp"), 
+                                         "grass", FunctionalGroup))) %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"),
-         Duration = ifelse(site == "KNZ" & species == "Asclepias_syriaca", "perennial", Duration),
-         Duration = ifelse(species %in% c("Astragalus_drummondii", "Astragalus_laxmanii", "Astragalus_Oxytropis_sp", "Astragalus_shortianus", "Astragalus_sp", "Astragulus_crassicarpus"), "perennial", Duration),
-         Duration = ifelse(species %in% c("Euphorbia_exstipulata", "Euphorbia_sp", "Euphorbia_sp."), "annual", Duration), 
-         Duration = ifelse(species %in% c("Sporobolus_asper", "Sporobolus_cryptandrus", "Sporobolus_heterolepis", "Sporobolus_sp", "Sporobolus_sp."), "perennial", Duration), 
-         Duration = ifelse(is.na(Duration) | Duration == "unk", "unknown", Duration)) %>%
-  mutate(Photo = ifelse(site %in% c("SBK", "SBL") & species == "Sporobolus_sp", "c4", Photo),
-         Photo = ifelse(site == "KNZ" & species == "Eleocharis_sp.", "c3", Photo),
-         Photo = ifelse(site == "KNZ" & species == "Juncus_interior", "c3", Photo))
+         Duration = ifelse(site == "KNZ" & species == "Asclepias_syriaca",
+                           "perennial", Duration),
+         Duration = ifelse(species %in% c("Astragalus_drummondii", 
+                                          "Astragalus_laxmanii", 
+                                          "Astragalus_Oxytropis_sp",
+                                          "Astragalus_shortianus", 
+                                          "Astragalus_sp", 
+                                          "Astragulus_crassicarpus"), 
+                           "perennial", Duration),
+         Duration = ifelse(species %in% c("Euphorbia_exstipulata", 
+                                          "Euphorbia_sp", "Euphorbia_sp."), 
+                           "annual", Duration), 
+         Duration = ifelse(species %in% c("Sporobolus_asper", 
+                                          "Sporobolus_cryptandrus", 
+                                          "Sporobolus_heterolepis", 
+                                          "Sporobolus_sp", 
+                                          "Sporobolus_sp."), 
+                           "perennial", Duration), 
+         Duration = ifelse(is.na(Duration) | Duration == "unk", 
+                           "unknown", Duration)) %>%
+  mutate(Photo = ifelse(site %in% c("SBK", "SBL") & species == "Sporobolus_sp",
+                        "c4", Photo),
+         Photo = ifelse(site == "KNZ" & species == "Eleocharis_sp.", 
+                        "c3", Photo),
+         Photo = ifelse(site == "KNZ" & species == "Juncus_interior", 
+                        "c3", Photo))
 
 ## check unknowns
 photo_unks = edge_RR2 %>%
@@ -93,7 +117,7 @@ eriog = FG %>%
 ## KNZ, Asclepias syriaca is unknown, but I think this is a perennial; Cirsium also unknown
 
 # Plot ####
-## Fig S4 ####
+## Fig S8 ####
 lh_sd = edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%
   ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
@@ -144,7 +168,7 @@ lh_tpd = edge_RR2 %>%
 
 ggarrange(lh_sd, lh_td, lh_spd, lh_tpd, nrow = 2, ncol = 2, common.legend = TRUE, legend = "bottom", labels = "AUTO")
 
-## ggsave("figures/Mar2025/FigS6_duration_RR_v_rarity.tiff", width = 10, height = 6)
+## ggsave("figures/review_figs/FigS8_duration_RR_v_rarity.tiff", width = 10, height = 6)
 
 ## Talk Figure ####
 edge_RR2 %>%

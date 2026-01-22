@@ -46,19 +46,3 @@ edge_RR2 %>%
   geom_point() +
   facet_wrap(~species) +
   geom_smooth(method = "lm")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

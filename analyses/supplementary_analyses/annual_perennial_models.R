@@ -1,11 +1,11 @@
 # Header ####
 ## Script name: Annual Perennial Models
 ##
-## Purpose of script: Run mixed effects models incorporating duration in addition to rarity.
+## Purpose of script: Run mixed effects models incorporating duration in addition 
+## to rarity.
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
 
 # Set up ####
 library(performance)

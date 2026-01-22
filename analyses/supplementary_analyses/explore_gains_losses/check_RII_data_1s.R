@@ -1,4 +1,11 @@
+# Header ####
+## Script name: Fig S7: D4 vs. D7 response ratios
+##
+## Purpose of script: visualize d4 vs. d7 response ratios to show no 
+## difference between the two.
 
+##
+## Author: Carmen Watkins
 
 
 SBKchsp = drought.SE.RII4 %>%
