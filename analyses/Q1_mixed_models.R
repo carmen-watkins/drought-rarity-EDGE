@@ -1,11 +1,11 @@
 # Header ####
 ## Script name: Q1 Mixed Models
 
-## Purpose of script: Run linear mixed effects models to test the overall effect of rarity on response ratio
+## Purpose of script: Run linear mixed effects models to test the overall 
+## effect of rarity on response ratio
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
 
 # Set up ####
 library(performance)
@@ -13,49 +13,83 @@ library(parameters)
 library(tidyverse)
 library(car)
 library(lmerTest)
-
 library(jtools)
 library(xtable)
+library(MuMIn)
+
+library(effectsize)
 
 source("analyses/calc_response_ratio.R") 
-source("analyses/color_palettes.R")
+#source("analyses/color_palettes.R")
 
 ## read in FG data
-FG <- read.csv(here::here("data","edge_species_info_CP_BA.csv"))
+FG = read.csv(here::here("data","edge_species_info_CP_BA.csv"))
 
 #Join functional group data to species response ratio data
-edge_RR2 <- edge_RR %>%
+edge_RR2 = edge_RR %>%
   left_join(FG, by = "species") %>%
-  mutate(FunctionalGroup = ifelse(species %in% c("Astragalus_sp", "Eriogonum_sp", "Euphorbia_sp", "Oenothera_sp", "Asclepias_syriaca", "Cirsium_sp", "Astragalus_Oxytropis_sp"), "forb", 
-                                  ifelse(species %in% c("Sporobolus_sp"), "grass", FunctionalGroup))) %>%
+  mutate(FunctionalGroup = ifelse(species %in% c("Astragalus_sp", "Eriogonum_sp",
+                                                 "Euphorbia_sp", "Oenothera_sp",
+                                                 "Asclepias_syriaca", "Cirsium_sp",
+                                                 "Astragalus_Oxytropis_sp"), 
+                                  "forb", 
+                                  ifelse(species %in% c("Sporobolus_sp"), 
+                                         "grass", FunctionalGroup))) %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"),
-         Duration = ifelse(site == "KNZ" & species == "Asclepias_syriaca", "perennial", Duration),
-         Duration = ifelse(species %in% c("Astragalus_drummondii", "Astragalus_laxmanii", "Astragalus_Oxytropis_sp", "Astragalus_shortianus", "Astragalus_sp", "Astragulus_crassicarpus"), "perennial", Duration),
-         Duration = ifelse(species %in% c("Euphorbia_exstipulata", "Euphorbia_sp", "Euphorbia_sp."), "annual", Duration), 
-         Duration = ifelse(species %in% c("Sporobolus_asper", "Sporobolus_cryptandrus", "Sporobolus_heterolepis", "Sporobolus_sp", "Sporobolus_sp."), "perennial", Duration), 
-         Duration = ifelse(is.na(Duration) | Duration == "unk", "unknown", Duration))
+         Duration = ifelse(site == "KNZ" & species == "Asclepias_syriaca", 
+                           "perennial", Duration),
+         Duration = ifelse(species %in% c("Astragalus_drummondii", 
+                                          "Astragalus_laxmanii", 
+                                          "Astragalus_Oxytropis_sp", 
+                                          "Astragalus_shortianus", 
+                                          "Astragalus_sp", 
+                                          "Astragulus_crassicarpus"), 
+                           "perennial", Duration),
+         Duration = ifelse(species %in% c("Euphorbia_exstipulata", 
+                                          "Euphorbia_sp", "Euphorbia_sp."), 
+                           "annual", Duration), 
+         Duration = ifelse(species %in% c("Sporobolus_asper", 
+                                          "Sporobolus_cryptandrus", 
+                                          "Sporobolus_heterolepis", 
+                                          "Sporobolus_sp", "Sporobolus_sp."), 
+                           "perennial", Duration), 
+         Duration = ifelse(is.na(Duration) | Duration == "unk", 
+                           "unknown", Duration))
 
 ## set up graphics
 theme_set(theme_classic())
-pal <- wes_palette("Royal3")
+pal = c("#03274E", "#3B5378", "#7F5F70",
+        "#CE685E", "#E5AA7F", "#FCD484")
 #wes_palette("Royal3")
 
 # Model ####
-## model as way of estimating the overall effect of rarity on response ratio during drought and postdrought for spatial and temporal rarity. good that it still accounts for effect of site.
+## model as way of estimating the overall effect of rarity on response ratio
+## during drought and postdrought for spatial and temporal rarity. good that 
+## it still accounts for effect of site.
 
 ## drought, spatial ####
 mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsd)
 summary(mmsd) ## supp table
-Anova(mmsd, type = 2) ## main table
+Atable = Anova(mmsd, type = 2, test.statistic = "F", SSPE = "TRUE") ## main table
 
 xint = -(-0.30282)/0.86135
 ## VarCorr could be helpful for extracting model output
 
 coef(mmsd)$site[,"(Intercept)"]
-
 confint(mmsd)
+
+## effect sizes: 
+## 
+0.87491 / sqrt(0.03003 + 0.37390)
+
+## diff b/w means divided by sqrt of var intercept + var slope + var residual
+
+## note, it seems like if you have multiple random effects, you just add them all into this square root term.
+
+r.squaredGLMM(mmsd)
+eta_squared(Atable)
 
 ## drought, temporal ####
 mmtd = lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = edge_RR)
