@@ -34,9 +34,9 @@ tmpmods_pred = left_join(tmp_mods, site_pred_scaled, by = c("site"))
 head(site_pred_scaled)
 
 site_tab = site_pred_scaled %>%
-  select(site, grassland.type, MAP.mm, MAT.C, BP.dom.site)
+  select(site, grassland.type, MAP.mm, MAT.C, aridity, BP.dom.site)
 
-#write.csv(site_tab, "tables/site_info.csv")
+#write.csv(site_tab, "tables/review_tabs/site_info_TabS1.csv", row.names = F)
 
 # Models ####
 ## Spatial, Drought ####
@@ -76,6 +76,18 @@ spm3_df = as.data.frame(summary(spm3)$coeff) %>%
          period = "Drought", 
          predictor = "Dominance")
 
+## aridity
+spm4 = lm(estimate ~ aridity, 
+          data = spmods_pred[spmods_pred$term == "spatial_rarity" & 
+                               spmods_pred$period == "Drought",])
+
+summary(spm4)
+
+spm4_df = as.data.frame(summary(spm4)$coeff) %>%
+  mutate(rarity = "Spatial", 
+         period = "Drought", 
+         predictor = "Aridity")
+
 ## Temporal, Drought ####
 ## precipitation
 tpm1 = lm(estimate ~ z_precip, 
@@ -113,35 +125,38 @@ tpm3_df = as.data.frame(summary(tpm3)$coeff) %>%
          period = "Drought", 
          predictor = "Dominance")
 
+## aridity 
+tpm4 = lm(estimate ~ aridity, 
+          tmpmods_pred[tmpmods_pred$term == "temporal_rarity" & 
+                         tmpmods_pred$period == "Drought",])
+summary(tpm4)
+
+## save model outputs as dataframe
+tpm4_df = as.data.frame(summary(tpm4)$coeff) %>%
+  mutate(rarity = "Temporal", 
+         period = "Drought", 
+         predictor = "Aridity")
+
 ## Combine ####
-slope_pred_tab = rbind(spm1_df, spm2_df, spm3_df, tpm1_df, tpm2_df, tpm3_df) %>%
+slope_pred_tab = rbind(spm1_df, spm2_df, spm3_df, spm4_df, tpm1_df, tpm2_df, 
+                       tpm3_df, tpm4_df) %>%
   mutate(signif = ifelse(`Pr(>|t|)` < 0.001, "***", 
                          ifelse(`Pr(>|t|)` < 0.01 & `Pr(>|t|)` > 0.001, "**",
                                 ifelse(`Pr(>|t|)` > 0.01 & `Pr(>|t|)` < 0.05, "*", 
                                        ifelse(`Pr(>|t|)` < 0.1 & `Pr(>|t|)` > 0.05, 
                                               ".", " "))))) %>%
   rownames_to_column(var = "type") %>%
+  mutate_if(is.numeric, round, digits = 3) %>%
   select(predictor, period, rarity, type, Estimate, `Std. Error`, 
          `t value`, `Pr(>|t|)`, signif)
 
-#write.csv(slope_pred_tab, "tables/slope_predictor_mod_table.csv", row.names = F)
+## write.csv(slope_pred_tab, "tables/review_tabs/slope_predictor_mod_TabS14.csv", 
+        ##  row.names = F)
 
 
 ## Spatial, Post-Drought ####
 ## precipitation
-spm4 = lm(estimate ~ z_precip, 
-          data = spmods_pred[spmods_pred$term == "spatial_rarity" & 
-                               spmods_pred$period == "Post-Drought",])
-summary(spm4)
-
-## save model outputs as dataframe
-spm4_df = as.data.frame(summary(spm4)$coeff) %>%
-  mutate(rarity = "Spatial", 
-         period = "Post-Drought", 
-         predictor = "Precipitation")
-
-## temperature
-spm5 = lm(estimate ~ z_temp, 
+spm5 = lm(estimate ~ z_precip, 
           data = spmods_pred[spmods_pred$term == "spatial_rarity" & 
                                spmods_pred$period == "Post-Drought",])
 summary(spm5)
@@ -150,10 +165,10 @@ summary(spm5)
 spm5_df = as.data.frame(summary(spm5)$coeff) %>%
   mutate(rarity = "Spatial", 
          period = "Post-Drought", 
-         predictor = "Temperature")
+         predictor = "Precipitation")
 
-## dominance
-spm6 = lm(estimate ~ dom.rounded, 
+## temperature
+spm6 = lm(estimate ~ z_temp, 
           data = spmods_pred[spmods_pred$term == "spatial_rarity" & 
                                spmods_pred$period == "Post-Drought",])
 summary(spm6)
@@ -162,24 +177,36 @@ summary(spm6)
 spm6_df = as.data.frame(summary(spm6)$coeff) %>%
   mutate(rarity = "Spatial", 
          period = "Post-Drought", 
+         predictor = "Temperature")
+
+## dominance
+spm7 = lm(estimate ~ dom.rounded, 
+          data = spmods_pred[spmods_pred$term == "spatial_rarity" & 
+                               spmods_pred$period == "Post-Drought",])
+summary(spm7)
+
+## save model outputs as dataframe
+spm7_df = as.data.frame(summary(spm7)$coeff) %>%
+  mutate(rarity = "Spatial", 
+         period = "Post-Drought", 
          predictor = "Dominance")
+
+## aridity 
+spm8 = lm(estimate ~ aridity, 
+          data = spmods_pred[spmods_pred$term == "spatial_rarity" & 
+                               spmods_pred$period == "Post-Drought",])
+summary(spm8)
+
+## save model outputs as dataframe
+spm8_df = as.data.frame(summary(spm8)$coeff) %>%
+  mutate(rarity = "Spatial", 
+         period = "Post-Drought", 
+         predictor = "Aridity")
 
 
 ## Temporal, Post-Drought ####
 ## precipitation
-tpm4 = lm(estimate ~ z_precip, 
-          data = tmpmods_pred[tmpmods_pred$term == "temporal_rarity" & 
-                                tmpmods_pred$period == "Post-Drought",])
-summary(tpm4)
-
-## save model outputs as dataframe
-tpm4_df = as.data.frame(summary(tpm4)$coeff) %>%
-  mutate(rarity = "Temporal", 
-         period = "Post-Drought", 
-         predictor = "Precipitation")
-
-## temperature
-tpm5 = lm(estimate ~ z_temp, 
+tpm5 = lm(estimate ~ z_precip, 
           data = tmpmods_pred[tmpmods_pred$term == "temporal_rarity" & 
                                 tmpmods_pred$period == "Post-Drought",])
 summary(tpm5)
@@ -188,10 +215,10 @@ summary(tpm5)
 tpm5_df = as.data.frame(summary(tpm5)$coeff) %>%
   mutate(rarity = "Temporal", 
          period = "Post-Drought", 
-         predictor = "Temperature")
+         predictor = "Precipitation")
 
-## dominance
-tpm6 = lm(estimate ~ dom.rounded, 
+## temperature
+tpm6 = lm(estimate ~ z_temp, 
           data = tmpmods_pred[tmpmods_pred$term == "temporal_rarity" & 
                                 tmpmods_pred$period == "Post-Drought",])
 summary(tpm6)
@@ -200,19 +227,72 @@ summary(tpm6)
 tpm6_df = as.data.frame(summary(tpm6)$coeff) %>%
   mutate(rarity = "Temporal", 
          period = "Post-Drought", 
+         predictor = "Temperature")
+
+## dominance
+tpm7 = lm(estimate ~ dom.rounded, 
+          data = tmpmods_pred[tmpmods_pred$term == "temporal_rarity" & 
+                                tmpmods_pred$period == "Post-Drought",])
+summary(tpm7)
+
+## save model outputs as dataframe
+tpm7_df = as.data.frame(summary(tpm7)$coeff) %>%
+  mutate(rarity = "Temporal", 
+         period = "Post-Drought", 
          predictor = "Dominance")
 
+## aridity
+tpm8 = lm(estimate ~ aridity, 
+          data = tmpmods_pred[tmpmods_pred$term == "temporal_rarity" & 
+                                tmpmods_pred$period == "Post-Drought",])
+summary(tpm8)
+
+## save model outputs as dataframe
+tpm8_df = as.data.frame(summary(tpm8)$coeff) %>%
+  mutate(rarity = "Temporal", 
+         period = "Post-Drought", 
+         predictor = "Aridity")
+
 ## Combine ####
-slope_pred_tab_PD = rbind(spm4_df, spm5_df, spm6_df, tpm4_df, tpm5_df, tpm6_df) %>%
+slope_pred_tab_PD = rbind(spm5_df, spm6_df, spm7_df, spm8_df, tpm5_df, tpm6_df,
+                          tpm7_df, tpm8_df) %>%
   mutate(signif = ifelse(`Pr(>|t|)` < 0.001, "***", 
                          ifelse(`Pr(>|t|)` < 0.01 & `Pr(>|t|)` > 0.001, "**",
                                 ifelse(`Pr(>|t|)` > 0.01 & `Pr(>|t|)` < 0.05, "*", 
                                        ifelse(`Pr(>|t|)` < 0.1 & `Pr(>|t|)` > 0.05, 
                                               ".", " "))))) %>%
   rownames_to_column(var = "type") %>%
+  mutate_if(is.numeric, round, digits = 3) %>%
   select(predictor, period, rarity, type, Estimate, `Std. Error`, 
          `t value`, `Pr(>|t|)`, signif)
 
-#write.csv(slope_pred_tab_PD, "tables/slope_predictor_mod_table_PD.csv", row.names = F)
+## write.csv(slope_pred_tab_PD, "tables/review_tabs/slope_predictor_mod_PD_TabS15.csv", 
+      ##    row.names = F)
 
+# Aridity v Ppt Fig ####
+pa = site_pred_scaled %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS",
+                            "SBL", "SBK")) %>%
+ggplot(aes(x=MAP.mm, y=aridity, color = site)) +
+  scale_fill_manual(values = pal) +
+  geom_point(aes(fill = site), colour = "black", size = 2.5, pch = 21) +
+  xlab("Mean Annual Precip (mm)") +
+  ylab("Aridity Index") +
+  labs(fill = "Site")
+  
+
+ta = site_pred_scaled %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS",
+                            "SBL", "SBK")) %>%
+  ggplot(aes(x=MAT.C, y=aridity, color = site)) +
+  scale_fill_manual(values = pal) +
+  geom_point(aes(fill = site), colour = "black", size = 2.5, pch = 21) +
+  xlab("Mean Annual Temp (C)") +
+  ylab("Aridity Index") +
+  labs(fill = "Site")
+
+ggarrange(pa, ta, ncol = 2, nrow = 1, labels = "AUTO", common.legend = TRUE, 
+          legend = "right")
+
+## ggsave("figures/review_figs/aridity_MAP_MAT_comp_FigSXX.tiff", width = 6, height = 3)
 

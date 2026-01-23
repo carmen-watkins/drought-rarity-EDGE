@@ -12,6 +12,7 @@ source("data-prep/classify_rank_persistence.R")
 
 ## load precip data
 source("data-prep/clean_ppt_data.R")
+source("data-prep/clean_aridity_data.R")
 
 ## load site MAP & MAT data
 MAP = read.csv("data/map_data.csv") %>%
@@ -44,7 +45,8 @@ BP_dominance = controls %>%
 
 # Merge ####
 site_pred = left_join(MAP, BP_dominance, by = "site")
-site_pred_final = left_join(site_ppt, site_pred, by = "site")
+site_pred2 = left_join(site_pred, aridity_clean, by = "site")
+site_pred_final = left_join(site_ppt, site_pred2, by = "site")
 
 # Scale Variables ####
 site_pred_scaled = site_pred_final %>%
@@ -54,25 +56,26 @@ site_pred_scaled = site_pred_final %>%
          sd_ppt = sd(mean_ppt),
          z_precip = (mean_ppt - mean_ppt_across)/sd_ppt,
          z_temp = (MAT.C - mean_temp)/sd_temp, 
-         dom.rounded = round(BP.dom.site, digits = 3),
+         dom.rounded = round(BP.dom.site, digits = 3)
          
          ## scale ppt intervals
-         meanDRR4 = mean(pptDRR4),
-         sdDRR4 = sd(pptDRR4),
-         meanPDRRfull = mean(pptPDRRfull),
-         sdPDRRfull = sd(pptPDRRfull),
-         meanPDRRfinal = mean(pptPDRRfinal),
-         sdPDRRfinal = sd(pptPDRRfinal),
-         meanPDRRfirst = mean(pptPDRRfirst),
-         sdPDRRfirst = sd(pptPDRRfirst),
+      #   meanDRR4 = mean(pptDRR4),
+       #  sdDRR4 = sd(pptDRR4),
+        # meanPDRRfull = mean(pptPDRRfull),
+  #       sdPDRRfull = sd(pptPDRRfull),
+   #      meanPDRRfinal = mean(pptPDRRfinal),
+    #     sdPDRRfinal = sd(pptPDRRfinal),
+     #    meanPDRRfirst = mean(pptPDRRfirst),
+      #   sdPDRRfirst = sd(pptPDRRfirst),
          
-         z_precipDRR4 = (pptDRR4 - meanDRR4)/sdDRR4,
-         z_precipPDRRfull = (pptPDRRfull - meanPDRRfull)/sdPDRRfull,
-         z_precipPDRRfinal = (pptPDRRfinal - meanPDRRfinal)/sdPDRRfinal,
-         z_precipPDRRfirst = (pptPDRRfirst - meanPDRRfirst)/sdPDRRfirst
+       #  z_precipDRR4 = (pptDRR4 - meanDRR4)/sdDRR4,
+        # z_precipPDRRfull = (pptPDRRfull - meanPDRRfull)/sdPDRRfull,
+         #z_precipPDRRfinal = (pptPDRRfinal - meanPDRRfinal)/sdPDRRfinal,
+         #z_precipPDRRfirst = (pptPDRRfirst - meanPDRRfirst)/sdPDRRfirst
          
-         )
+         ) %>%
+  select(-pptDRR4, -pptDRR7, -pptPDRRfinal, -pptPDRRfirst, -pptPDRRfull)
 
 # Clean Env ####
 rm(site_pred, site_pred_final, BP_dominance, controls, MAP, site_ppt, 
-   edge_all, rank_persist)
+   edge_all, rank_persist, site_pred2, aridity_clean)

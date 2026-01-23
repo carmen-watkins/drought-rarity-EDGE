@@ -37,6 +37,23 @@ pD1 = spmods_pred %>%
         axis.title=element_text(size=13)) +
   coord_cartesian(ylim = c(-1, 2.8))
 
+spmods_pred %>%
+  filter(term == "spatial_rarity", period == "Drought") %>%
+  ggplot(aes(x=aridity, y=estimate)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.009) +
+  geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
+  scale_fill_manual(values = pal) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  xlab(" ") +
+  ylab(" ") +
+  labs(fill = "Site")  +
+  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
+              linetype = "dashed")  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) +
+  coord_cartesian(ylim = c(-1, 2.8))
+
 ## spatial rarity vs. temperature
 pT1 = spmods_pred %>%
   filter(term == "spatial_rarity", period == "Drought") %>%
