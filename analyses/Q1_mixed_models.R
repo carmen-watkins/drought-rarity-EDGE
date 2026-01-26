@@ -18,6 +18,7 @@ library(xtable)
 library(MuMIn)
 
 library(effectsize)
+library(afex)
 
 source("analyses/calc_response_ratio.R") 
 #source("analyses/color_palettes.R")
@@ -72,7 +73,9 @@ mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsd)
 summary(mmsd) ## supp table
-Atable = Anova(mmsd, type = 2, test.statistic = "F", SSPE = "TRUE") ## main table
+Atable = Anova(mmsd, type = 2, test.statistic = "F") ## main table
+
+nice(Atable)
 
 xint = -(-0.30282)/0.86135
 ## VarCorr could be helpful for extracting model output

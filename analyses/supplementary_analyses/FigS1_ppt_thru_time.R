@@ -10,14 +10,15 @@ calcSE<-function(x){
 }
 
 ## read in precip data
-precip <- read.csv("data/growingseason_precip_totals_allyears.csv")
-sev_ppt <- read.csv("data/sev_download/sev298_NPP_edge_biomass.csv")
+precip = read.csv("data/growingseason_precip_totals_allyears.csv")
+sev_ppt = read.csv("data/sev_download/sev298_NPP_edge_biomass.csv")
 
 source("analyses/color_palettes.R")
 
 ## set up graphics
 theme_set(theme_classic())
-pal <- wes_palette("Royal3")
+pal = c("#03274E", "#3B5378", "#7F5F70",
+        "#CE685E", "#E5AA7F", "#FCD484")
 
 # Clean data ####
 sev_temporal = sev_ppt %>%
@@ -40,13 +41,19 @@ ppt_all = rbind(sev_temporal, north_temporal) %>%
          site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
 # Plot ####
-ggplot(ppt_all, aes(x = year, y = tot.precip, color = site)) +
-  geom_point() +
-  geom_line() +
+ggplot(ppt_all, aes(x = year, y = tot.precip)) +
+  
+  geom_rect(aes(xmin = 2013, xmax = 2019, ymin = -Inf, 
+                ymax = Inf), fill="#E6E6E6", alpha = .2) +
+  
+  geom_point(aes(color = site)) +
+  geom_line(aes(color = site)) +
   xlab("Year") +
   ylab("Precipitation (mm)") +
   labs(color = "Site") +
-  scale_color_manual(values = pal) 
-
-ggsave("figures/Mar2025/fig_s1_precip_year.tiff", width = 6, height = 4)  
+  scale_color_manual(values = pal) +
+  geom_vline(xintercept = 2014, color = "black", linetype = "dashed") +
+  geom_vline(xintercept = 2017, color = "black", linetype = "dashed")
+  
+ggsave("figures/review_figs/precip_year_FigSX.tiff", width = 6, height = 4)  
 
