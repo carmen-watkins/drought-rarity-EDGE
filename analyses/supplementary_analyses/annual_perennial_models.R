@@ -8,17 +8,22 @@
 ##
 
 # Set up ####
+## load packages
 library(performance)
 library(parameters)
 library(tidyverse)
 library(car)
 library(lmerTest)
-
 library(jtools)
 library(xtable)
 library(lme4)
+library(MuMIn)
+library(effectsize)
+library(afex)
+library(emmeans)
 
-source("analyses/supplementary_analyses/FigS1_FigS4_duration_analyses.R")
+## read in data
+source("analyses/supplementary_analyses/annual_perennial_figures_FigS1_S8.R")
 
 ## clean up data 
 edge3 = edge_RR2 %>%
@@ -30,13 +35,16 @@ ms = lmer(resp.ratio.site_D4 ~ spatial_rarity*Duration + (1|site), data = edge3)
 summary(ms)
 check_model(ms)
 
-Anova(ms, type = 3, test.statistic = "F")
+Ams2 = Anova(ms, type = 3, test.statistic = "F")
+Ams2
 
 ms2 = lmer(resp.ratio.site_D4 ~ spatial_rarity+Duration + (1|site), data = edge3)
 
 anova(ms, ms2)
 ## ms (model with the interaction) is the significantly better model.
 
+r.squaredGLMM(ms)
+eta_squared(Ams2)
 
 ## Post-Drought ####
 msp = lmer(resp.ratio.site_PDfull ~ spatial_rarity*Duration + (1|site), data = edge3)

@@ -19,6 +19,7 @@ library(MuMIn)
 
 library(effectsize)
 library(afex)
+library(emmeans)
 
 source("analyses/calc_response_ratio.R") 
 #source("analyses/color_palettes.R")
@@ -65,7 +66,7 @@ pal = c("#03274E", "#3B5378", "#7F5F70",
 
 # Model ####
 ## model as way of estimating the overall effect of rarity on response ratio
-## during drought and postdrought for spatial and temporal rarity. good that 
+## during drought and post-drought for spatial and temporal rarity. good that 
 ## it still accounts for effect of site.
 
 ## drought, spatial ####
@@ -74,8 +75,8 @@ mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = edge_RR)
 #check_model(mmsd)
 summary(mmsd) ## supp table
 Atable = Anova(mmsd, type = 2, test.statistic = "F") ## main table
-
-nice(Atable)
+Atable
+#nice(Atable)
 
 xint = -(-0.30282)/0.86135
 ## VarCorr could be helpful for extracting model output
@@ -94,29 +95,50 @@ confint(mmsd)
 r.squaredGLMM(mmsd)
 eta_squared(Atable)
 
+#emmeans(mmsd, specs = "spatial_rarity", at = list(x = c(0, 0.25, 0.5, 0.75, 1)))
+
+#emtrends(mmsd, specs = "spatial_rarity", var = "site")
+
 ## drought, temporal ####
 mmtd = lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = edge_RR)
 
 #check_model(mmtd)
 summary(mmtd) ## supp table
-Anova(mmtd, type = 3, test.statistic = "F") ## main table
+Atable2 = Anova(mmtd, type = 2, test.statistic = "F") ## main table
 confint(mmtd)
+Atable2
+
+## calc effect sizes
+r.squaredGLMM(mmtd)
+eta_squared(Atable2)
 
 ## post-drought spatial ####
 mmsp = lmer(resp.ratio.site_PDfull ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsp)
 summary(mmsp) ## supp table
-Anova(mmsp, type = 2, test.statistic = "F") ## main table
+Atable3 = Anova(mmsp, type = 2, test.statistic = "F") ## main table
 confint(mmsp)
+Atable3
+
+## calc effect sizes
+r.squaredGLMM(mmsp)
+eta_squared(Atable3)
 
 ## post-drought temporal ####
 mmtp = lmer(resp.ratio.site_PDfull ~ temporal_rarity + (1|site), data = edge_RR)
 
 #check_model(mmtp)
 summary(mmtp) ## supp table
-Anova(mmtp, type = 3, test.statistic = "F") ## main table
+Atable4 = Anova(mmtp, type = 2, test.statistic = "F") ## main table
 confint(mmtp)
+
+Atable4
+
+## calc effect sizes
+r.squaredGLMM(mmtp)
+eta_squared(Atable4)
+
 
 # Create Tables ####
 ## Anova ####
@@ -139,9 +161,15 @@ mmtp_tab = as.data.frame(Anova(mmtp, type = 2, test.statistic = "F")) %>%
 
 anova_df = rbind(mmsd_tab, mmtd_tab, mmsp_tab, mmtp_tab) %>%
   rownames_to_column(var = "type") %>%
-  select(period, rarity, type, `F`, Df, Df.res, `Pr(>F)` )
+  mutate_if(is.numeric, round, digits = 2) %>%
+  mutate(signif = ifelse(`Pr(>F)` < 0.001, "***", 
+                         ifelse(`Pr(>F)` < 0.01 & `Pr(>F)` > 0.001, "**",
+                                ifelse(`Pr(>F)` > 0.01 & `Pr(>F)` < 0.05, "*", 
+                                       ifelse(`Pr(>F)` < 0.1 & `Pr(>F)` > 0.05, 
+                                              ".", " "))))) %>%
+  select(period, rarity, type, `F`, Df, Df.res, `Pr(>F)`, signif) 
 
-#write.csv(anova_df, "tables/mixed_mod_anova_table.csv")
+write.csv(anova_df, "tables/review_tabs/Q1_mixed_mod_anova_TabS9.csv", row.names = F)
 #xtable(anova_df)
 
 ## Coeff ####
@@ -171,10 +199,19 @@ mmtp_coeff = as.data.frame(summary(mmtp)$coefficients) %>%
 
 coeff_df = rbind(mmsd_coeff, mmtd_coeff, mmsp_coeff, mmtp_coeff) %>%
   rownames_to_column(var = "type") %>%
-  select(period, rarity, type, Estimate, `Std. Error`, df, `t value`, `Pr(>|t|)`)
+  select(period, rarity, type, Estimate, `Std. Error`, df, `t value`, `Pr(>|t|)`) %>%
+  
+  mutate(signif = ifelse(`Pr(>|t|)` < 0.001, "***", 
+                         ifelse(`Pr(>|t|)` < 0.01 & `Pr(>|t|)` > 0.001, "**",
+                                ifelse(`Pr(>|t|)` > 0.01 & `Pr(>|t|)` < 0.05, "*", 
+                                       ifelse(`Pr(>|t|)` < 0.1 & `Pr(>|t|)` > 0.05, 
+                                              ".", " "))))) %>%
+ # mutate_if(is.numeric, round, digits = 2) %>%
+  mutate(across(where(is.numeric) & !`Pr(>|t|)`, ~round(.x, 2))) %>%
+  mutate(`Pr(>|t|)` = round(`Pr(>|t|)`, digits = 3))
 
 #xtable(coeff_df)
-#write.csv(coeff_df, "tables/mixed_mod_coeff_table.csv", row.names = F)
+write.csv(coeff_df, "tables/review_tabs/Q1_mixed_mod_coeff_Tab1.csv", row.names = F)
 
 # Plot Old Fig 1 version ####
 p1 = effect_plot(mmsd, pred = spatial_rarity, interval = TRUE, plot.points = TRUE, y.label = "Drought Response Ratio", x.label = " ", 

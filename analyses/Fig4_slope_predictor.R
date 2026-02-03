@@ -30,29 +30,13 @@ pD1 = spmods_pred %>%
   xlab(" ") +
   ylab(" ") +
   labs(fill = "Site")  +
-  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
-              linetype = "dashed")  +
+#  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
+#              linetype = "dashed")  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
-
-spmods_pred %>%
-  filter(term == "spatial_rarity", period == "Drought") %>%
-  ggplot(aes(x=aridity, y=estimate)) +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.009) +
-  geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
-  scale_fill_manual(values = pal) +
-  geom_hline(yintercept = 0, linetype = "dashed")  +
-  xlab(" ") +
-  ylab(" ") +
-  labs(fill = "Site")  +
-  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
-              linetype = "dashed")  +
-  theme(axis.text.x=element_text(size=12)) +
-  theme(axis.text.y=element_text(size=12),
-        axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
+  coord_cartesian(ylim = c(-1, 2.8)) +
+  annotate("text", x = 0.4, y=2.6, label = "p: 0.236", size = 3, parse = TRUE)
 
 ## spatial rarity vs. temperature
 pT1 = spmods_pred %>%
@@ -69,7 +53,9 @@ pT1 = spmods_pred %>%
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
+  coord_cartesian(ylim = c(-1, 2.8))  +
+  annotate("text", x = 9, y=2.6, label = "p: 0.017", size = 3, parse = TRUE) +
+  annotate("text", x = 9, y=2.3, label = "R^2: 0.743", size = 3, parse = TRUE)
 
 ## spatial rarity vs. MAP
 pP1 = spmods_pred %>%
@@ -82,12 +68,13 @@ pP1 = spmods_pred %>%
   xlab(" ") +
   ylab("Spatial Rarity Slope") +
   labs(fill = "Site") +
-  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
-              linetype = "dashed")  +
+ # geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
+  #            linetype = "dashed")  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
-  coord_cartesian(ylim = c(-1, 2.8))
+  coord_cartesian(ylim = c(-1, 2.8)) +
+  annotate("text", x = 375, y=2.6, label = "p: 0.676", size = 3, parse = TRUE)
 
 ## temporal ####
 ## temporal rarity vs. dominance
@@ -109,7 +96,9 @@ pDt = tmpmods_pred %>%
   coord_cartesian(ylim = c(-1, 2.8))  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
-        axis.title=element_text(size=13))
+        axis.title=element_text(size=13)) +
+  annotate("text", x = 0.4, y=2.6, label = "p: 0.086", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=2.3, label = "R^2: 0.452", size = 3, parse = TRUE)
 
 ## temporal rarity vs. temperature
 pTt = tmpmods_pred %>%
@@ -129,7 +118,9 @@ pTt = tmpmods_pred %>%
   coord_cartesian(ylim = c(-1, 2.8))  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
-        axis.title=element_text(size=13))
+        axis.title=element_text(size=13))  +
+  annotate("text", x = 9, y=2.6, label = "p: 0.021", size = 3, parse = TRUE) +
+  annotate("text", x = 9, y=2.3, label = "R^2: 0.713", size = 3, parse = TRUE)
 
 ## temporal rarity vs. MAP
 pPt = tmpmods_pred %>%
@@ -143,12 +134,13 @@ pPt = tmpmods_pred %>%
   xlab("Mean Annual Precipitation") +
   ylab("Temporal Rarity Slope") +
   labs(color = "Site") +
-  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
-              linetype = "dashed") +
+  #geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
+   #           linetype = "dashed") +
   coord_cartesian(ylim = c(-1, 2.8))  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
-        axis.title=element_text(size=13))
+        axis.title=element_text(size=13))  +
+  annotate("text", x = 375, y=2.6, label = "p: 0.979", size = 3, parse = TRUE)
 
 ## combine panels & plot
 ggarrange(pP1, pT1, pD1, 
@@ -157,8 +149,8 @@ ggarrange(pP1, pT1, pD1,
           labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"))
 
 ## save
-ggsave("figures/review_figs/Fig4_site_slopes_predictors_drought_both_rarity.tiff", 
-       width = 8.5, height = 6.15)
+#ggsave("figures/review_figs/Fig4_site_slopes_predictors_drought_both_rarity.tiff", 
+ #      width = 8.5, height = 6.15)
 
 # Fig S9: Coeff plots ####
 ### temporal, drought

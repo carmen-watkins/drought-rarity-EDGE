@@ -110,7 +110,9 @@ SR_drought = ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4,
   labs(color = "Site") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13)) +
-  coord_cartesian(ylim = c(-1,1))
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.14", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.21", size = 3, parse = TRUE)
 
 SR_postdrought = ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull, 
                                      color = site)) +
@@ -122,7 +124,10 @@ SR_postdrought = ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PDfull,
   xlab("Spatial Rarity") +
   ylab("Post-drought") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13))
+  theme(text = element_text(size = 13)) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.11", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.14", size = 3, parse = TRUE)
 
 TR_drought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4, 
                                   color = site)) +
@@ -134,7 +139,10 @@ TR_drought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4,
   xlab(" ") +
   ylab(" ") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13))
+  theme(text = element_text(size = 13)) + 
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.15", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.18", size = 3, parse = TRUE)
 
 TR_postdrought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull, 
                                       color = site)) +
@@ -146,13 +154,16 @@ TR_postdrought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull
   xlab("Temporal Rarity") +
   ylab("") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13))
+  theme(text = element_text(size = 13)) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.09", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.10", size = 3, parse = TRUE)
 
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = c("(a)", "(b)", "(c)", "(d)"), common.legend = T, 
           legend = "bottom", ncol = 2, nrow=2)
 
-# ggsave("figures/review_figs/Fig2_resp_ratio_v_rarity.tiff", width = 6, height = 5.5)
+#ggsave("figures/review_figs/Fig2_resp_ratio_v_rarity.tiff", width = 6, height = 5.6)
 
 ## Talk Figure ####
 ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
