@@ -14,8 +14,9 @@ library(wesanderson)
 
 tmppal2 = wes_palette("Darjeeling2", type = "discrete")
 tmppal3 = wes_palette("Chevalier1")
-pal2 = c(tmppal2[3], "#94c0c1", tmppal3[1]) #tmppal2[4])
+#pal2 = c(tmppal2[3], "#94c0c1", tmppal3[1]) #tmppal2[4])
 
+pal2 = c("#541A38", "#94c0c1")
 
 #Read in functional group info
 FG = read.csv(here::here("data","edge_species_info_CP_BA.csv"))
@@ -120,59 +121,72 @@ eriog = FG %>%
 ## KNZ, Asclepias syriaca is unknown, but I think this is a perennial; Cirsium also unknown
 
 # Plot ####
-## Fig S8 ####
+## Fig S5 ####
 lh_sd = edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%
   ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
   geom_point() +
   geom_smooth(method = "lm") +
-  facet_wrap(~Duration) +
+  #facet_wrap(~Duration) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
-  ylab("Drought Response Ratio") +
+  ylab("Drought") +
   xlab(" ") +
+  labs(color = "Life History") +
   theme(text = element_text(size = 13)) +
-  scale_color_manual(values = pal2)
+  scale_color_manual(values = pal2) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.17", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.24", size = 3, parse = TRUE)
 
 lh_td = edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%
   ggplot(aes(x=temporal_rarity, y=resp.ratio.site_D4, color = Duration)) +
   geom_point() +
   geom_smooth(method = "lm") +
-  facet_wrap(~Duration) +
+  #facet_wrap(~Duration) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   ylab(" ") +
   xlab(" ") +
   theme(text = element_text(size = 13)) +
-  scale_color_manual(values = pal2)
+  scale_color_manual(values = pal2) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.16", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.20", size = 3, parse = TRUE)
 
 lh_spd = edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%
   ggplot(aes(x=spatial_rarity, y=resp.ratio.site_PDfull, color = Duration)) +
   geom_point() +
   geom_smooth(method = "lm") +
-  facet_wrap(~Duration) +
+  #facet_wrap(~Duration) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
-  ylab("Post-Drought Response Ratio") +
+  ylab("Post-Drought") +
   xlab("Spatial Rarity") +
   theme(text = element_text(size = 13)) +
-  scale_color_manual(values = pal2)
+  scale_color_manual(values = pal2) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.13", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.16", size = 3, parse = TRUE)
 
 lh_tpd = edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%
   ggplot(aes(x=temporal_rarity, y=resp.ratio.site_PDfull, color = Duration)) +
   geom_point() +
   geom_smooth(method = "lm") +
-  facet_wrap(~Duration) +
+  #facet_wrap(~Duration) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   ylab(" ") +
   xlab("Temporal Rarity") +
   theme(text = element_text(size = 13)) +
-  scale_color_manual(values = pal2)
+  scale_color_manual(values = pal2) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.11", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.12", size = 3, parse = TRUE)
 
 ggarrange(lh_sd, lh_td, lh_spd, lh_tpd, nrow = 2, ncol = 2, common.legend = TRUE, 
-          legend = "bottom", labels = "AUTO")
+          legend = "bottom", labels = c("(a)", "(b)", "(c)", "(d)"))
 
-## ggsave("figures/review_figs/FigS8_duration_RR_v_rarity.tiff", width = 10, height = 6)
+#ggsave("figures/review_figs/FigS5_annual_perenn_RR_v_rarity.tiff", width = 6, height = 5.6)
 
 ## Talk Figure ####
 edge_RR2 %>%
@@ -190,13 +204,13 @@ edge_RR2 %>%
 
 #ggsave("figures/dissertation_talk/duration.png", width = 8, height = 4)
 
-## Fig S1 ####
+## Fig S4 ####
 all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
   geom_bar(stat = 'identity') +
   xlab(NULL) +
   ylab("Proportion") +
   ggtitle("All Species") +
-  scale_fill_manual(values = c("#D69C4E", "#E6A0C4","#94c0c1", "#798E87"))
+  scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#798E87"))
 
 sctc = edge_RR2 %>%
   filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
@@ -211,23 +225,7 @@ sctc = edge_RR2 %>%
   xlab(NULL) +
   ylab("Proportion") +
   ggtitle("Common & Persistent")  +
-  scale_fill_manual(values = c("#D69C4E", "#E6A0C4","#94c0c1", "#798E87"))
-
-edge_RR2 %>%
-  filter(spatial_rarity < 0.25 & temporal_rarity < 0.5, 
-         FunctionalGroup == "grass") %>%
-  group_by(site, Duration) %>%
-  summarise(num_dur = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_dur),
-         prop_dur = num_dur / tot) %>%
-  ggplot(aes(x=site, y=prop_dur, fill = Duration)) +
-  geom_bar(stat = 'identity') +
-  xlab(NULL) +
-  ylab("Proportion") +
-  ggtitle("Common & Persistent")  +
-  scale_fill_manual(values = c("#D69C4E", "#E6A0C4","#94c0c1", "#798E87"))
+  scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#798E87"))
 
 srtr = edge_RR2 %>%
   filter(spatial_rarity > 0.25 & temporal_rarity >= 0.5) %>%
@@ -242,7 +240,7 @@ srtr = edge_RR2 %>%
   xlab(NULL) +
   ylab("Proportion") +
   ggtitle("Sparse & Intermittent") +
-  scale_fill_manual(values = c("#D69C4E", "#94c0c1", "#798E87"))
+  scale_fill_manual(values = c("#541A38", "#94c0c1", "#798E87"))
 
 sctr = edge_RR2 %>%
   filter(spatial_rarity < 0.25 & temporal_rarity >= 0.5) %>%
@@ -257,7 +255,7 @@ sctr = edge_RR2 %>%
   xlab(NULL) +
   ylab("Proportion") +
   ggtitle("Common & Intermittent") +
-  scale_fill_manual(values = c("#D69C4E", "#94c0c1"))
+  scale_fill_manual(values = c("#541A38", "#94c0c1"))
 
 srtc = edge_RR2 %>%
   filter(spatial_rarity >= 0.25 & temporal_rarity < 0.5) %>%
@@ -272,12 +270,12 @@ srtc = edge_RR2 %>%
   xlab(NULL) +
   ylab("Proportion") +
   ggtitle("Sparse & Persistent") +
-  scale_fill_manual(values = c("#D69C4E", "#E6A0C4","#94c0c1", "#798E87"))
+  scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#798E87"))
 
-ggarrange(all, sctc, srtr, srtc, sctr, common.legend = T, labels = "AUTO", 
+ggarrange(all, sctc, srtr, srtc, sctr, common.legend = T, labels = c("(a)", "(b)", "(c)", "(d)", "(e)"), 
           legend = "bottom")
 
-## ggsave("figures/Mar2025/FigS8_sp_duration_proportions.tiff", width = 8, height = 5)
+#ggsave("figures/review_figs/FigS4_sp_life_history_proportions.tiff", width = 8, height = 5)
 
 ## Exploratory C3/C4 Fig ####
 all2 = edge_RR2 %>%
