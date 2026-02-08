@@ -36,6 +36,15 @@ edge_RR_cats$site = factor(edge_RR_cats$site, levels = c("KNZ", "HYS", "CHY",
 edge_RR$site = factor(edge_RR$site, levels = c("KNZ", "HYS", "CHY", "SGS", 
                                                "SBL", "SBK"))
 
+## summary metrics ####
+unique(edge_RR$species)
+
+table(edge_RR$site, edge_RR$species)
+
+site_rich = edge_RR %>%
+  group_by(site) %>%
+  summarise(num_sp = n())
+
 # Figure S3 ####
 ## MS Figure ####
 ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+

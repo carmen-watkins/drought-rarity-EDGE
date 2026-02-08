@@ -1,6 +1,17 @@
+# Header ####
+## Script name: 
+
+## Purpose of script: 
+##
+## Author: Beatriz Aguirre
+##
+
 # Figure 2 by Functional Group and Life History
 # November 13, 2024
 # BAA
+
+library(ggExtra)
+
 
 # source("analyses/calculate_response_ratio.R")
 # source("analyses/color_palettes.R")
@@ -14,9 +25,40 @@ FG <- read.csv(here::here("data","edge_species_info_CP_BA.csv"))
 #Join functional group data to species response ratio data
 edge_RR2 <- edge_RR %>%
   left_join(FG, by = "species") %>%
-  mutate(FunctionalGroup = ifelse(species %in% c("Astragalus_sp", "Eriogonum_sp", "Euphorbia_sp", "Oenothera_sp", "Asclepias_syriaca", "Cirsium_sp", "Astragalus_Oxytropis_sp"), "forb", 
-                                  ifelse(species %in% c("Sporobolus_sp"), "grass", FunctionalGroup))) %>%
-  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+  mutate(FunctionalGroup = ifelse(species %in% c("Astragalus_sp", "Eriogonum_sp", 
+                                                 "Euphorbia_sp", "Oenothera_sp", 
+                                                 "Asclepias_syriaca", "Cirsium_sp", 
+                                                 "Astragalus_Oxytropis_sp"), "forb", 
+                                  ifelse(species %in% c("Sporobolus_sp"), 
+                                         "grass", FunctionalGroup))) %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"),
+         Duration = ifelse(site == "KNZ" & species == "Asclepias_syriaca",
+                           "perennial", Duration),
+         Duration = ifelse(species %in% c("Astragalus_drummondii", 
+                                          "Astragalus_laxmanii", 
+                                          "Astragalus_Oxytropis_sp",
+                                          "Astragalus_shortianus", 
+                                          "Astragalus_sp", 
+                                          "Astragulus_crassicarpus"), 
+                           "perennial", Duration),
+         Duration = ifelse(species %in% c("Euphorbia_exstipulata", 
+                                          "Euphorbia_sp", "Euphorbia_sp."), 
+                           "annual", Duration), 
+         Duration = ifelse(species %in% c("Sporobolus_asper", 
+                                          "Sporobolus_cryptandrus", 
+                                          "Sporobolus_heterolepis", 
+                                          "Sporobolus_sp", 
+                                          "Sporobolus_sp."), 
+                           "perennial", Duration), 
+         Duration = ifelse(is.na(Duration) | Duration == "unk", 
+                           "unknown", Duration)) %>%
+  mutate(Photo = ifelse(site %in% c("SBK", "SBL") & species == "Sporobolus_sp",
+                        "c4", Photo),
+         Photo = ifelse(site == "KNZ" & species == "Eleocharis_sp.", 
+                        "c3", Photo),
+         Photo = ifelse(site == "KNZ" & species == "Juncus_interior", 
+                        "c3", Photo))
+
 
 
 nacheck = edge_RR2 %>%
@@ -47,7 +89,7 @@ ggplot(edge_RR2, aes(x=spatial_rarity, y=resp.ratio.site_D4, color = FunctionalG
   geom_hline(yintercept = 0, linetype = "dashed")  +
   ylab("Drought Response Ratio") +
   xlab("Spatial Rarity") 
-ggsave("figures/Jan2025/misc_not_included/FG_RR_v_rarity_drought_overall.png", width = 8, height = 3)
+#ggsave("figures/Jan2025/misc_not_included/FG_RR_v_rarity_drought_overall.png", width = 8, height = 3)
 
 ggplot(edge_RR2, aes(x=temporal_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
   geom_point() +
@@ -56,7 +98,7 @@ ggplot(edge_RR2, aes(x=temporal_rarity, y=resp.ratio.site_D4, color = Functional
   geom_hline(yintercept = 0, linetype = "dashed") +
   ylab("Drought Response Ratio") +
   xlab("Temporal Rarity")
-ggsave("figures/Jan2025/misc_not_included/FG_RR_v_Trarity_drought_overall.png", width = 8, height = 3)
+#ggsave("figures/Jan2025/misc_not_included/FG_RR_v_Trarity_drought_overall.png", width = 8, height = 3)
 
 ggplot(edge_RR2, aes(x=spatial_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
   geom_point() +
@@ -65,7 +107,7 @@ ggplot(edge_RR2, aes(x=spatial_rarity, y=resp.ratio.site_D4, color = FunctionalG
   geom_hline(yintercept = 0, linetype = "dashed") +
   ylab("Drought Response Ratio") +
   xlab("Spatial Rarity")
-ggsave("figures/Jan2025/misc_not_included/FG_RR_v_rarity_drought.png", width = 8, height = 10)
+#ggsave("figures/Jan2025/misc_not_included/FG_RR_v_rarity_drought.png", width = 8, height = 10)
 
 ggplot(edge_RR2, aes(x=temporal_rarity, y=resp.ratio.site_D4, color = FunctionalGroup)) +
   geom_point() +
@@ -74,7 +116,7 @@ ggplot(edge_RR2, aes(x=temporal_rarity, y=resp.ratio.site_D4, color = Functional
   geom_hline(yintercept = 0, linetype = "dashed") +
   ylab("Drought Response Ratio") +
   xlab("Temporal Rarity")
-ggsave("figures/Jan2025/misc_not_included/FG_RR_v_Trarity_drought.png", width = 8, height = 10)
+#ggsave("figures/Jan2025/misc_not_included/FG_RR_v_Trarity_drought.png", width = 8, height = 10)
 
 ## Duration ####
 edge_RR2 %>%
@@ -86,7 +128,7 @@ ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   ylab("Drought Response Ratio") +
   xlab("Spatial Rarity") 
-ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_drought.png", width = 6, height = 3)
+#ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_drought.png", width = 6, height = 3)
 
 edge_RR2 %>%
   filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
@@ -99,7 +141,7 @@ edge_RR2 %>%
   ylab("Drought Response Ratio") +
   xlab("Spatial Rarity") +
   theme_bw()
-ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_drought_site.png", width = 8, height = 10)
+#ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_drought_site.png", width = 8, height = 10)
 
 edge_RR2 %>%
   filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
@@ -110,7 +152,7 @@ edge_RR2 %>%
   geom_hline(yintercept = 0, linetype = "dashed")  +
   ylab("Drought Response Ratio") +
   xlab("Temporal Rarity") 
-ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Trarity_drought.png", width = 6, height = 3)
+#ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Trarity_drought.png", width = 6, height = 3)
 
 
 edge_RR2 %>%
@@ -124,7 +166,7 @@ edge_RR2 %>%
   ylab("Drought Response Ratio") +
   xlab("Temporal Rarity") +
   theme_bw()
-ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Trarity_drought_site.png", width = 8, height = 10)
+#ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Trarity_drought_site.png", width = 8, height = 10)
 
 ### post-drought ####
 edge_RR2 %>%
@@ -136,7 +178,7 @@ edge_RR2 %>%
   geom_hline(yintercept = 0, linetype = "dashed")  +
   ylab("Post-Drought Response Ratio") +
   xlab("Spatial Rarity") 
-ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_postdrought.png", width = 6, height = 3)
+#ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Srarity_postdrought.png", width = 6, height = 3)
 
 edge_RR2 %>%
   filter(!Duration %in% c("unk", "annual/perennial"), !is.na(Duration)) %>%
@@ -147,7 +189,7 @@ edge_RR2 %>%
   geom_hline(yintercept = 0, linetype = "dashed")  +
   ylab("Post-Drought Response Ratio") +
   xlab("Temporal Rarity") 
-ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Trarity_postdrought.png", width = 6, height = 3)
+#ggsave("figures/Jan2025/misc_not_included/duration_RR_v_Trarity_postdrought.png", width = 6, height = 3)
 
 
 
@@ -240,7 +282,6 @@ ggplot(edge_RR2, aes(x = spatial_rarity, y=temporal_rarity, color=Duration))+
 
 #create density plots for each rarity metric by functional group
 
-library(ggExtra)
 
 sum_edge_RR2 %>% 
   group_by(site) %>% 
