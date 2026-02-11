@@ -15,7 +15,7 @@ precip = read.csv("data/growingseason_precip_totals_allyears.csv")
 sev_ppt = read.csv("data/sev_download/sev298_NPP_edge_biomass.csv")
 
 source("data-prep/clean_spei_data.R")
-source("analyses/color_palettes.R")
+#source("analyses/color_palettes.R")
 
 ## set up graphics
 theme_set(theme_classic())
@@ -43,30 +43,83 @@ ppt_all = rbind(sev_temporal, north_temporal) %>%
          site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
 # Plot ####
-ppt_time = ggplot(ppt_all, aes(x = year, y = tot.precip)) +
+ppt_north = ppt_all %>%
+  filter(!site %in% c("SBL", "SBK")) %>%
+  ggplot(aes(x = year, y = tot.precip)) +
+  
+  geom_rect(aes(xmin = 2014, xmax = 2017, ymin = -Inf, 
+                ymax = Inf), fill="#E6E6E6", alpha = .2) +
+  
+  geom_point(aes(color = site), size = 2) +
+  geom_line(aes(color = site)) +
+  xlab("Year") +
+  ylab("Precip (mm)") +
+  labs(color = "Site") +
+  scale_color_manual(values = pal) +
+  theme(text = element_text(size = 12)) +
+  coord_cartesian(ylim = c(0, 1000))
+
+ppt_sev = ppt_all %>%
+  filter(site %in% c("SBL", "SBK"),
+         year != 2012) %>%
+  ggplot(aes(x = year, y = tot.precip)) +
   
   geom_rect(aes(xmin = 2013, xmax = 2019, ymin = -Inf, 
                 ymax = Inf), fill="#E6E6E6", alpha = .2) +
   
-  geom_point(aes(color = site), size = 3) +
+  geom_point(aes(color = site), size = 2) +
   geom_line(aes(color = site)) +
   xlab("Year") +
-  ylab("Precipitation (mm)") +
+  ylab("Precip (mm)") +
+  labs(color = "Site") +
+  scale_color_manual(values = c(pal[5], pal[6])) +
+  theme(text = element_text(size = 12))  +
+  coord_cartesian(ylim = c(0, 1000)) +
+  scale_x_continuous(breaks = seq(2013, 2023, 3))
+
+spei_north = spei_exp %>%
+  filter(site != "SEV") %>%
+ggplot(aes(x = year, y = spei)) +
+  
+  geom_rect(aes(xmin = 2014, xmax = 2017, ymin = -Inf, 
+                ymax = Inf), fill="#E6E6E6", alpha = .2) +
+  
+  geom_point(aes(color = site), size = 2) +
+  geom_line(aes(color = site)) +
+  xlab("Year") +
+  ylab("SPEI") +
   labs(color = "Site") +
   scale_color_manual(values = pal) +
-  geom_vline(xintercept = 2014, color = "black", linetype = "dashed") +
-  geom_vline(xintercept = 2017, color = "black", linetype = "dashed") +
-  theme(text = element_text(size = 14))
+  theme(text = element_text(size = 12)) +
+  coord_cartesian(ylim = c(-2.5, 2)) #+
+  #scale_x_continuous(breaks = seq(2013, 2023, 2))
 
+spei_sev = spei_exp %>%
+  filter(site == "SEV") %>%
+  ggplot(aes(x = year, y = spei)) +
   
+  geom_rect(aes(xmin = 2013, xmax = 2019, ymin = -Inf, 
+                ymax = Inf), fill="#E6E6E6", alpha = .2) +
+  
+  geom_point(aes(color = site), size = 2) +
+  geom_line(aes(color = site)) +
+  xlab("Year") +
+  ylab("SPEI") +
+  labs(color = "Site") +
+  scale_color_manual(values = pal[6]) +
+  theme(text = element_text(size = 12)) +
+  coord_cartesian(ylim = c(-2.5, 2)) +
+  scale_x_continuous(breaks = seq(2013, 2023, 3))
+
 ## explore distrib of SPEI over all years
-spei_time = spei_all %>%
+spei_hist = spei_all %>%
   ungroup() %>%
   ggplot(aes(x=spei)) +
   geom_density() +
   facet_wrap(~site, ncol = 5, nrow = 1) +
-  geom_jitter(data = spei_exp, aes(x=spei, y=0.1, color = exp.year, fill = exp.year),
-              height = 0.01, width = 0, alpha = 0.5, size = 2) +
+  geom_jitter(data = spei_exp, aes(x=spei, y=0.1, color = exp.year, 
+                                   fill = exp.year),
+              height = 0.01, width = 0, alpha = 0.5, size = 1.5) +
   scale_color_manual(values = c( "#D69C4E", "#435163", "white")) +
   scale_fill_manual(values = c( "#D69C4E", "#435163")) +
   xlab("Growing Seasion SPEI") +
@@ -74,9 +127,15 @@ spei_time = spei_all %>%
   labs(color = "Experiment Year", fill = "Experiment Year") +
   guides(fill = "none") +
   theme(legend.position = "bottom") +
-  theme(text = element_text(size = 14))
+  theme(text = element_text(size = 12))
 
-plot_grid(ppt_time, spei_time, ncol = 1, labels = c("(a)", "(b)"))
+p1 = plot_grid(ppt_north, ppt_sev, spei_north, spei_sev, ncol = 2, 
+               labels = c("(a)", "(b)", "(c)", "(d)"), align = "v", label_x = -0.03)
 
-ggsave("figures/review_figs/precip_year_FigSX.tiff", width = 8, height = 6)  
+p2 = plot_grid(spei_hist, labels = c("(e)"))
+
+plot_grid(p1, p2, ncol = 1, rel_heights = c(1, 0.5))
+
+ggsave("figures/review_figs/precip_year_FigSX.tiff",
+       width = 18, height = 15, units = "cm")  
 
