@@ -1,5 +1,5 @@
 # Header ####
-## Script name: Duration Analyses
+## Script name: Annual Perennial Figures
 ##
 ## Purpose of script: ## Calc proportion of annual common vs. annual species at
 ## each site
