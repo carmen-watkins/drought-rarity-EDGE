@@ -5,7 +5,6 @@
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
 
 # Set up ####
 source("data-prep/clean_cover_dat_standardize_cols.R")
@@ -20,7 +19,9 @@ sort(unique(sbk$sp.epithet))
 
 ## find species with genus id present, but no sp epithet id
 sbk_unk_epithet = sbk %>%
-  filter(is.na(sp.epithet) | sp.epithet %in% c("sp.", "sp. ", "Seedling", "seedling", "unknown", "sp", "small"))
+  filter(is.na(sp.epithet) | sp.epithet %in% c("sp.", "sp. ", "Seedling", 
+                                               "seedling", "unknown", "sp",
+                                               "small"))
 
 unique(sbk_unk_epithet$genus)
 ## 3 genera with unidentified sp epithets
@@ -88,7 +89,9 @@ sort(unique(sbl$kartez))
 
 ## find species with genus id present, but no sp epithet id
 sbl_unk_epithet = sbl %>%
-  filter(is.na(sp.epithet) | sp.epithet %in% c("sp.", "sp. ", "Seedling", "seedling", "unknown", "sp", "small"))
+  filter(is.na(sp.epithet) | sp.epithet %in% c("sp.", "sp. ", "Seedling",
+                                               "seedling", "unknown", "sp", 
+                                               "small"))
 
 unique(sbl_unk_epithet$genus)
 ## 2 genera with unidentified sp epithets
@@ -150,14 +153,16 @@ sort(unique(knz$sp.ep))
 
 ## to remove right away 
 ## remove trees + unknowns with no identifying genus info
-knz_rm1 = c("blob_unknown", "Ulmus_americana", "Ulmus_sp.", "unk_rush_unknown", "UNKFKNZ1", "UNKFKNZ2", "Unknown_Seedling", "UNKTRKNZ1", "UNKTRKNZ2")
+knz_rm1 = c("blob_unknown", "Ulmus_americana", "Ulmus_sp.", "unk_rush_unknown", 
+            "UNKFKNZ1", "UNKFKNZ2", "Unknown_Seedling", "UNKTRKNZ1", "UNKTRKNZ2")
 
 knz_temp = knz %>%
   filter(!species %in% knz_rm1)
 
 ## find species with genus id present, but no sp epithet id
 knz_unk_epithet = knz_temp %>%
-  filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling", "unknown", "sp", "small"))
+  filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling",
+                                     "unknown", "sp", "small"))
 
 unique(knz_unk_epithet$genus)
 
@@ -233,7 +238,8 @@ sort(unique(knz_sp$sp.ep))
 
 ### quantify unknowns ####
 knz_unks = knz %>%
-  filter(species %in% knz_rm1 | species %in% c("panicum_unknown", "Unknown_ericoides_small"),
+  filter(species %in% knz_rm1 | species %in% c("panicum_unknown", 
+                                               "Unknown_ericoides_small"),
          !species %in% c("Ulmus_americana", "Ulmus_sp."))
 
 length(unique(knz_unks$species))
@@ -243,7 +249,12 @@ nrow(knz_unks)
 sort(unique(hys$species))
 ## to remove right away 
 ## remove trees + unknowns with no identifying genus info
-hys_rm1 = c("oxytopis_like_legume", "seedling_unknown", "Ulmus_sp.", "unk_alternate_leaf_forb",      "unk_fall_opposite_leaf", "unk_juicy_forb", "unk_mustard_unknown", "Unk_overlapping_alt", "UNKFHYS4", "UNKFHYS5", "UNKFHYS7", "UNKFHYS8", "unkforb_opp_Lvs", "UNKGRHYS1", "UNKHYS", "unknown_forb", "Unknown_rosette", "Unknown_woody")
+hys_rm1 = c("oxytopis_like_legume", "seedling_unknown", "Ulmus_sp.", 
+            "unk_alternate_leaf_forb",      "unk_fall_opposite_leaf", 
+            "unk_juicy_forb", "unk_mustard_unknown", "Unk_overlapping_alt", 
+            "UNKFHYS4", "UNKFHYS5", "UNKFHYS7", "UNKFHYS8", "unkforb_opp_Lvs", 
+            "UNKGRHYS1", "UNKHYS", "unknown_forb", "Unknown_rosette",
+            "Unknown_woody")
 
 hys_temp = hys %>%
   filter(!species %in% hys_rm1)
@@ -253,7 +264,8 @@ sort(unique(hys_temp$sp.ep))
 
 ## find species with genus id present, but no sp epithet id
 hys_unk_epithet = hys_temp %>%
-  filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling", "unknown", "sp", "small", "Hays"))
+  filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling", 
+                                     "unknown", "sp", "small", "Hays"))
 
 unique(hys_unk_epithet$genus)
 ## "Asclepias"   "Chenopodium" "Chloris" "Euphorbia" "Melilotus" "unk" "Triodanis" "Astragalus" "Croton"  
@@ -409,14 +421,23 @@ hys_sp = hys_temp %>%
             ## keep asclepias_sp
          
          ## lump eriogonum species
-         genus = ifelse(species %in% c("unk_Eriogonum_Hays", "Eriogonum_effusum"), "Eriogonum", genus),
-         spcode = ifelse(species %in% c("unk_Eriogonum_Hays", "Eriogonum_effusum"), "ERISP", spcode),
-         species = ifelse(species %in% c("unk_Eriogonum_Hays", "Eriogonum_effusum"), "Eriogonum_sp", species),
+         genus = ifelse(species %in% c("unk_Eriogonum_Hays", "Eriogonum_effusum"),
+                        "Eriogonum", genus),
+         spcode = ifelse(species %in% c("unk_Eriogonum_Hays", "Eriogonum_effusum"), 
+                         "ERISP", spcode),
+         species = ifelse(species %in% c("unk_Eriogonum_Hays", "Eriogonum_effusum"), 
+                          "Eriogonum_sp", species),
          
          ## lump oenothera
-         genus = ifelse(species %in% c("unk_Oenothera", "unk_oenotheria", "Oenothera_suffrutescens"), "Oenothera", genus),
-         spcode = ifelse(species %in% c("unk_Oenothera", "unk_oenotheria", "Oenothera_suffrutescens"), "OENSP", spcode),
-         species = ifelse(species %in% c("unk_Oenothera", "unk_oenotheria", "Oenothera_suffrutescens"), "Oenothera_sp", species)
+         genus = ifelse(species %in% c("unk_Oenothera", "unk_oenotheria", 
+                                       "Oenothera_suffrutescens"), 
+                        "Oenothera", genus),
+         spcode = ifelse(species %in% c("unk_Oenothera", "unk_oenotheria", 
+                                        "Oenothera_suffrutescens"), 
+                         "OENSP", spcode),
+         species = ifelse(species %in% c("unk_Oenothera", "unk_oenotheria",
+                                         "Oenothera_suffrutescens"), 
+                          "Oenothera_sp", species)
     
          )
 
@@ -430,7 +451,8 @@ sort(unique(hys_sp$sp.ep))
 
 ### quantify unknowns ####
 hys_unks = hys %>%
-  filter(species %in% hys_rm1 | species %in% c("Unknown_Cirsium", "Asclepias_seedling"), #, "Asclepias_sp."),
+  filter(species %in% hys_rm1 | species %in% c("Unknown_Cirsium", 
+                                               "Asclepias_seedling"), #, "Asclepias_sp."),
          !species %in% c("Ulmus_americana", "Ulmus_sp."))
 
 length(unique(hys_unks$species))
@@ -440,7 +462,11 @@ nrow(hys_unks)
 sort(unique(chy$species))
 ## to remove right away 
 ## remove trees + unknowns with no identifying genus info
-chy_rm1 = c("UK_Fuzzy_Aster", "UK_onagraceac", "UK_Tall_Phlox", "unk_alternate_strong_midvein_hairy_margin", "UNK_Aster_rosette", "UNKFCHY1", "UNKFCHY3", "UNKFCHY4", "UNKFCHY5", "UNKFCHY6", "UNKFCHY7", "unknown", "Unknown_forb", "Unknown_linear_lvs", "Unknown_rosette", "unknown_shiny_alternate")
+chy_rm1 = c("UK_Fuzzy_Aster", "UK_onagraceac", "UK_Tall_Phlox", 
+            "unk_alternate_strong_midvein_hairy_margin", "UNK_Aster_rosette", 
+            "UNKFCHY1", "UNKFCHY3", "UNKFCHY4", "UNKFCHY5", "UNKFCHY6", 
+            "UNKFCHY7", "unknown", "Unknown_forb", "Unknown_linear_lvs", 
+            "Unknown_rosette", "unknown_shiny_alternate")
 
 chy_temp = chy %>%
   filter(!species %in% chy_rm1)
@@ -450,7 +476,8 @@ sort(unique(chy_temp$sp.ep))
 
 ## find species with genus id present, but no sp epithet id
 chy_unk_epithet = chy_temp %>%
-  filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling", "unknown", "sp", "small", "Hays"))
+  filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling", 
+                                     "unknown", "sp", "small", "Hays"))
 
 sort(unique(chy_unk_epithet$genus))
 ## "Astragalus"  "Chenopodium" "Festuca"     "Oenothera"   "Orobanche"   "Paronychia"  "Silene"      "Sporobolus"  "unk"  
@@ -603,10 +630,12 @@ ggplot(penstem, aes(x=year, y=plot, color = species)) +
 
 ### clean sp ####
 chy_sp = chy_temp %>%
-  filter(!species %in% c("Astragalus_sp.", "unk_astragalus_oxytropis", "unk_Oxytropis_sp.",
+  filter(!species %in% c("Astragalus_sp.", "unk_astragalus_oxytropis",
+                         "unk_Oxytropis_sp.",
                          "Festuca_unknown",
                          "Oenothera_sp.",
-                         "unk_Artemisia_ludoviciana",  "unk_Stipa_veridas", "Unknown_Erysimum")) %>%
+                         "unk_Artemisia_ludoviciana",  "unk_Stipa_veridas",
+                         "Unknown_Erysimum")) %>%
   
   ## fix penstemon
   mutate(genus = ifelse(species %in% c("huge_penstemon"), "Penstemon", genus),
@@ -619,7 +648,14 @@ sort(unique(chy_sp$sp.ep))
 
 ### quantify unknowns ####
 chy_unks = chy %>%
-  filter(species %in% chy_rm1 | species %in% c("Astragalus_sp.", "unk_astragalus_oxytropis", "unk_Oxytropis_sp.", "Festuca_unknown", "Oenothera_sp.", "unk_Artemisia_ludoviciana",  "unk_Stipa_veridas", "Unknown_Erysimum"))
+  filter(species %in% chy_rm1 | species %in% c("Astragalus_sp.",
+                                               "unk_astragalus_oxytropis", 
+                                               "unk_Oxytropis_sp.", 
+                                               "Festuca_unknown", 
+                                               "Oenothera_sp.", 
+                                               "unk_Artemisia_ludoviciana",  
+                                               "unk_Stipa_veridas", 
+                                               "Unknown_Erysimum"))
 
 length(unique(chy_unks$species))
 nrow(chy_unks)
@@ -628,7 +664,8 @@ nrow(chy_unks)
 sort(unique(sgs$species))
 ## to remove right away 
 ## remove trees + unknowns with no identifying genus info
-sgs_rm1 = c("unk_Alien", "unk_Lepidium_like_forb", "unk_Red_edged_forb", "UNKFSGS2", "UNKFSGS3", "Unknown_grass", "Unknown_milky_waxy")
+sgs_rm1 = c("unk_Alien", "unk_Lepidium_like_forb", "unk_Red_edged_forb",
+            "UNKFSGS2", "UNKFSGS3", "Unknown_grass", "Unknown_milky_waxy")
 
 sgs_temp = sgs %>%
   filter(!species %in% sgs_rm1)
@@ -638,7 +675,9 @@ sort(unique(sgs_temp$sp.ep))
 
 ## find species with genus id present, but no sp epithet id
 sgs_unk_epithet = sgs_temp %>%
-  filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling", "unknown", "sp", "small", "Hays", "ASOX", "astragalus", "unk") | genus %in% c("unk"))
+  filter(is.na(sp.ep) | sp.ep %in% c("sp.", "sp. ", "Seedling", "seedling",
+                                     "unknown", "sp", "small", "Hays", "ASOX", 
+                                     "astragalus", "unk") | genus %in% c("unk"))
 
 sort(unique(sgs_unk_epithet$genus))
 # "ASOX"        "Chenopodium" "Euphorbia"   "Oenothera"   "Orobanche"  "unk"
@@ -699,11 +738,22 @@ table(unks$year, unks$species)
 sgs_sp = sgs_temp %>%
   
   ## lump astragalus and oxytropis
-  mutate(spcode = ifelse(species %in% c("ASOX", "Astragalus_fluxuosus", "Astragalus_gracilis", "Astragalus_lotiflorus", "unk_Tall_astragulus"), "ASOX", spcode),
+  mutate(spcode = ifelse(species %in% c("ASOX", "Astragalus_fluxuosus", 
+                                        "Astragalus_gracilis", 
+                                        "Astragalus_lotiflorus", 
+                                        "unk_Tall_astragulus"), "ASOX", spcode),
          
-         genus = ifelse(species %in% c("ASOX", "Astragalus_fluxuosus", "Astragalus_gracilis", "Astragalus_lotiflorus", "unk_Tall_astragulus"), "Astragalus", genus),
+         genus = ifelse(species %in% c("ASOX", "Astragalus_fluxuosus", 
+                                       "Astragalus_gracilis", 
+                                       "Astragalus_lotiflorus", 
+                                       "unk_Tall_astragulus"), 
+                        "Astragalus", genus),
          
-         species = ifelse(species %in% c("ASOX", "Astragalus_fluxuosus", "Astragalus_gracilis", "Astragalus_lotiflorus", "unk_Tall_astragulus"), "Astragalus_sp", species),
+         species = ifelse(species %in% c("ASOX", "Astragalus_fluxuosus", 
+                                         "Astragalus_gracilis", 
+                                         "Astragalus_lotiflorus",
+                                         "unk_Tall_astragulus"), 
+                          "Astragalus_sp", species),
          ## keep A. mollissimus, A. shortianus, oxytropis separate
 
          ## lump oenothera
@@ -723,4 +773,10 @@ nrow(sgs_unks)
 
 
 # Clean Env ####
-rm(amaran, artemesia, asclep, astrag, astrag_oxy, chenop, chloris, chy, chy_rm1, chy_temp, chy_unk_epithet, cirsium, croton, eleoch, eriogo, erysim, euphorb, festuca, glandularia, hys, hys_rm1, hys_temp, hys_unk_epithet, knz, knz_rm1, knz_unk_epithet, melilo, oenoth, oroban, panic, paron, penstem, sbk, sbk_unk_epithet, sbl, sbl_unk_epithet, sgs, sgs_rm1, sgs_temp, sgs_unk_epithet, silene, sphaer, sporob, stipa, triodan, unkASOX, unkC, unkO, unks, unkSt)
+rm(amaran, artemesia, asclep, astrag, astrag_oxy, chenop, chloris, chy, 
+   chy_rm1, chy_temp, chy_unk_epithet, cirsium, croton, eleoch, eriogo, 
+   erysim, euphorb, festuca, glandularia, hys, hys_rm1, hys_temp, 
+   hys_unk_epithet, knz, knz_rm1, knz_unk_epithet, melilo, oenoth,
+   oroban, panic, paron, penstem, sbk, sbk_unk_epithet, sbl, sbl_unk_epithet, 
+   sgs, sgs_rm1, sgs_temp, sgs_unk_epithet, silene, sphaer, sporob, stipa, 
+   triodan, unkASOX, unkC, unkO, unks, unkSt)

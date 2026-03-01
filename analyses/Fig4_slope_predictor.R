@@ -27,17 +27,15 @@ pD1 = spmods_pred %>%
   geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
   scale_fill_manual(values = pal) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
-  xlab(" ") +
-  ylab(" ") +
+  xlab("Site Level Dominance") +
+  ylab("Slope") +
   labs(fill = "Site")  +
-#  geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
-#              linetype = "dashed")  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
   coord_cartesian(ylim = c(-1, 2.8)) +
-  annotate("text", x = 0.4, y=2.6, label = "p: 0.236", size = 3.5, parse = TRUE) +
-  annotate("text", x = 0.4, y=2.3, label = "R^2: 0.158", size = 3.5, parse = TRUE)
+  #annotate("text", x = 0.4, y=2.6, label = "p: 0.236", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.4, y=2.6, label = "R^2: 0.158", size = 3.5, parse = TRUE)
 
 ## spatial rarity vs. temperature
 pT1 = spmods_pred %>%
@@ -47,16 +45,16 @@ pT1 = spmods_pred %>%
   geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
   scale_fill_manual(values = pal) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
-  xlab(" ") +
-  ylab(" ") +
+  xlab("MAT (C)") +
+  ylab("Slope") +
   labs(fill = "Site") +
   geom_smooth(method = "lm", alpha = 0.1, color = "black")  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
   coord_cartesian(ylim = c(-1, 2.8))  +
-  annotate("text", x = 9, y=2.6, label = "p: 0.017", size = 3.5, parse = TRUE) +
-  annotate("text", x = 9, y=2.3, label = "R^2: 0.743", size = 3.5, parse = TRUE)
+  #annotate("text", x = 9, y=2.6, label = "p: 0.017", size = 3.5, parse = TRUE) +
+  annotate("text", x = 9, y=2.6, label = "R^2: 0.743", size = 3.5, parse = TRUE)
 
 ## spatial rarity vs. MAP
 pP1 = spmods_pred %>%
@@ -66,94 +64,128 @@ pP1 = spmods_pred %>%
   geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
   scale_fill_manual(values = pal) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
-  xlab(" ") +
-  ylab("Spatial Rarity Slope") +
+  xlab("MAP (mm)") +
+  ylab("Slope") +
   labs(fill = "Site") +
- # geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
-  #            linetype = "dashed")  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
   coord_cartesian(ylim = c(-1, 2.8)) +
-  annotate("text", x = 375, y=2.6, label = "p: 0.676", size = 3.5, parse = TRUE) +
+ # annotate("text", x = 375, y=2.6, label = "p: 0.676", size = 3.5, parse = TRUE) +
+  annotate("text", x = 600, y=2.7, label = "Spatial Rarity", size = 4.5) +
   annotate("text", x = 375, y=2.3, label = "R^2: -0.19", size = 3.5, parse = TRUE)
 
 ## temporal ####
 ## temporal rarity vs. dominance
 pDt = tmpmods_pred %>%
   filter(term == "temporal_rarity", period == "Drought") %>%
-  
   ggplot(aes(x=BP.dom.site, y=estimate)) +
-  
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.009) +
   geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
   scale_fill_manual(values = pal) +
-  #facet_wrap(~period, ncol = 1, nrow = 2) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
   xlab("Site-Level Dominance") +
   ylab(" ") +
-  labs(color = "Site")  +
+  labs(fill = "Site")  +
   geom_smooth(method = "lm", alpha = 0.1, color = "black", 
               linetype = "dashed") +
   coord_cartesian(ylim = c(-1, 2.8))  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
-  annotate("text", x = 0.4, y=2.6, label = "p: 0.086", size = 3.5, parse = TRUE) +
-  annotate("text", x = 0.4, y=2.3, label = "R^2: 0.452", size = 3.5, parse = TRUE)
+  #annotate("text", x = 0.4, y=2.6, label = "p: 0.086", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.4, y=2.6, label = "R^2: 0.452", size = 3.5, parse = TRUE)
 
 ## temporal rarity vs. temperature
 pTt = tmpmods_pred %>%
   filter(term == "temporal_rarity", period == "Drought") %>%
-  
   ggplot(aes(x=MAT.C, y=estimate)) +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.25) +
-  
   geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
   scale_fill_manual(values = pal) +
-  #facet_wrap(~period, ncol = 1, nrow = 2) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
-  xlab("Mean Annual Temperature") +
+  xlab("MAT (C)") +
   ylab(" ") +
-  labs(color = "Site") +
+  labs(fill = "Site") +
   geom_smooth(method = "lm", alpha = 0.1, color = "black") +
   coord_cartesian(ylim = c(-1, 2.8))  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13))  +
-  annotate("text", x = 9, y=2.6, label = "p: 0.021", size = 3.5, parse = TRUE) +
-  annotate("text", x = 9, y=2.3, label = "R^2: 0.713", size = 3.5, parse = TRUE)
+  #annotate("text", x = 9, y=2.6, label = "p: 0.021", size = 3.5, parse = TRUE) +
+  annotate("text", x = 9, y=2.6, label = "R^2: 0.713", size = 3.5, parse = TRUE)
 
 ## temporal rarity vs. MAP
 pPt = tmpmods_pred %>%
   filter(term == "temporal_rarity", period == "Drought") %>%
   ggplot(aes(x=MAP.mm, y=estimate)) +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 20) +
-  
   geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
   scale_fill_manual(values = pal) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
-  xlab("Mean Annual Precipitation") +
-  ylab("Temporal Rarity Slope") +
-  labs(color = "Site") +
-  #geom_smooth(method = "lm", alpha = 0.1, color = "#7d7f7c", 
-   #           linetype = "dashed") +
+  xlab("MAP (mm)") +
+  ylab(" ") +
+  labs(fill = "Site") +
   coord_cartesian(ylim = c(-1, 2.8))  +
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13))  +
-  annotate("text", x = 375, y=2.6, label = "p: 0.979", size = 3.5, parse = TRUE) +
+  annotate("text", x = 600, y=2.7, label = "Temporal Rarity", size = 4.5) +
   annotate("text", x = 375, y=2.3, label = "R^2: -0.250", size = 3.5, parse = TRUE)
 
 ## combine panels & plot
-ggarrange(pP1, pT1, pD1, 
-          pPt, pTt, pDt, 
-          ncol = 3, nrow = 2, common.legend = T, legend = "bottom", 
-          labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"))
+ggarrange(pP1, pPt,
+          pT1, pTt,
+          pD1, pDt,
+             
+          ncol = 2, nrow = 3, common.legend = T, legend = "bottom", 
+          labels = c("a", "b", "c", "d", "e", "f"))
 
 ## save
-#ggsave("figures/review_figs/Fig4_site_slopes_predictors_drought_both_rarity.tiff", 
- #     width = 8.5, height = 6.15)
+##ggsave("figures/review_figs/Fig4_site_slopes_predictors_drought_both_rarity.tiff", 
+     #width = 15, height = 20, units = "cm")
+
+
+sfct = tmpmods_pred %>%
+  filter(term == "temporal_rarity", period == "Post-Drought") %>%
+  ggplot(aes(x=soil.field.capacity, y=estimate)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 2) +
+  geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
+  scale_fill_manual(values = pal) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  xlab("Field Capacity (%)") +
+  ylab(" ") +
+  geom_smooth(method = "lm", alpha = 0.1, color = "black") +
+  labs(fill = "Site") +
+  coord_cartesian(ylim = c(-0.8, 1.8))  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) +
+  annotate("text", x = 30, y=1.7, label = "Temporal Rarity", size = 4.5) +
+  annotate("text", x = 19, y=1.4, label = "R^2: 0.621", size = 3.5, parse = TRUE)
+
+
+sfcs = spmods_pred %>%
+  filter(term == "spatial_rarity", period == "Post-Drought") %>%
+  ggplot(aes(x=soil.field.capacity, y=estimate)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 2) +
+  geom_point(aes(fill = site), colour = "black", size = 4, pch = 21) +
+  scale_fill_manual(values = pal) +
+  geom_hline(yintercept = 0, linetype = "dashed")  +
+  xlab("Field Capacity (%)") +
+  ylab("Slope") +
+  geom_smooth(method = "lm", alpha = 0.1, color = "black") +
+  labs(fill = "Site") +
+  coord_cartesian(ylim = c(-0.8, 1.8))  +
+  theme(axis.text.x=element_text(size=12)) +
+  theme(axis.text.y=element_text(size=12),
+        axis.title=element_text(size=13)) +
+  annotate("text", x = 30, y=1.7, label = "Spatial Rarity", size = 4.5) +
+  annotate("text", x = 19, y=1.4, label = "R^2: 0.736", size = 3.5, parse = TRUE)
+
+ggarrange(sfcs, sfct, labels = "auto", common.legend = T, legend = "bottom")
+
+ggsave("figures/review_figs/FigSXXX_soil_field_capacity.tiff", width = 15, height = 10, unit = "cm")
 
 # Fig S10: Coeff plots ####
 ### temporal, drought

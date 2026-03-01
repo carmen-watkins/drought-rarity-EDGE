@@ -1,11 +1,11 @@
 # Header #### 
 ## Script name: Clean cover data, standardize cols
 ##
-## Purpose of script: Standardize cover data column names & site codes, select appropriate years and filter out monsoon timing treatment
+##' Purpose of script: Standardize cover data column names & site codes, 
+##' select appropriate years and filter out monsoon timing treatment
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
 
 # Set up Env ####
 ## load packages
@@ -37,10 +37,13 @@ sev_temp <- sev_edge %>%
          species = paste0(genus, "_", sp.epithet)) %>%
   mutate(experiment.year = year - 2012, 
          treatment.year = ifelse(year == 2012, "pre-treatment", 
-                                 ifelse((2012 < year) & (year < 2020), "drought", "recovery"))) %>%
+                                 ifelse((2012 < year) & (year < 2020), 
+                                        "drought", "recovery"))) %>%
   filter(treatment != "D") %>% ## remove monsoon timing treatment 
   mutate(across(c(spcode), toupper)) %>%
-  select(-date, -web, -transect, -quad, -family, -LifeHistory, -PhotoPath, -FunctionalGroup, -volume, -biomass.BM, -biomass.BIM, -SiteCluster, -MetStation, -season.precip, -GDD, -SPEI.comp)
+  select(-date, -web, -transect, -quad, -family, -LifeHistory, -PhotoPath,
+         -FunctionalGroup, -volume, -biomass.BM, -biomass.BIM, -SiteCluster,
+         -MetStation, -season.precip, -GDD, -SPEI.comp)
 
 ## North Sites ####
 north_temp <- north_edge %>%
@@ -66,9 +69,11 @@ north_temp <- north_edge %>%
   mutate(treatment = ifelse(treatment == "chr", "D", "C"), 
          experiment.year = year - 2013, ## 2013 is pre-treat year
          treatment.year = ifelse(year == 2013, "pre-treatment", 
-                                 ifelse((2013 < year) & (year < 2018), "drought", "recovery"))) %>%
+                                 ifelse((2013 < year) & (year < 2018),
+                                        "drought", "recovery"))) %>%
   mutate(across(c(spcode), toupper)) %>%
-  select(-kartez, -Spcode, -Species, -spepcode, -genuscode, -Site, -Plot, -Block, -Trt, -Subplot, -Year)
+  select(-kartez, -Spcode, -Species, -spepcode, -genuscode, -Site, -Plot, 
+         -Block, -Trt, -Subplot, -Year)
 
 # Split ####
 ## split by sites to clean species names individually

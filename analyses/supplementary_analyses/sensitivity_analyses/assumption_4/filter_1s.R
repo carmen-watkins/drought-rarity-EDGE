@@ -52,6 +52,14 @@ Kkeep = Ktmp %>%
 Kdrop = Ktmp %>%
   filter(PA < 1)
 
+## number of times species appears overall
+Kdrop2 = edge_all %>%
+#  filter(year > 2014) %>%
+  filter(site == "KNZ") %>%
+  group_by(species)%>%
+  summarise(pres.abs.sum = sum(pres.abs)) %>%
+  filter(pres.abs.sum < 2)
+
 ## HYS ####
 hys_check = checksp1 %>%
   filter(site == "HYS")
@@ -74,6 +82,15 @@ Hkeep = Htmp %>%
 Hdrop = Htmp %>%
   filter(PA < 1)
 
+## number of times species appears overall
+Hdrop2 = edge_all %>%
+  #  filter(year > 2014) %>%
+  filter(site == "HYS") %>%
+  group_by(species)%>%
+  summarise(pres.abs.sum = sum(pres.abs)) %>%
+  filter(pres.abs.sum < 2)
+
+
 ## CHY ####
 chy_check = checksp1 %>%
   filter(site == "CHY")
@@ -95,6 +112,14 @@ Ckeep = Ctmp %>%
 
 Cdrop = Ctmp %>%
   filter(PA < 1)
+
+## number of times species appears overall
+Cdrop2 = edge_all %>%
+  #  filter(year > 2014) %>%
+  filter(site == "CHY") %>%
+  group_by(species)%>%
+  summarise(pres.abs.sum = sum(pres.abs)) %>%
+  filter(pres.abs.sum < 2)
 
 ## SGS ####
 sgs_check = checksp1 %>%

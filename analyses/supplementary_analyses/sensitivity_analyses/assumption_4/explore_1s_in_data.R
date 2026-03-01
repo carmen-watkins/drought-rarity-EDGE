@@ -7,7 +7,7 @@
 ## Author: Carmen Watkins
 
 # Set Up ####
-source("analyses/supplementary_analyses/sensitivity_analyses/assumption_4/filter_1s")
+source("analyses/supplementary_analyses/sensitivity_analyses/assumption_4/filter_1s.R")
 SKsp = unique(SKdrop$species)
 
 # SBK ####
@@ -137,7 +137,8 @@ SBL = edge_all %>%
   filter(species %in% c(SKsp))
 
 sbl_check2 = sbl_check %>%
-  filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & resp.ratio.site_PDfull %in% c(1, -1, NaN))
+  filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & resp.ratio.site_PDfull
+         %in% c(1, -1, NaN))
 
 ## KNZ ####
 KNZ = edge_all %>%
@@ -145,7 +146,8 @@ KNZ = edge_all %>%
   filter(species %in% c(SKsp))
 
 knz_check2 = knz_check %>%
-  filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & resp.ratio.site_PDfull %in% c(1, -1, NaN))
+  filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & resp.ratio.site_PDfull
+         %in% c(1, -1, NaN))
 
 
 checks = KNZ %>%

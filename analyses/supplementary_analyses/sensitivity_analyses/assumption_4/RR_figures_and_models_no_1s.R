@@ -122,6 +122,8 @@ mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = filtered_RR)
 #check_model(mmsd)
 summary(mmsd) ## supp table
 Anova(mmsd, type = 2) ## main table
+r.squaredGLMM(mmsd)
+eta_squared(Atable4)
 
 ## drought, temporal ####
 mmtd = lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = edge_RR)

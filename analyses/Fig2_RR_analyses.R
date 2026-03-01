@@ -26,7 +26,16 @@ unique(edge_RR$species)
 edge_RR_cats = edge_RR %>%
   mutate(spatial = ifelse(spatial_rarity < 0.25, "Sp Common", "Sp Rare"),
          temporal = ifelse(temporal_rarity < 0.5, "Tmp Common", "Tmp Rare"),
-         rarity_cat = paste0(temporal, ", ", spatial)) 
+         rarity_cat = paste0(temporal, ", ", spatial)) %>%
+  
+  ## filter out species with ONE observation only.
+  ## this was added 2/23/26; CHECK with co-authors before actually including...
+  filter(!(site == "KNZ" & species %in% drop1x[drop1x$site == "KNZ",]$species),
+         !(site == "HYS" & species %in% drop1x[drop1x$site == "HYS",]$species),
+         !(site == "CHY" & species %in% drop1x[drop1x$site == "CHY",]$species),
+         !(site == "SGS" & species %in% drop1x[drop1x$site == "SGS",]$species),
+         !(site == "SBL" & species %in% drop1x[drop1x$site == "SBL",]$species),
+         !(site == "SBK" & species %in% drop1x[drop1x$site == "SBK",]$species))
 
 ## arrange sites
 edge_RR_cats$site = factor(edge_RR_cats$site, levels = c("KNZ", "HYS", "CHY", 

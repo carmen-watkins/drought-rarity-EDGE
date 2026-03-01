@@ -56,7 +56,11 @@ site_pred_scaled = site_pred_final %>%
          sd_ppt = sd(mean_ppt),
          z_precip = (mean_ppt - mean_ppt_across)/sd_ppt,
          z_temp = (MAT.C - mean_temp)/sd_temp, 
-         dom.rounded = round(BP.dom.site, digits = 3)
+         dom.rounded = round(BP.dom.site, digits = 3),
+         
+         mean_soil = mean(soil.field.capacity),
+         sd_soil = sd(soil.field.capacity),
+         z_soil = (soil.field.capacity - mean_soil)/sd_soil
          
          ## scale ppt intervals
       #   meanDRR4 = mean(pptDRR4),

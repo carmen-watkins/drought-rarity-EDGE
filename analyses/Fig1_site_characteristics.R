@@ -1,4 +1,3 @@
-
 ## Header ## 
 ## Script Name: Fig 1: Site Characteristics
 
@@ -10,18 +9,20 @@
 # Set up ####
 ## load packages
 library(cowplot)
+library(fillpattern)
 
 ## read in data 
 source("analyses/calc_response_ratio.R") ## response ratio data
 source("data-prep/prep_model_predictors.R") ## site ppt, temp, dominance data
-source("analyses/color_palettes.R") ## for color palettes
+#source("analyses/color_palettes.R") ## for color palettes
 
 #Read in functional group info
 FG = read.csv(here::here("data","edge_species_info_CP_BA.csv")) 
 
 ## set up graphics
-theme_set(theme_classic())
-#pal <- wes_palette("Royal3")
+global_size = 9
+theme_set(theme_classic(base_size = global_size))
+
 ## new color palette
 pal = c("#03274E", "#3B5378", "#7F5F70",
         "#CE685E", "#E5AA7F", "#FCD484")
@@ -68,9 +69,9 @@ ppt = site_pred_scaled %>%
   ggplot(aes(x=site, y=MAP.mm, fill = site)) +
   geom_bar(stat = "identity") +
   scale_fill_manual(values = rev(pal)) +
-  ylab("Mean Annual Precip (mm)") +
+  ylab("MAP (mm)") +
   xlab(" ") +
-  theme(text = element_text(size = 15)) +
+  theme(axis.title=element_text(size=10)) +
   labs(fill = "Site")
 
 temp = site_pred_scaled %>%
@@ -78,9 +79,9 @@ temp = site_pred_scaled %>%
   ggplot(aes(x=site, y=MAT.C, fill = site)) +
   geom_bar(stat = "identity") +
   scale_fill_manual(values = rev(pal)) +
-  ylab("Mean Annual Temp (C)") +
+  ylab("MAT (C)") +
   xlab(" ") +
-  theme(text = element_text(size = 15)) +
+  theme(axis.title=element_text(size=10)) +
   labs(fill = "Site")
 
 dom = site_pred_scaled %>%
@@ -90,7 +91,7 @@ dom = site_pred_scaled %>%
   geom_errorbar(aes(ymin = BP.dom.site - se.dom.site, 
                     ymax = BP.dom.site + se.dom.site), width = 0.2) +
   scale_fill_manual(values = rev(pal))  +
-  theme(text = element_text(size = 15)) +
+  theme(axis.title=element_text(size=10)) +
   ylab("Mean Plot Dominance") +
   xlab(" ") +
   labs(fill = "Site")
@@ -104,17 +105,18 @@ sctc = edge_RR2 %>%
   group_by(site) %>%
   mutate(tot = sum(num_dur),
          prop_dur = num_dur / tot,
-         Duration = ifelse(Duration == "annual", "Ann", 
-                           ifelse(Duration == "annual/perennial", "Ann/Peren", 
-                                  ifelse(Duration == "perennial", "Peren", 
-                                         "Unk")))) %>%
-  ggplot(aes(x=site, y=prop_dur, fill = Duration)) +
+         Duration = ifelse(Duration == "annual", "A",
+                           ifelse(Duration == "perennial", "P",
+                                  ifelse(Duration == "unknown", "U", "A/P")))) %>%
+  ggplot(aes(x=site, y=prop_dur, fill = Duration)) + 
   geom_bar(stat = 'identity', color = "black") +
+#  scale_fill_pattern(patterns = c("stripe", "solid", "grid_longdash", "solid")) +
   xlab("Site") +
   ylab("Proportion") +
-  theme(text = element_text(size = 15)) +  
+  theme(axis.title=element_text(size=10)) +
   labs(fill = NULL) +
-  scale_fill_manual(values = c("#020202", "#c0c0c0","#767676", "#494949")) +
+  theme(plot.title = element_text(size = 10)) +
+  scale_fill_manual(values = c("#020202", "white", "#DBDBDB", "#5F615E")) + # "#494949"
   ggtitle("Common, Persistent Species")
 
 cpg = edge_RR2 %>%
@@ -133,13 +135,16 @@ cpg = edge_RR2 %>%
   ylab(" ") +
   xlab("Site") +
   labs(fill = NULL) +
-  theme(text = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 10)) +
+  theme(axis.title=element_text(size=10)) +
   scale_fill_manual(values = c("#a7a7a7","#f2f2f2")) +
   ggtitle("Common, Persistent Grasses")
 
 p1 = ggarrange(ppt, temp, dom, ncol = 3, common.legend = TRUE, legend = "right", 
-               labels = c("(a)", "(b)", "(c)"))
-p2 = plot_grid(sctc, cpg, labels = c("(d)", "(e)"), rel_widths = c(1.1, 1))
+               labels = c("a", "b", "c"), vjust = 1.1, hjust = 0.1,
+               font.label=list(color="black",size=12))
+p2 = ggarrange(sctc, cpg, labels = c("d", "e"),
+               font.label=list(color="black",size=12))
 plot_grid(p1, p2, ncol = 1)
 
-#ggsave("figures/review_figs/Fig1_site_char.tiff", width = 10, height = 6.75)
+ggsave("figures/review_figs/Fig1_site_char.tiff", width = 16, height = 10, units = "cm")

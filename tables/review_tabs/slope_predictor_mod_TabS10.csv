@@ -1,0 +1,41 @@
+"period","rarity","predictor","type","Estimate","Std. Error","t value","Pr(>|t|)"
+"Drought","Spatial","Precip","(Intercept)",0.801,0.299,2.677,0.055
+"Drought","Spatial","Precip","z_precip",0.148,0.328,0.45,0.676
+"Drought","Spatial","Temp","(Intercept)1",0.801,0.139,5.761,0.005
+"Drought","Spatial","Temp","z_temp",0.599,0.152,3.932,0.017
+"Drought","Spatial","Dominance","(Intercept)2",-0.56,1.01,-0.554,0.609
+"Drought","Spatial","Dominance","dom.rounded",2.974,2.137,1.391,0.236
+"Drought","Spatial","Aridity","(Intercept)3",0.718,0.608,1.18,0.303
+"Drought","Spatial","Aridity","aridity",0.312,1.968,0.159,0.882
+"Drought","Spatial","Soil Field Capacity","(Intercept)4",0.801,0.23,3.488,0.025
+"Drought","Spatial","Soil Field Capacity","z_soil",0.446,0.252,1.77,0.151
+"Drought","Temporal","Precip","(Intercept)5",0.68,0.223,3.042,0.038
+"Drought","Temporal","Precip","z_precip1",0.007,0.245,0.028,0.979
+"Drought","Temporal","Temp","(Intercept)6",0.68,0.107,6.353,0.003
+"Drought","Temporal","Temp","z_temp1",0.43,0.117,3.666,0.021
+"Drought","Temporal","Dominance","(Intercept)7",-0.621,0.593,-1.046,0.355
+"Drought","Temporal","Dominance","dom.rounded1",2.841,1.256,2.263,0.086
+"Drought","Temporal","Aridity","(Intercept)8",0.76,0.442,1.719,0.161
+"Drought","Temporal","Aridity","aridity1",-0.3,1.43,-0.21,0.844
+"Drought","Temporal","Soil Field Capacity","(Intercept)9",0.68,0.197,3.447,0.026
+"Drought","Temporal","Soil Field Capacity","z_soil1",0.23,0.216,1.066,0.346
+"Post-Drought","Spatial","Precipitation","(Intercept)",0.663,0.192,3.448,0.026
+"Post-Drought","Spatial","Precipitation","z_precip",0.197,0.211,0.937,0.402
+"Post-Drought","Spatial","Temperature","(Intercept)1",0.663,0.136,4.868,0.008
+"Post-Drought","Spatial","Temperature","z_temp",0.357,0.149,2.393,0.075
+"Post-Drought","Spatial","Dominance","(Intercept)2",0.334,0.834,0.4,0.709
+"Post-Drought","Spatial","Dominance","dom.rounded",0.719,1.765,0.407,0.705
+"Post-Drought","Spatial","Aridity","(Intercept)3",0.438,0.402,1.091,0.337
+"Post-Drought","Spatial","Aridity","aridity",0.84,1.3,0.646,0.553
+"Post-Drought","Spatial","Soil Field Capacity","(Intercept)4",0.663,0.098,6.798,0.002
+"Post-Drought","Spatial","Soil Field Capacity","z_soil",0.413,0.107,3.869,0.018
+"Post-Drought","Temporal","Precipitation","(Intercept)5",0.491,0.081,6.035,0.004
+"Post-Drought","Temporal","Precipitation","z_precip1",0.142,0.089,1.59,0.187
+"Post-Drought","Temporal","Temperature","(Intercept)6",0.491,0.059,8.363,0.001
+"Post-Drought","Temporal","Temperature","z_temp1",0.188,0.064,2.921,0.043
+"Post-Drought","Temporal","Dominance","(Intercept)7",0.409,0.414,0.986,0.38
+"Post-Drought","Temporal","Dominance","dom.rounded1",0.179,0.877,0.204,0.848
+"Post-Drought","Temporal","Aridity","(Intercept)8",0.304,0.176,1.727,0.159
+"Post-Drought","Temporal","Aridity","aridity1",0.696,0.57,1.221,0.289
+"Post-Drought","Temporal","Soil Field Capacity","(Intercept)9",0.491,0.057,8.578,0.001
+"Post-Drought","Temporal","Soil Field Capacity","z_soil1",0.19,0.063,3.031,0.039
