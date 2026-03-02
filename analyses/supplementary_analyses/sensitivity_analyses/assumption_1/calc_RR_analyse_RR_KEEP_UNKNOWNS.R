@@ -177,7 +177,7 @@ TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD, c
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = "auto", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-ggsave("figures/review_figs/FigS7_RR_v_rarity_keep_unknowns.tiff", width = 18, height = 16, units = "cm")
+## ggsave("figures/review_figs/FigS7_RR_v_rarity_keep_unknowns.tiff", width = 18, height = 16, units = "cm")
 
 # Check Models ####
 ## drought, spatial ####
@@ -248,31 +248,23 @@ mmtp_tab = as.data.frame(Anova(mmtp, type = 2, test.statistic = "F")) %>%
 anova_df = rbind(mmsd_tab, mmtd_tab, mmsp_tab, mmtp_tab) %>%
   rownames_to_column(var = "type") %>%
   select(period, rarity, type, `F`, Df, Df.res, `Pr(>F)` )
-write.csv(anova_df, "tables/mixed_mod_anova_table_SA_Keep_Unknowns.csv")
+## write.csv(anova_df, "tables/review_tabs/TabS4_mixed_mod_anova_table_SA_Keep_Unknowns.csv")
 
 
 ## Coeff ####
 mmsd_coeff = as.data.frame(summary(mmsd)$coefficients) %>% 
-  #lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = .) %>% 
-  #tidy(conf.int = TRUE) %>%
   mutate(period = "Drought",
          rarity = "Spatial")
 
 mmtd_coeff = as.data.frame(summary(mmtd)$coefficients) %>% 
-  #lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = .) %>% 
-  #tidy(conf.int = TRUE) %>%
   mutate(period = "Drought",
          rarity = "Temporal")
 
 mmsp_coeff = as.data.frame(summary(mmsp)$coefficients)%>%
-  # lmer(resp.ratio.site_PDfull ~ spatial_rarity + (1|site), data = .) %>% 
-  #tidy(conf.int = TRUE) %>%
   mutate(period = "Post-Drought",
          rarity = "Spatial")
 
 mmtp_coeff = as.data.frame(summary(mmtp)$coefficients) %>%
-  # lmer(resp.ratio.site_PDfull ~ temporal_rarity + (1|site), data = .) %>% 
-  #  tidy(conf.int = TRUE) %>%
   mutate(period = "Post-Drought",
          rarity = "Temporal")
 
@@ -281,6 +273,5 @@ coeff_df = rbind(mmsd_coeff, mmtd_coeff, mmsp_coeff, mmtp_coeff) %>%
   select(period, rarity, type, Estimate, `Std. Error`, df, `t value`, `Pr(>|t|)`) %>%
   mutate_if(is.numeric, round, digits = 3)
 
-#xtable(coeff_df)
-## write.csv(coeff_df, "tables/mixed_mod_coeff_table_SA_Keep_Unknowns.csv", row.names = F)
+## write.csv(coeff_df, "tables/review_tabs/TabS4_mixed_mod_coeff_table_SA_Keep_Unknowns.csv", row.names = F)
 
