@@ -175,7 +175,7 @@ rc_hi = edge_RR_cats_broad %>%
 
 ggarrange(rc_lo, rc_hi, ncol = 2, labels = c("(a)", "(b)"))
 
-ggsave("figures/review_figs/FigSXXX_DRR_v_PDRR_sensitivity_analysis.tiff", 
+ggsave("figures/review_figs/FigS11_DRR_v_PDRR_sensitivity_analysis.tiff", 
        width = 18, height = 10, unit = "cm")
 
 

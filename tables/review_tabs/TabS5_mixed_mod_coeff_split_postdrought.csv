@@ -1,0 +1,7 @@
+"rarity","type","Estimate","Std. Error","df","t value","Pr(>|t|)"
+"Spatial","(Intercept)",-0.16,0.078,10.145,-2.05,0.067
+"Spatial","spatial_rarity",0.73,0.086,704.21,8.498,0
+"Spatial","PD_periodinitial",-0.072,0.049,704.508,-1.472,0.141
+"Temporal","(Intercept)1",-0.099,0.064,11.215,-1.54,0.151
+"Temporal","temporal_rarity",0.599,0.071,682.26,8.381,0
+"Temporal","PD_periodinitial1",-0.068,0.049,705.122,-1.396,0.163

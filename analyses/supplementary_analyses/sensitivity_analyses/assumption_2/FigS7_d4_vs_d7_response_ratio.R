@@ -33,108 +33,137 @@ edge_SEV = edge_RR %>%
          resp.ratio.site_D6) %>%
   pivot_longer(cols = c("resp.ratio.site_D4", "resp.ratio.site_D6"), 
                names_to = "drought_length", values_to = "response_ratio") %>%
-  mutate(drought_length = ifelse(drought_length == "resp.ratio.site_D4", "4 Years", "6 Years"))
+  mutate(drought_length = ifelse(drought_length == "resp.ratio.site_D4", "4 Years", "7 Years"))
 
 # Figure S4 ####
-SR_d = ggplot(edge_SEV, aes(x=spatial_rarity, y = response_ratio, 
+## R2 vals
+R2vals = data.frame(site = c("SBL", "SBK"), x = rep(-0.8, 2), 
+                    y = rep(1.15, 2), R2 = c(0.196, 0.404))
+
+
+SBLS = edge_SEV %>%
+  filter(site == "SBL") %>%
+  ggplot(aes(x=spatial_rarity, y = response_ratio, 
                             colour = drought_length)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25) +
-  facet_wrap(~site) +
   xlab("Spatial Rarity") +
-  ylab("Drought Response Ratio") +
-  theme(text = element_text(size = 13)) +
-  coord_cartesian(ylim = c(-1,1)) +
+  ylab("Response Ratio") +
+  theme(text = element_text(size = 12)) +
+  coord_cartesian(ylim = c(-1,1.2)) +
   labs(color = "Drought Length") +
-  scale_color_manual(values = c("#88CCEE", "#2d1c82"))
+  scale_color_manual(values = c("#88CCEE", "#2d1c82"))+
+  annotate("text", x = 0.1, y=1.16, label = "R^2: 0.196", size = 3,
+           parse = TRUE) +
+  ggtitle("SBL") +
+  theme(axis.title=element_text(size=13))
 
-TR_d = ggplot(edge_SEV, aes(x=temporal_rarity, y = response_ratio, 
-                     colour = drought_length)) +
+SBKS = edge_SEV %>%
+  filter(site == "SBK") %>%
+  ggplot(aes(x=spatial_rarity, y = response_ratio, 
+             colour = drought_length)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25) +
-  facet_wrap(~site) +
-  xlab("Temporal Rarity") +
-  ylab("Drought Response Ratio") +
-  theme(text = element_text(size = 13)) +
-  coord_cartesian(ylim = c(-1,1)) +
+  xlab("Spatial Rarity") +
+  ylab(" ") +
+  theme(text = element_text(size = 12)) +
+  coord_cartesian(ylim = c(-1,1.2)) +
   labs(color = "Drought Length") +
-  scale_color_manual(values = c("#88CCEE", "#2d1c82"))
+  scale_color_manual(values = c("#88CCEE", "#2d1c82"))+
+  annotate("text", x = 0.1, y=1.16, label = "R^2: 0.404", size = 3,
+           parse = TRUE) +
+  ggtitle("SBK") +
+  theme(axis.title=element_text(size=13))
 
-ggarrange(SR_d, TR_d, nrow = 2, ncol = 1, labels = "AUTO", common.legend = T, legend = "bottom")
+SBLT = edge_SEV %>%
+  filter(site == "SBL") %>%
+  ggplot(aes(x=temporal_rarity, y = response_ratio, 
+             colour = drought_length)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.25) +
+  xlab("Temporal Rarity") +
+  ylab("Response Ratio") +
+  theme(text = element_text(size = 12)) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  labs(color = "Drought Length") +
+  scale_color_manual(values = c("#88CCEE", "#2d1c82"))+
+  annotate("text", x = 0.1, y=1.16, label = "R^2: 0.125 ", size = 3,
+           parse = TRUE) +
+  ggtitle("SBL") +
+  theme(axis.title=element_text(size=13))
 
-#ggsave("figures/review_figs/FigS7_resp_ratio_v_rarity.tiff", width = 6, height = 6)
+SBKT = edge_SEV %>%
+  filter(site == "SBK") %>%
+  ggplot(aes(x=temporal_rarity, y = response_ratio, 
+             colour = drought_length)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.25) +
+  xlab("Temporal Rarity") +
+  ylab(" ") +
+  theme(text = element_text(size = 12)) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  labs(color = "Drought Length") +
+  scale_color_manual(values = c("#88CCEE", "#2d1c82"))+
+  annotate("text", x = 0.1, y=1.16, label = "R^2: 0.382", size = 3,
+           parse = TRUE) +
+  ggtitle("SBK") +
+  theme(axis.title=element_text(size=13))
+
+ggarrange(SBLS, SBKS, SBLT, SBKT, nrow = 2, ncol = 2, labels = "auto", 
+          common.legend = T, legend = "bottom")
+
+#ggsave("figures/review_figs/FigS10_resp_ratio_v_rarity.tiff", width = 18, height = 16, units = "cm")
+
 
 # Model ####
-## spatial, drought ####
-sites = c("SBL", "SBK")
+## sbl, spatial
+sbls = lm(response_ratio ~ spatial_rarity + drought_length, 
+   data = edge_SEV[edge_SEV$site == "SBL",])
 
-mod_df = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, 
-                    p.value = NA,  conf.low = NA, conf.high = NA, site = NA, 
-                    period = NA)
+summary(sbls)
 
-for(i in 1:length(sites)) {
-  
-  ## select site
-  s = sites[i]
-  
-  ## run the model
-  tmp = edge_RR[edge_RR$site == s,] %>% 
-    lm(resp.ratio.site_D4 ~ spatial_rarity, data = .) %>% 
-    tidy(conf.int = TRUE) %>%
-    mutate(site = s, 
-           period = "Drought")
-  
-  ## append
-  mod_df = rbind(mod_df, tmp) %>%
-    filter(!is.na(term))
-  
-}
+sbls_coeff = as.data.frame(summary(sbls)$coefficients) %>% 
+  mutate(site = "SBL",
+         rarity = "Spatial")
+Anova(sbls, type = 2, test.statistic = "F")
+
+## sbl, temporal
+sblt = lm(response_ratio ~ temporal_rarity + drought_length, 
+          data = edge_SEV[edge_SEV$site == "SBL",])
+
+summary(sblt)
+sblt_coeff = as.data.frame(summary(sblt)$coefficients) %>% 
+  mutate(site = "SBL",
+         rarity = "Temporal")
+Anova(sblt, type = 2, test.statistic = "F")
 
 
-## temporal, drought ####
-modt_df = data.frame(term = NA, estimate = NA, std.error = NA, statistic = NA, 
-                     p.value = NA,  conf.low = NA, conf.high = NA, site = NA, 
-                     period = NA)
+## sbk, spatial
+sbks = lm(response_ratio ~ spatial_rarity + drought_length, 
+         data = edge_SEV[edge_SEV$site == "SBK",])
 
-for(i in 1:length(sites)) {
-  
-  ## select site
-  s = sites[i]
-  
-  ## run the model
-  tmp = edge_RR[edge_RR$site == s,] %>% 
-    lm(resp.ratio.site_D4 ~ temporal_rarity, data = .) %>% 
-    tidy(conf.int = TRUE) %>%
-    mutate(site = s, 
-           period = "Drought")
-  
-  ## append
-  modt_df = rbind(modt_df, tmp) %>%
-    filter(!is.na(term))
-  
-}
+summary(sbks)
+sbks_coeff = as.data.frame(summary(sbks)$coefficients) %>% 
+  mutate(site = "SBK",
+         rarity = "Spatial")
+Anova(sbks, type = 2, test.statistic = "F")
+
+## sbk, temporal
+sbkt = lm(response_ratio ~ temporal_rarity + drought_length, 
+          data = edge_SEV[edge_SEV$site == "SBK",])
+
+summary(sbkt)
+sbkt_coeff = as.data.frame(summary(sbkt)$coefficients) %>% 
+  mutate(site = "SBK",
+         rarity = "Temporal")
+Anova(sbkt, type = 2, test.statistic = "F")
 
 
-sp_mods_tab = mod_df %>%
-  select(period, site, term, estimate, std.error, statistic, p.value) %>%
-  mutate(signif = ifelse(p.value < 0.001, "***", 
-                         ifelse(p.value < 0.01 & p.value > 0.001, "**",
-                                ifelse(p.value > 0.01 & p.value < 0.05, "*", 
-                                       ifelse(p.value < 0.1 & p.value > 0.05, 
-                                              ".", " "))))) %>%
-  mutate_if(is.numeric, round, digits = 3)
-write.csv(sp_mods_tab, "tables/site_model_output_spatial_SA_7yrdrought.csv")
+## combine
+d4d7 = rbind(sbls_coeff, sblt_coeff, sbks_coeff, sbkt_coeff) %>%
+  mutate(across(where(is.numeric) & !`Pr(>|t|)`, ~round(.x, 3))) %>%
+  mutate(`Pr(>|t|)` = round(`Pr(>|t|)`, digits = 10)) %>%
+  rownames_to_column(var = "type")
 
-
-tmp_mods_tab = modt_df %>%
-  select(period, site, term, estimate, std.error, statistic, p.value) %>%
-  mutate(signif = ifelse(p.value < 0.001, "***", 
-                         ifelse(p.value < 0.01 & p.value > 0.001, "**",
-                                ifelse(p.value > 0.01 & p.value < 0.05, "*", 
-                                       ifelse(p.value < 0.1 & p.value > 0.05,
-                                              ".", " "))))) %>%
-  mutate_if(is.numeric, round, digits = 3)
-#write.csv(tmp_mods_tab, "tables/site_model_output_temporal_SA_7yrdrought.csv")
-
-
-
+## write.csv(d4d7, "tables/review_tabs/TabS6site_model_coeff_4v7yrdrought.csv", 
+   ##      row.names = F)

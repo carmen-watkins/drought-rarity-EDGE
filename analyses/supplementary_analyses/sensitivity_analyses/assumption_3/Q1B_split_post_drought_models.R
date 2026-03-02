@@ -63,6 +63,20 @@ pd_anova_df = rbind(mmpdss_tab, mmpdts_tab) %>%
 #write.csv(pd_anova_df, "tables/final_tables/pd_final_initial_mixed_mod_anova_table.csv",
           #row.names = F)
 
+mmpdss_coeff = as.data.frame(summary(mmpdss)$coefficients) %>% 
+  mutate(rarity = "Spatial")
+
+mmpdts_coeff = as.data.frame(summary(mmpdts)$coefficients) %>% 
+  mutate(rarity = "Temporal")
+
+coeff_df = rbind(mmpdss_coeff, mmpdts_coeff) %>%
+  rownames_to_column(var = "type") %>%
+  select(rarity, type, Estimate, `Std. Error`, df, `t value`, 
+         `Pr(>|t|)`) %>%
+  mutate_if(is.numeric, round, digits = 3)
+
+write.csv(coeff_df, "tables/review_tabs/TabS5_mixed_mod_coeff_split_postdrought.csv", row.names = F)
+
 # Figure S7 ####
 pds = edge_PDlong %>%
   ggplot(aes(x=spatial_rarity, y=resp.ratio, color = PD_period)) +
@@ -97,5 +111,5 @@ ggarrange(pds, pdt, common.legend = T, labels = c("(a)", "(b)"), legend = "botto
 ggsave("figures/review_figs/FigS7_split_post_drought.tiff", width = 6, height = 3.5)
 
 
-"#855C75","#D9AF6B","#AF6458","#736F4C","#526A83",#625377,#68855C,#9C9C5E,#A06177,#8C785D,#467378,#7C7C7C
+#"#855C75","#D9AF6B","#AF6458","#736F4C","#526A83",#625377,#68855C,#9C9C5E,#A06177,#8C785D,#467378,#7C7C7C
 
