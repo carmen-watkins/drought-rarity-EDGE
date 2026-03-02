@@ -6,6 +6,7 @@
 ##
 ## Author: Carmen Watkins
 ##
+library(tidyverse)
 
 # Set up ####
 source("analyses/calc_response_ratio.R") 
@@ -16,6 +17,7 @@ library(ggpubr)
 theme_set(theme_classic())
 
 # Define Rarity Categories ####
+## Standard Def ####
 ## as in figure 3
 edge_RR_cats = edge_RR %>%
   mutate(spatial = ifelse(spatial_rarity < 0.25, "Sp Common", "Sp Rare"),
@@ -34,15 +36,16 @@ edge_RR_cats = edge_RR %>%
                                 "Common (S), Intermittent (T)", 
                                 "Sparse (S), Intermittent (T)")) 
 
-
+## calc correlations 
 norm_corr = edge_RR_cats %>%
   filter(!is.na(resp.ratio.site_D4), !is.na(resp.ratio.site_PDfull)) %>%
   group_by(rarity_2) %>%
   summarise(corr_RR = cor(resp.ratio.site_D4, resp.ratio.site_PDfull),
             corr_RR = round(corr_RR, 3)) %>%
   mutate(x = c(-0.8, -0.8, -0.8, -0.8), ## x & y values where label should be placed
-         y = c(0.75, 0.75, 0.75, 0.74))
+         y = c(1.15, 1.15, 1.15, 1.15))
 
+## Narrow Def ####
 ## narrow definition of common/persistent species
 edge_RR_cats_narrow = edge_RR %>%
   mutate(spatial = ifelse(spatial_rarity < 0.15, "Sp Common", "Sp Rare"),
@@ -61,14 +64,16 @@ edge_RR_cats_narrow = edge_RR %>%
                                 "Common (S), Intermittent (T)", 
                                 "Sparse (S), Intermittent (T)"))
 
+## calc correlations 
 narrow_corr = edge_RR_cats_narrow %>%
   filter(!is.na(resp.ratio.site_D4), !is.na(resp.ratio.site_PDfull)) %>%
   group_by(rarity_2) %>%
   summarise(corr_RR = cor(resp.ratio.site_D4, resp.ratio.site_PDfull),
             corr_RR = round(corr_RR, 3)) %>%
   mutate(x = c(-0.8, -0.8, -0.8, -0.8),
-         y = c(0.75, 0.75, 0.75, 0.74))
+         y = rep(1.15, 4))
 
+## Broad Def ####
 ## broad definition of common/persistent species
 edge_RR_cats_broad = edge_RR %>%
   mutate(spatial = ifelse(spatial_rarity < 0.35, "Sp Common", "Sp Rare"),
@@ -87,13 +92,14 @@ edge_RR_cats_broad = edge_RR %>%
                                 "Common (S), Intermittent (T)", 
                                 "Sparse (S), Intermittent (T)"))
 
+## calc correlations 
 broad_corr = edge_RR_cats_broad %>%
   filter(!is.na(resp.ratio.site_D4), !is.na(resp.ratio.site_PDfull)) %>%
   group_by(rarity_2) %>%
   summarise(corr_RR = cor(resp.ratio.site_D4, resp.ratio.site_PDfull),
             corr_RR = round(corr_RR, 3))  %>%
   mutate(x = c(-0.8, -0.8, -0.8, -0.8),
-         y = c(0.75, 0.75, 0.75, 0.74))
+         y = rep(1.15, 4))
 
 
 ## arrange sites
@@ -125,7 +131,8 @@ edge_RR_cats %>%
   theme(legend.position = "right") +
   geom_text(data = norm_corr, mapping = aes(x = x, y = y, label = corr_RR))
 
-## ggsave("figures/final/Fig3_DRR_v_PDRR.tiff", width = 6, height = 5.5)
+## ggsave("figures/review_figs/Fig3_DRR_v_PDRR.tiff", width = 15, height = 14, 
+   #    units = "cm")
 
 # Figure SXX ####
 rc_lo = edge_RR_cats_narrow %>%
