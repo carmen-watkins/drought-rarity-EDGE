@@ -8,17 +8,19 @@
 ##
 ## Author: Carmen Watkins
 
+# Set Up ####
 ## load response ratio data, so can verify which are 1 or -1
 source("analyses/calc_response_ratio.R") 
 
 ## load data with years attached so can filter to 'pre-treatment' species
 source("data-prep/clean_cover_dat_fill_zeros.R")
 
+# Prep Data ####
 ## filter to pre-treatment years
 pre_trt = edge_all %>%
   filter(year < 2014) 
 
-## Check 1's and -1's ####
+## filter gained and/or lost species
 ## select all species with a 1 or -1 value in drought or post-drought
 checksp1 = edge_RR %>%
   filter(resp.ratio.site_D4 %in% c(1, -1, NaN) & 
@@ -26,166 +28,121 @@ checksp1 = edge_RR %>%
   select(site, species, resp.ratio.site_D4, resp.ratio.site_PDfull,
          spatial_rarity, temporal_rarity)
 
+# Filter Sites ####
+## KNZ ####
+## examine KNZ gained or lost species
+sort(unique(checksp1[checksp1$site == "KNZ",]$species))
 
-## KNZ
-knz_check = checksp1 %>%
-  filter(site == "KNZ")
-
-sort(unique(knz_check$species))
-
-## sum number of times each species appeared in the pre-treatment data
+## in pre-treatment data
 knz_PT = pre_trt %>%
+  ## filter to correct site
   filter(site == "KNZ") %>%
-  group_by(species, treatment)%>%
-  summarise(pres.abs.sum = sum(pres.abs)) 
-
-## filter pre-treatment data by the species that need to be checked as they
-## have a 1 or -1 value RR
-Ktmp = knz_PT %>%
-  filter(species %in% c(unique(knz_check$species))) %>%
+  ## filter gained or lost species
+  filter(species %in% c(unique(checksp1[checksp1$site == "KNZ",]$species))) %>%
   group_by(species) %>%
-  summarise(PA = sum(pres.abs.sum))
-  
-Kkeep = Ktmp %>%
-  filter(PA >= 1)
+  ## sum presence / absence across plots
+  summarise(PA = sum(pres.abs))
 
-Kdrop = Ktmp %>%
+## create a list of species to drop
+## based on not appearing in pre-treatment data
+Kdrop = knz_PT %>%
   filter(PA < 1)
-
-## number of times species appears overall
-Kdrop2 = edge_all %>%
-#  filter(year > 2014) %>%
-  filter(site == "KNZ") %>%
-  group_by(species)%>%
-  summarise(pres.abs.sum = sum(pres.abs)) %>%
-  filter(pres.abs.sum < 2)
 
 ## HYS ####
-hys_check = checksp1 %>%
-  filter(site == "HYS")
+## examine HYS gained or lost species
+sort(unique(checksp1[checksp1$site == "HYS",]$species))
 
-sort(unique(hys_check$species))
-
+## in pre-treatment data
 hys_PT = pre_trt %>%
+  ## filter to correct site
   filter(site == "HYS") %>%
-  group_by(species, treatment)%>%
-  summarise(pres.abs.sum = sum(pres.abs)) 
-
-Htmp = hys_PT %>%
-  filter(species %in% c(unique(hys_check$species))) %>%
+  ## filter gained or lost species
+  filter(species %in% c(unique(checksp1[checksp1$site == "HYS",]$species))) %>%
   group_by(species) %>%
-  summarise(PA = sum(pres.abs.sum))
+  ## sum presence / absence across plots
+  summarise(PA = sum(pres.abs))
 
-Hkeep = Htmp %>%
-  filter(PA >= 1)
-
-Hdrop = Htmp %>%
+## create a list of species to drop
+## based on not appearing in pre-treatment data
+Hdrop = hys_PT %>%
   filter(PA < 1)
-
-## number of times species appears overall
-Hdrop2 = edge_all %>%
-  #  filter(year > 2014) %>%
-  filter(site == "HYS") %>%
-  group_by(species)%>%
-  summarise(pres.abs.sum = sum(pres.abs)) %>%
-  filter(pres.abs.sum < 2)
-
 
 ## CHY ####
-chy_check = checksp1 %>%
-  filter(site == "CHY")
+## examine CHY gained or lost species
+sort(unique(checksp1[checksp1$site == "CHY",]$species))
 
-sort(unique(chy_check$species))
-
+## in pre-treatment data
 chy_PT = pre_trt %>%
+  ## filter to correct site
   filter(site == "CHY") %>%
-  group_by(species, treatment)%>%
-  summarise(pres.abs.sum = sum(pres.abs)) 
-
-Ctmp = chy_PT %>%
-  filter(species %in% c(unique(chy_check$species))) %>%
+  ## filter gained or lost species
+  filter(species %in% c(unique(checksp1[checksp1$site == "CHY",]$species))) %>%
   group_by(species) %>%
-  summarise(PA = sum(pres.abs.sum))
+  ## sum presence / absence across plots
+  summarise(PA = sum(pres.abs))
 
-Ckeep = Ctmp %>%
-  filter(PA >= 1)
-
-Cdrop = Ctmp %>%
+## create a list of species to drop
+## based on not appearing in pre-treatment data
+Cdrop = chy_PT %>%
   filter(PA < 1)
 
-## number of times species appears overall
-Cdrop2 = edge_all %>%
-  #  filter(year > 2014) %>%
-  filter(site == "CHY") %>%
-  group_by(species)%>%
-  summarise(pres.abs.sum = sum(pres.abs)) %>%
-  filter(pres.abs.sum < 2)
-
 ## SGS ####
-sgs_check = checksp1 %>%
-  filter(site == "SGS")
+## examine SGS gained or lost species
+sort(unique(checksp1[checksp1$site == "SGS",]$species))
 
-sort(unique(sgs_check$species))
-
+## in pre-treatment data
 sgs_PT = pre_trt %>%
+  ## filter to correct site
   filter(site == "SGS") %>%
-  group_by(species, treatment)%>%
-  summarise(pres.abs.sum = sum(pres.abs)) 
-
-SGtmp = sgs_PT %>%
-  filter(species %in% c(unique(sgs_check$species))) %>%
+  ## filter gained or lost species
+  filter(species %in% c(unique(checksp1[checksp1$site == "SGS",]$species))) %>%
   group_by(species) %>%
-  summarise(PA = sum(pres.abs.sum))
+  ## sum presence / absence across plots
+  summarise(PA = sum(pres.abs))
 
-SGkeep = SGtmp %>%
-  filter(PA >= 1)
-
-SGdrop = SGtmp %>%
+## create a list of species to drop
+## based on not appearing in pre-treatment data
+SGdrop = sgs_PT %>%
   filter(PA < 1)
 
 ## SBL ####
-sbl_check = checksp1 %>%
-  filter(site == "SBL")
+## examine SBL gained or lost species
+sort(unique(checksp1[checksp1$site == "SBL",]$species))
 
-sort(unique(sbl_check$species))
-
+## in pre-treatment data
 sbl_PT = pre_trt %>%
-  filter(site == "SBL", 
-         year < 2013) %>%
-  group_by(species, treatment)%>%
-  summarise(pres.abs.sum = sum(pres.abs)) 
-
-SLtmp = sbl_PT %>%
-  filter(species %in% c(unique(sbl_check$species))) %>%
+  ## filter to correct site and year as 2012 is pre-treatment at SEV sites
+  filter(site == "SBL", year < 2013) %>%
+  ## filter gained or lost species
+  filter(species %in% c(unique(checksp1[checksp1$site == "SBL",]$species))) %>%
   group_by(species) %>%
-  summarise(PA = sum(pres.abs.sum))
+  ## sum presence / absence across plots
+  summarise(PA = sum(pres.abs))
 
-SLkeep = SLtmp %>%
-  filter(PA >= 1)
-
-SLdrop = SLtmp %>%
+## create a list of species to drop
+## based on not appearing in pre-treatment data
+SLdrop = sbl_PT %>%
   filter(PA < 1)
 
 ## SBK ####
-sbk_check = checksp1 %>%
-  filter(site == "SBK")
+## examine SBK gained or lost species
+sort(unique(checksp1[checksp1$site == "SBK",]$species))
 
-sort(unique(sbk_check$species))
-
+## in pre-treatment data
 sbk_PT = pre_trt %>%
-  filter(site == "SBK", 
-         year < 2013) %>%
-  group_by(species, treatment)%>%
-  summarise(pres.abs.sum = sum(pres.abs)) 
-
-SKtmp = sbk_PT %>%
-  filter(species %in% c(unique(sbk_check$species))) %>%
+  ## filter to correct site and year as 2012 is pre-treatment at SEV sites
+  filter(site == "SBK", year < 2013) %>%
+  ## filter gained or lost species
+  filter(species %in% c(unique(checksp1[checksp1$site == "SBK",]$species))) %>%
   group_by(species) %>%
-  summarise(PA = sum(pres.abs.sum))
+  ## sum presence / absence across plots
+  summarise(PA = sum(pres.abs))
 
-SKkeep = SKtmp %>%
-  filter(PA >= 1)
-
-SKdrop = SKtmp %>%
+## create a list of species to drop
+## based on not appearing in pre-treatment data
+SKdrop = sbk_PT %>%
   filter(PA < 1)
+
+# Clean Up ####
+rm(knz_PT, hys_PT, chy_PT, sgs_PT, sbl_PT, sbk_PT)
 

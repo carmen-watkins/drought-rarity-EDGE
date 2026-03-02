@@ -120,7 +120,7 @@ ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = c("(a)", "(b)", "(c)", "(d)"), common.legend = T, 
           legend = "bottom", ncol = 2, nrow=2)
 
-#ggsave("figures/review_figs/Fig2_resp_ratio_v_rarity.tiff", width = 6, height = 5.6)
+ggsave("figures/review_figs/Fig2_resp_ratio_v_rarity.tiff", width = 18, height = 16, units = "cm")
 
 ## Talk Figure ####
 ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
