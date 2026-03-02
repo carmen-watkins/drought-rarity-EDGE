@@ -33,7 +33,7 @@ pal = c("#03274E", "#3B5378", "#7F5F70",
 ## it still accounts for effect of site.
 
 ## drought, spatial ####
-mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = edge_RR_cats)
+mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsd)
 summary(mmsd) ## supp table

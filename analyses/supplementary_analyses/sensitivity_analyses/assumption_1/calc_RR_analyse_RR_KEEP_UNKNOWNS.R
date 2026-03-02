@@ -29,7 +29,6 @@ pal = c("#03274E", "#3B5378", "#7F5F70",
 
 # Calc Resp Ratio ####
 ## Drought ####
-### 4-year ####
 drought.SE.RII <- edge_all %>%
   filter(experiment.year %in% c(1:4)) %>% ## 0 is pre-treat year; drought was years 1-4
   group_by(site, treatment, species) %>%
@@ -65,8 +64,6 @@ drought.SE.RII <- edge_all %>%
          SE.RII = outpar * inpar,
          
          treatment.period = "D") ## add in column to differentiate from post-drought RR
-
-
 
 ## Recovery ####
 recov.SE.RII <- edge_all %>%
@@ -105,22 +102,20 @@ recov.SE.RII <- edge_all %>%
          
          treatment.period = "PD") ## add in column to differentiate from post-drought RR
 
-RR.tog <- rbind(drought.SE.RII, recov.SE.RII) %>%
+RR.tog = rbind(drought.SE.RII, recov.SE.RII) %>%
   select(site, species, resp.ratio.site, SE.RII, treatment.period) %>%
   pivot_wider(names_from = treatment.period, values_from = c(resp.ratio.site, SE.RII))#
 
 ## merge with rank and persistence values for each species
-edge_RR <- left_join(RR.tog, rank_persist, by = c("site", "species"))
+edge_RR = left_join(RR.tog, rank_persist, by = c("site", "species"))
 
-
-# Clean up ####
+## Clean up ####
 rm(edge_all, drought.SE.RII, recov.SE.RII, RR.tog, rank_persist)
 
-
-# Check Results ####
+# Plot####
 edge_RR$site = factor(edge_RR$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
-## Fig S4 ####
+## Fig S7 ####
 ## test out main pattern
 SR_drought = ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D, color = site)) +
   geom_point(alpha = 0.9, size = 0.6) +
@@ -133,7 +128,9 @@ SR_drought = ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D, color =
   labs(color = "Site") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13)) +
-  coord_cartesian(ylim = c(-1,1))
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.15", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.21", size = 3, parse = TRUE)
 
 SR_postdrought = ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PD, color = site)) +
   geom_point(alpha = 0.9, size = 0.6) +
@@ -144,7 +141,10 @@ SR_postdrought = ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PD, col
   xlab("Spatial Rarity") +
   ylab("Post-drought") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13))
+  theme(text = element_text(size = 13)) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.15", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.18", size = 3, parse = TRUE)
 
 TR_drought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D, color = site)) +
   geom_point(alpha = 0.9, size = 0.6) +
@@ -155,7 +155,10 @@ TR_drought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D, color =
   xlab(" ") +
   ylab(" ") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13))
+  theme(text = element_text(size = 13)) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.13", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.16", size = 3, parse = TRUE)
 
 TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD, color = site)) +
   geom_point(alpha = 0.9, size = 0.6) +
@@ -166,12 +169,15 @@ TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD, c
   xlab("Temporal Rarity") +
   ylab("") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
-  theme(text = element_text(size = 13))
+  theme(text = element_text(size = 13)) +
+  coord_cartesian(ylim = c(-1,1.2)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.10", size = 3, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.12", size = 3, parse = TRUE)
 
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
-          labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
+          labels = "auto", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
-## ggsave("figures/review_figs/FigS4_RR_v_rarity_keep_unknowns.tiff", width = 6, height = 5.5)
+ggsave("figures/review_figs/FigS7_RR_v_rarity_keep_unknowns.tiff", width = 18, height = 16, units = "cm")
 
 # Check Models ####
 ## drought, spatial ####
@@ -179,22 +185,32 @@ mmsd = lmer(resp.ratio.site_D ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsd)
 summary(mmsd) ## supp table
-Anova(mmsd, type = 2)
+mmsdA = Anova(mmsd, type = 2, test.statistic = "F")
+mmsdA
+
+r.squaredGLMM(mmsd)
+eta_squared(mmsdA)
 
 ## drought, temporal ####
 mmtd = lmer(resp.ratio.site_D ~ temporal_rarity + (1|site), data = edge_RR)
 
 #check_model(mmtd)
 summary(mmtd) ## supp table
-Anova(mmtd, type = 3, test.statistic = "F") ## main table
+mmtdA = Anova(mmtd, type = 2, test.statistic = "F") ## main table
+mmtdA
+
+r.squaredGLMM(mmtd)
+eta_squared(mmtdA)
 
 ## post-drought spatial ####
 mmsp = lmer(resp.ratio.site_PD ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsp)
 summary(mmsp) ## supp table
-Anova(mmsp, type = 2, test.statistic = "F") ## main table
+mmspA = Anova(mmsp, type = 2, test.statistic = "F") ## main table
 confint(mmsp)
+
+r.squaredGLMM(mmsp)
 
 ## post-drought temporal ####
 mmtp = lmer(resp.ratio.site_PD ~ temporal_rarity + (1|site), data = edge_RR)
@@ -203,6 +219,8 @@ mmtp = lmer(resp.ratio.site_PD ~ temporal_rarity + (1|site), data = edge_RR)
 summary(mmtp) ## supp table
 Anova(mmtp, type = 3, test.statistic = "F") ## main table
 confint(mmtp)
+
+r.squaredGLMM(mmtp)
 
 # Create Tables ####
 ## Anova ####
