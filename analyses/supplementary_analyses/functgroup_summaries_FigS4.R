@@ -174,9 +174,9 @@ ggarrange(grasses, forbs, shrubs, annuals, perennials, common.legend = T,
           legend = "right", ncol = 3, nrow = 2, 
           labels = c("(a)", "(b)", "(c)", "(d)", "(e)"))
 
-ggsave("figures/review_figs/FigSXX_fg_lh_rarity_cat.tiff", width = 10, height = 5)
+#ggsave("figures/review_figs/FigSXX_fg_lh_rarity_cat.tiff", width = 10, height = 5)
 
-## Fig S4 ####
+## Fig Alt version ####
 all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
   geom_bar(stat = 'identity') +
   xlab(NULL) +
@@ -261,7 +261,7 @@ srtc = edge_RR2 %>%
 
 #ggsave("figures/review_figs/FigS4_sp_life_history_proportions.tiff", width = 8, height = 5)
 
-## Alt Fig SXX ####
+## Fig S4 ####
 all_fg = edge_RR2_cats %>%
   group_by(site, FunctionalGroup) %>%
   summarise(numpcat = n())%>%
@@ -354,14 +354,14 @@ ssit = edge_RR2_cats %>%
         axis.text.x = element_text(angle = 45, hjust = 1))
 
 p1 = ggarrange(all, all_fg, ncol = 2, nrow = 1, 
-               labels = c("(a)", "(f)"))
+               labels = c("a", "f"))
 
 p2 = ggarrange(sctc, srtc, sctr, srtr,
-               labels = c("(b)", "(c)", "(d)", "(e)", "(f)"), legend = "none")
+               labels = c("b", "c", "d", "e", "f"), legend = "none")
 
 p3 = ggarrange(cspt, sspt, csit, ssit, common.legend = T, 
           legend = "none", ncol = 2, nrow = 2, 
-          labels = c("(g)", "(h)", "(i)", "(j)"))
+          labels = c("g", "h", "i", "j"))
 
 p4 = plot_grid(p2, p3)
 
@@ -370,6 +370,9 @@ plot_grid(p1, p4, ncol = 1, rel_heights = c(0.5, 1))
 ggsave("figures/review_figs/FigS4_fg_lh_rarity_cat.tiff",
        width = 10.5, height = 7.5)
 
+
+ggsave("figures/review_figs/supp/FigS4_fg_lh_rarity_cat.png",
+       width = 10.5, height = 7.5)
 
 
 

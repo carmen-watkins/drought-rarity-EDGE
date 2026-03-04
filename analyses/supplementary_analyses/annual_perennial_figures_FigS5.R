@@ -184,9 +184,11 @@ lh_tpd = edge_RR2 %>%
   annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.12", size = 3, parse = TRUE)
 
 ggarrange(lh_sd, lh_td, lh_spd, lh_tpd, nrow = 2, ncol = 2, common.legend = TRUE, 
-          legend = "bottom", labels = c("(a)", "(b)", "(c)", "(d)"))
+          legend = "bottom", labels = c("a", "b", "c", "d"))
 
 #ggsave("figures/review_figs/FigS5_annual_perenn_RR_v_rarity.tiff", width = 6, height = 5.6)
+
+#ggsave("figures/review_figs/supp/FigS5_annual_perenn_RR_v_rarity.png", width = 6, height = 5.6)
 
 ## Talk Figure ####
 edge_RR2 %>%
@@ -204,7 +206,7 @@ edge_RR2 %>%
 
 #ggsave("figures/dissertation_talk/duration.png", width = 8, height = 4)
 
-## Fig S4 ####
+## Old Fig ####
 all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
   geom_bar(stat = 'identity') +
   xlab(NULL) +
@@ -272,7 +274,7 @@ srtc = edge_RR2 %>%
   ggtitle("Sparse & Persistent") +
   scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#798E87"))
 
-ggarrange(all, sctc, srtr, srtc, sctr, common.legend = T, labels = c("(a)", "(b)", "(c)", "(d)", "(e)"), 
+ggarrange(all, sctc, srtr, srtc, sctr, common.legend = T, labels = c("a", "b", "c", "d", "e"), 
           legend = "bottom")
 
 #ggsave("figures/review_figs/FigS4_sp_life_history_proportions.tiff", width = 8, height = 5)

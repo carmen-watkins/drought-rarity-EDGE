@@ -106,9 +106,10 @@ pdt = edge_PDlong %>%
   annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.10", size = 3, parse = TRUE) +
   annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.12", size = 3, parse = TRUE)
 
-ggarrange(pds, pdt, common.legend = T, labels = c("(a)", "(b)"), legend = "bottom")
+ggarrange(pds, pdt, common.legend = T, labels = c("a", "b"), legend = "bottom")
 
-ggsave("figures/review_figs/FigS7_split_post_drought.tiff", width = 6, height = 3.5)
+ggsave("figures/review_figs/FigS9_split_post_drought.tiff", width = 6, height = 3.5)
+ggsave("figures/review_figs/supp/FigS9_split_post_drought.png", width = 6, height = 3.5)
 
 
 #"#855C75","#D9AF6B","#AF6458","#736F4C","#526A83",#625377,#68855C,#9C9C5E,#A06177,#8C785D,#467378,#7C7C7C

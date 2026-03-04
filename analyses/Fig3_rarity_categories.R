@@ -131,10 +131,15 @@ edge_RR_cats %>%
   theme(legend.position = "right") +
   geom_text(data = norm_corr, mapping = aes(x = x, y = y, label = corr_RR))
 
+## save official version
 ## ggsave("figures/review_figs/Fig3_DRR_v_PDRR.tiff", width = 15, height = 14, 
    #    units = "cm")
 
-# Figure SXX ####
+## save review version
+ggsave("figures/review_figs/Fig3_DRR_v_PDRR.png", width = 15, height = 14, 
+           units = "cm")
+       
+# Figure S11 ####
 rc_lo = edge_RR_cats_narrow %>%
   ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
@@ -173,9 +178,9 @@ rc_hi = edge_RR_cats_broad %>%
   geom_text(data = broad_corr, mapping = aes(x = x, y = y, label = corr_RR),
             size = 3)
 
-ggarrange(rc_lo, rc_hi, ncol = 2, labels = c("(a)", "(b)"))
+ggarrange(rc_lo, rc_hi, ncol = 2, labels = c("a", "b"))
 
-ggsave("figures/review_figs/FigS11_DRR_v_PDRR_sensitivity_analysis.tiff", 
+ggsave("figures/review_figs/supp/FigS11_DRR_v_PDRR_sensitivity_analysis.png", 
        width = 18, height = 10, unit = "cm")
 
 

@@ -52,7 +52,7 @@ ggplot(filtered_RR, aes(x=spatial_rarity, y=resp.ratio.site_D4)) +
   facet_wrap(~site)
 
 
-# Fig S6 ####
+# Fig S8 ####
 SR_drought = ggplot(filtered_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4, 
                                      color = site)) +
   geom_point(alpha = 0.9, size = 0.6) +
@@ -115,12 +115,13 @@ TR_postdrought = ggplot(filtered_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD
   annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.09", size = 3, parse = TRUE)
 
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
-          labels = "AUTO", common.legend = T, legend = "bottom", ncol = 2, 
+          labels = "auto", common.legend = T, legend = "bottom", ncol = 2, 
           nrow=2)
 ggsave("figures/review_figs/FigS8_resp_ratio_v_rarity_no1s.tiff", 
        width = 18, height = 16, units = "cm")
 
-
+ggsave("figures/review_figs/supp/FigS8_resp_ratio_v_rarity_no1s.png", 
+       width = 18, height = 16, units = "cm")
 
 # Model ####
 ## model as way of estimating the overall effect of rarity on response ratio 

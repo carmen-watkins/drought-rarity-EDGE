@@ -145,6 +145,8 @@ ggarrange(pP1, pPt,
 ##ggsave("figures/review_figs/Fig4_site_slopes_predictors_drought_both_rarity.tiff", 
      #width = 15, height = 20, units = "cm")
 
+ggsave("figures/review_figs/Fig4_site_slopes_predictors_drought_both_rarity.png",
+       width = 15, height = 20, units = "cm")
 
 sfct = tmpmods_pred %>%
   filter(term == "temporal_rarity", period == "Post-Drought") %>%
@@ -187,7 +189,7 @@ ggarrange(sfcs, sfct, labels = "auto", common.legend = T, legend = "bottom")
 
 ggsave("figures/review_figs/FigSXXX_soil_field_capacity.tiff", width = 15, height = 10, unit = "cm")
 
-# Fig S10: Coeff plots ####
+# Old Fig: Coeff plots ####
 ### temporal, drought
 temp_slope = tmp_mods %>%
   filter(period == "Drought", term == "temporal_rarity") %>%
@@ -329,7 +331,7 @@ ggarrange(spat_slope, spat_slopep, temp_slope, temp_slopep,
  #      width = 8.5, height = 5.5)
 
 
-# Fig S11 (post-drought) ####
+# Old Fig (post-drought) ####
 ## spatial ####
 pD2 = spmods_pred %>%
   filter(term == "spatial_rarity", period == "Post-Drought") %>%
@@ -451,6 +453,6 @@ ggarrange(pP2, pT2, pD2,
           pPt2, pTt2, pDt2, 
           ncol = 3, nrow = 2, common.legend = T, legend = "bottom", labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"))
 
-ggsave("figures/review_figs/FigS11_site_slopes_predictors_postdrought_both_rarity.tiff", 
-       width = 8.5, height = 6.15)
+#ggsave("figures/review_figs/FigS11_site_slopes_predictors_postdrought_both_rarity.tiff", 
+ #      width = 8.5, height = 6.15)
 

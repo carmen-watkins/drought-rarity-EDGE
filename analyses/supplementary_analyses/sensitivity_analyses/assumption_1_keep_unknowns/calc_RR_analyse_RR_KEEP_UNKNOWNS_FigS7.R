@@ -20,7 +20,7 @@ library(xtable)
 library(ggpubr)
 
 ## load data
-source("analyses/supplementary_analyses/sensitivity_analyses/assumption_1/calc_rank_persistence_KEEP_UNKNOWNS.R")
+source("analyses/supplementary_analyses/sensitivity_analyses/assumption_1_keep_unknowns/calc_rank_persistence_KEEP_UNKNOWNS.R")
 
 ## set up graphics
 theme_set(theme_classic())
@@ -178,6 +178,8 @@ ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = "auto", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
 ## ggsave("figures/review_figs/FigS7_RR_v_rarity_keep_unknowns.tiff", width = 18, height = 16, units = "cm")
+
+ggsave("figures/review_figs/supp/FigS7_RR_v_rarity_keep_unknowns.png", width = 18, height = 16, units = "cm")
 
 # Check Models ####
 ## drought, spatial ####

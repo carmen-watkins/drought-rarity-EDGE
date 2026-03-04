@@ -129,26 +129,14 @@ tmp_mods = rbind(modt_df, modt_dfp) %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
 # Create Table ####
-sp_mods_tab = sp_mods %>%
+mods_tab = rbind(sp_mods, tmp_mods) %>%
   select(period, site, term, estimate, std.error, statistic, p.value) %>%
-  mutate(signif = ifelse(p.value < 0.001, "***", 
-                         ifelse(p.value < 0.01 & p.value > 0.001, "**",
-                                ifelse(p.value > 0.01 & p.value < 0.05, "*", 
-                                       ifelse(p.value < 0.1 & p.value > 0.05, 
-                                              ".", " ")))))
+  mutate(across(where(is.numeric) & !p.value, ~round(.x, 3))) %>%
+  mutate(p.value = round(p.value, 10))
 
-#write.csv(sp_mods_tab, "tables/site_model_output_spatial.csv")
-
-tmp_mods_tab = tmp_mods %>%
-  select(period, site, term, estimate, std.error, statistic, p.value) %>%
-  mutate(signif = ifelse(p.value < 0.001, "***", 
-                         ifelse(p.value < 0.01 & p.value > 0.001, "**",
-                                ifelse(p.value > 0.01 & p.value < 0.05, "*", 
-                                       ifelse(p.value < 0.1 & p.value > 0.05, 
-                                              ".", " ")))))
-
-#write.csv(tmp_mods_tab, "tables/site_model_output_temporal.csv")
+write.csv(mods_tab, "tables/review_tabs/TabS7_site_model_output_all.csv",
+          row.names = F)
 
 # Clean Env ####
-rm(chy_unks, hys_unks, knz_temp, knz_unks, sbk_unks, sgs_unks, virid_sp, 
-   tmp_mods_tab, sp_mods_tab, mod_df, mod_dfp, modt_df, modt_dfp, tmp)
+rm(chy_unks, hys_unks, knz_temp, knz_unks, sbk_unks, sgs_unks, virid_sp,
+   mod_df, mod_dfp, modt_df, modt_dfp, tmp)

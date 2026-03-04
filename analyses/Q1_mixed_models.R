@@ -14,7 +14,7 @@ library(tidyverse)
 library(car)
 library(lmerTest)
 library(jtools)
-library(xtable)
+#library(xtable)
 library(MuMIn)
 library(effectsize)
 library(afex)
@@ -42,15 +42,15 @@ Atable
 confint(mmsd)
 
 ## effect sizes: 
-0.87491 / sqrt(0.03003 + 0.37390)
+#0.87491 / sqrt(0.03003 + 0.37390)
 
 ## diff b/w means divided by sqrt of var intercept + var slope + var residual
 ## note, it seems like if you have multiple random effects, you just add 
 ## them all into this square root term.
 
 r.squaredGLMM(mmsd)
+eta_squared(Atable, partial = T)
 eta_squared(Atable)
-
 ## drought, temporal ####
 mmtd = lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = edge_RR)
 

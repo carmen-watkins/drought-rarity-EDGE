@@ -49,6 +49,9 @@ ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
 ggsave("figures/review_figs/FigS1_rarity_correlation.tiff", 
        width = 18, height = 4, units = "cm")
 
+ggsave("figures/review_figs/supp/FigS1_rarity_correlation.png", 
+       width = 18, height = 4, units = "cm")
+
 ## Talk Figure
 ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
   geom_point(size = 1.5) +
@@ -115,11 +118,14 @@ c = ggplot(edge_RR, aes(x=temporal_rarity)) +
   scale_x_continuous(breaks = c(0,1,0.5),
                      labels = c(0, 1, 0.5))
 
-ggarrange(a, b, c, ncol = 1, labels = c("(a)", "(b)", "(c)"))
+ggarrange(a, b, c, ncol = 1, labels = c("a", "b", "c"))
 
 ## save
 ggsave("figures/review_figs/FigS2_rank_abundance_curve.tiff", 
  width = 18, height = 15, units = "cm")
+
+ggsave("figures/review_figs/supp/FigS2_rank_abundance_curve.png", 
+       width = 18, height = 15, units = "cm")
 
 ## test what temp rarity vs. abundance looks like
 ggplot(edge_RR, aes(x=temporal_rarity, y=mean.ctrl.cov)) +

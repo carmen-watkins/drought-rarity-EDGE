@@ -23,7 +23,7 @@ library(afex)
 library(emmeans)
 
 ## read in data
-source("analyses/supplementary_analyses/annual_perennial_figures_FigS1_S8.R")
+source("analyses/supplementary_analyses/annual_perennial_figures_FigS5.R")
 
 ## clean up data 
 edge3 = edge_RR2 %>%
@@ -50,7 +50,7 @@ Ams2
 ##' based on a species' life history
 
 r.squaredGLMM(ms)
-eta_squared(Ams2)
+eta_squared(Ams2, partial = T)
 
 test = emmeans(ms, specs = c('Duration', 'spatial_rarity'))
 

@@ -115,6 +115,9 @@ ggarrange(SBLS, SBKS, SBLT, SBKT, nrow = 2, ncol = 2, labels = "auto",
 #ggsave("figures/review_figs/FigS10_resp_ratio_v_rarity.tiff", width = 18, height = 16, units = "cm")
 
 
+#ggsave("figures/review_figs/supp/FigS10_resp_ratio_v_rarity.png", width = 18, height = 16, units = "cm")
+
+
 # Model ####
 ## sbl, spatial
 sbls = lm(response_ratio ~ spatial_rarity + drought_length, 

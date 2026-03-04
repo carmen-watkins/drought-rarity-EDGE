@@ -147,4 +147,11 @@ p2 = ggarrange(sctc, cpg, labels = c("d", "e"),
                font.label=list(color="black",size=12))
 plot_grid(p1, p2, ncol = 1)
 
+## save official version
 ggsave("figures/review_figs/Fig1_site_char.tiff", width = 16, height = 10, units = "cm")
+
+## save smaller version for review
+ggsave("figures/review_figs/Fig1_site_char.png", width = 16, height = 10, units = "cm")
+
+
+

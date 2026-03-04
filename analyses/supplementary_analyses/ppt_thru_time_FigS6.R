@@ -130,12 +130,14 @@ spei_hist = spei_all %>%
   theme(text = element_text(size = 12))
 
 p1 = plot_grid(ppt_north, ppt_sev, spei_north, spei_sev, ncol = 2, 
-               labels = c("(a)", "(b)", "(c)", "(d)"), align = "v", label_x = -0.03)
+               labels = c("a", "b", "c", "d"), align = "v") #, label_x = -0.03
 
-p2 = plot_grid(spei_hist, labels = c("(e)"))
+p2 = plot_grid(spei_hist, labels = c("e"))
 
 plot_grid(p1, p2, ncol = 1, rel_heights = c(1, 0.5))
 
-ggsave("figures/review_figs/precip_year_FigSX.tiff",
+ggsave("figures/review_figs/precip_year_FigS6.tiff",
        width = 18, height = 15, units = "cm")  
 
+ggsave("figures/review_figs/supp/FigS6_precip_year.png",
+       width = 18, height = 15, units = "cm")  

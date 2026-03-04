@@ -26,16 +26,8 @@ unique(edge_RR$species)
 edge_RR_cats = edge_RR %>%
   mutate(spatial = ifelse(spatial_rarity < 0.25, "Sp Common", "Sp Rare"),
          temporal = ifelse(temporal_rarity < 0.5, "Tmp Common", "Tmp Rare"),
-         rarity_cat = paste0(temporal, ", ", spatial)) %>%
-  
-  ## filter out species with ONE observation only.
-  ## this was added 2/23/26; CHECK with co-authors before actually including...
-  filter(!(site == "KNZ" & species %in% drop1x[drop1x$site == "KNZ",]$species),
-         !(site == "HYS" & species %in% drop1x[drop1x$site == "HYS",]$species),
-         !(site == "CHY" & species %in% drop1x[drop1x$site == "CHY",]$species),
-         !(site == "SGS" & species %in% drop1x[drop1x$site == "SGS",]$species),
-         !(site == "SBL" & species %in% drop1x[drop1x$site == "SBL",]$species),
-         !(site == "SBK" & species %in% drop1x[drop1x$site == "SBK",]$species))
+         rarity_cat = paste0(temporal, ", ", spatial))
+ 
 
 ## arrange sites
 edge_RR_cats$site = factor(edge_RR_cats$site, levels = c("KNZ", "HYS", "CHY", 
@@ -117,10 +109,14 @@ TR_postdrought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull
   annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.10", size = 3, parse = TRUE)
 
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
-          labels = c("(a)", "(b)", "(c)", "(d)"), common.legend = T, 
+          labels = c("a", "b", "c", "d"), common.legend = T, 
           legend = "bottom", ncol = 2, nrow=2)
 
+## save official version
 ggsave("figures/review_figs/Fig2_resp_ratio_v_rarity.tiff", width = 18, height = 16, units = "cm")
+
+## save version for review
+ggsave("figures/review_figs/Fig2_resp_ratio_v_rarity.png", width = 18, height = 16, units = "cm")
 
 ## Talk Figure ####
 ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4)) +
