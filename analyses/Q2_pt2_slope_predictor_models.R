@@ -45,6 +45,7 @@ spm1 = lm(estimate ~ z_precip,
           data = spmods_pred[spmods_pred$term == "spatial_rarity" & 
                                spmods_pred$period == "Drought",])
 summary(spm1)
+confint(spm1)
 
 ## save model outputs as dataframe
 spm1_df = as.data.frame(summary(spm1)$coeff) %>%
@@ -57,6 +58,7 @@ spm2 = lm(estimate ~ z_temp,
           data = spmods_pred[spmods_pred$term == "spatial_rarity" & 
                                spmods_pred$period == "Drought",])
 summary(spm2)
+confint(spm2)
 
 ## save model outputs as dataframe
 spm2_df = as.data.frame(summary(spm2)$coeff) %>%
@@ -118,6 +120,7 @@ tpm2 = lm(estimate ~ z_temp,
           data = tmpmods_pred[tmpmods_pred$term == "temporal_rarity" &
                                 tmpmods_pred$period == "Drought",])
 summary(tpm2)
+confint(tpm2)
 
 ## save model outputs as dataframe
 tpm2_df = as.data.frame(summary(tpm2)$coeff) %>%
@@ -130,6 +133,7 @@ tpm3 = lm(estimate ~ dom.rounded,
           tmpmods_pred[tmpmods_pred$term == "temporal_rarity" & 
                          tmpmods_pred$period == "Drought",])
 summary(tpm3)
+confint(tpm3)
 
 ## save model outputs as dataframe
 tpm3_df = as.data.frame(summary(tpm3)$coeff) %>%
