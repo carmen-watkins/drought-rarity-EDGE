@@ -115,29 +115,96 @@ edge_RR_cats_broad$site = factor(edge_RR_cats_broad$site,
                                          "SBL", "SBK"))
 
 # Figure 3 ####
-edge_RR_cats %>%
+#plot = edge_RR_cats %>%
+ # ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
+  #geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
+#  geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
+ # geom_point(fill = "grey", colour = "black", size = 2.5, pch = 21) +
+  #facet_wrap(~rarity_2, nrow = 2, ncol = 2) +
+#  xlab("Drought Response Ratio") +
+ # ylab("Post-drought Response Ratio") +
+  #labs(fill = NULL) +
+#  theme_bw() +
+ # theme(panel.grid = element_blank()) +
+  #theme(strip.background =element_rect(fill="white")) +
+#  theme(text = element_text(size = 13)) +
+ # theme(legend.position = "right") +
+  #geom_text(data = norm_corr, mapping = aes(x = x, y = y, label = corr_RR))
+
+## panel version ####
+a = edge_RR_cats %>%
+  filter(rarity_2 == "Common (S), Persistent (T)") %>%
   ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
   geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
   geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
-  geom_point(fill = "grey", colour = "black", size = 2.5, pch = 21) +
-  facet_wrap(~rarity_2, nrow = 2, ncol = 2) +
+  geom_point(fill = "grey", colour = "black", size = 1.5, pch = 21) +
+  xlab(" ") +
+  ylab("Post-drought Response Ratio") +
+  ggtitle("Common, Persistent") +
+  theme(text = element_text(size = 13)) +
+  theme(axis.title=element_text(size=11), 
+        plot.title = element_text(size = 12)) +
+  coord_cartesian(xlim = c(-1,1), ylim = c(-1,1.2)) +
+  geom_text(data = norm_corr[norm_corr$rarity_2 == "Common (S), Persistent (T)",], mapping = aes(x = x, y = y, label = corr_RR))
+
+b = edge_RR_cats %>%
+  filter(rarity_2 == "Sparse (S), Persistent (T)") %>%
+  ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
+  geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
+  geom_point(fill = "grey", colour = "black", size = 1.5, pch = 21) +
+  xlab(" ") +
+  ylab(" ") +
+  ggtitle("Sparse, Persistent") +
+  theme(text = element_text(size = 13)) +
+  theme(axis.title=element_text(size=11), 
+        plot.title = element_text(size = 12)) +
+  coord_cartesian(xlim = c(-1,1), ylim = c(-1,1.2)) +
+  geom_text(data = norm_corr[norm_corr$rarity_2 == "Sparse (S), Persistent (T)",], mapping = aes(x = x, y = y, label = corr_RR))
+
+c = edge_RR_cats %>%
+  filter(rarity_2 == "Common (S), Intermittent (T)") %>%
+  ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
+  geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
+  geom_point(fill = "grey", colour = "black", size = 1.5, pch = 21) +
   xlab("Drought Response Ratio") +
   ylab("Post-drought Response Ratio") +
-  labs(fill = NULL) +
-  theme_bw() +
-  theme(panel.grid = element_blank()) +
-  theme(strip.background =element_rect(fill="white")) +
+  ggtitle("Common, Intermittent") +
   theme(text = element_text(size = 13)) +
-  theme(legend.position = "right") +
-  geom_text(data = norm_corr, mapping = aes(x = x, y = y, label = corr_RR))
+  theme(axis.title=element_text(size=11), 
+        plot.title = element_text(size = 12)) +
+  coord_cartesian(xlim = c(-1,1), ylim = c(-1,1.2)) +
+  geom_text(data = norm_corr[norm_corr$rarity_2 == "Common (S), Intermittent (T)",], mapping = aes(x = x, y = y, label = corr_RR))
+
+d = edge_RR_cats %>%
+  filter(rarity_2 == "Sparse (S), Intermittent (T)") %>%
+  
+  ggplot(aes(x=resp.ratio.site_D4, y=resp.ratio.site_PDfull)) +
+  geom_hline(yintercept = 0, color = "black", linewidth = 0.25) +
+  geom_vline(xintercept = 0, color = "black", linewidth = 0.25) +
+  geom_point(fill = "grey", colour = "black", size = 1.5, pch = 21) +
+  xlab("Drought Response Ratio") +
+  ylab(" ") +
+  ggtitle("Sparse, Intermittent") +
+  theme(text = element_text(size = 13)) +
+  theme(axis.title=element_text(size=11), 
+        plot.title = element_text(size = 12)) +
+  coord_cartesian(xlim = c(-1,1), ylim = c(-1,1.2)) +
+  geom_text(data = norm_corr[norm_corr$rarity_2 == "Sparse (S), Intermittent (T)",], mapping = aes(x = x, y = y, label = corr_RR))
+
+plot = ggarrange(a, b, c, d, labels = "auto")
+
+annotate_figure(plot, top = text_grob("Figure 3", 
+                                      color = "black", face = "bold", size = 14))
 
 ## save official version
-## ggsave("figures/review_figs/Fig3_DRR_v_PDRR.tiff", width = 15, height = 14, 
-   #    units = "cm")
+ggsave("figures/final_figs/Fig3_DRR_v_PDRR.tiff", width = 13, height = 13.75, 
+      units = "cm")
 
 ## save review version
-ggsave("figures/review_figs/Fig3_DRR_v_PDRR.png", width = 15, height = 14, 
-           units = "cm")
+#ggsave("figures/review_figs/Fig3_DRR_v_PDRR.png", width = 15, height = 14, 
+ #          units = "cm")
        
 # Figure S11 ####
 rc_lo = edge_RR_cats_narrow %>%
