@@ -1,15 +1,15 @@
 ## Header ## 
 ## Script Name: Fig 1: Site Characteristics
-
+##
 ## Purpose of Script: create a figure of site MAP, temp, average BP dominance, 
 ## and annual / perennial and c3/c4
-
+##
 ## Author: Carmen Watkins
+##
 
 # Set up ####
 ## load packages
 library(cowplot)
-library(fillpattern)
 
 ## read in data 
 source("analyses/calc_response_ratio.R") ## response ratio data
@@ -20,8 +20,9 @@ source("data-prep/prep_model_predictors.R") ## site ppt, temp, dominance data
 FG = read.csv(here::here("data","edge_species_info_CP_BA.csv")) 
 
 ## set up graphics
-global_size = 9
+global_size = 11
 theme_set(theme_classic(base_size = global_size))
+#theme_set(theme_classic())
 
 ## new color palette
 pal = c("#03274E", "#3B5378", "#7F5F70",
@@ -62,8 +63,7 @@ edge_RR2 = edge_RR %>%
          Photo = ifelse(site == "KNZ" & species == "Juncus_interior", "c3", Photo))
 
 
-# Figures ####
-## Fig 1 ####
+# Figure 1 ####
 ppt = site_pred_scaled %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   ggplot(aes(x=site, y=MAP.mm, fill = site)) +
@@ -71,8 +71,9 @@ ppt = site_pred_scaled %>%
   scale_fill_manual(values = rev(pal)) +
   ylab("MAP (mm)") +
   xlab(" ") +
-  theme(axis.title=element_text(size=10)) +
-  labs(fill = "Site")
+  theme(axis.title=element_text(size=11)) +
+  labs(fill = "Site") +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 
 temp = site_pred_scaled %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
@@ -81,8 +82,9 @@ temp = site_pred_scaled %>%
   scale_fill_manual(values = rev(pal)) +
   ylab("MAT (C)") +
   xlab(" ") +
-  theme(axis.title=element_text(size=10)) +
-  labs(fill = "Site")
+  theme(axis.title=element_text(size=11)) +
+  labs(fill = "Site") +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 
 dom = site_pred_scaled %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
@@ -91,10 +93,11 @@ dom = site_pred_scaled %>%
   geom_errorbar(aes(ymin = BP.dom.site - se.dom.site, 
                     ymax = BP.dom.site + se.dom.site), width = 0.2) +
   scale_fill_manual(values = rev(pal))  +
-  theme(axis.title=element_text(size=10)) +
+  theme(axis.title=element_text(size=11)) +
   ylab("Mean Plot Dominance") +
   xlab(" ") +
-  labs(fill = "Site")
+  labs(fill = "Site") +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 
 sctc = edge_RR2 %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
@@ -110,14 +113,14 @@ sctc = edge_RR2 %>%
                                   ifelse(Duration == "unknown", "U", "A/P")))) %>%
   ggplot(aes(x=site, y=prop_dur, fill = Duration)) + 
   geom_bar(stat = 'identity', color = "black") +
-#  scale_fill_pattern(patterns = c("stripe", "solid", "grid_longdash", "solid")) +
   xlab("Site") +
   ylab("Proportion") +
-  theme(axis.title=element_text(size=10)) +
+  theme(axis.title=element_text(size=11)) +
   labs(fill = NULL) +
-  theme(plot.title = element_text(size = 10)) +
+  theme(plot.title = element_text(size = 11)) +
   scale_fill_manual(values = c("#020202", "white", "#DBDBDB", "#5F615E")) + # "#494949"
-  ggtitle("Common, Persistent Species")
+  ggtitle("Common, Persistent Species") +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 
 cpg = edge_RR2 %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
@@ -135,23 +138,26 @@ cpg = edge_RR2 %>%
   ylab(" ") +
   xlab("Site") +
   labs(fill = NULL) +
-  theme(plot.title = element_text(size = 10)) +
-  theme(axis.title=element_text(size=10)) +
+  theme(plot.title = element_text(size = 11)) +
+  theme(axis.title=element_text(size=11)) +
   scale_fill_manual(values = c("#a7a7a7","#f2f2f2")) +
-  ggtitle("Common, Persistent Grasses")
+  ggtitle("Common, Persistent Grasses") +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 
 p1 = ggarrange(ppt, temp, dom, ncol = 3, common.legend = TRUE, legend = "right", 
                labels = c("a", "b", "c"), vjust = 1.1, hjust = 0.1,
                font.label=list(color="black",size=12))
 p2 = ggarrange(sctc, cpg, labels = c("d", "e"),
                font.label=list(color="black",size=12))
-plot_grid(p1, p2, ncol = 1)
+plot = plot_grid(p1, p2, ncol = 1)
+
+annotate_figure(plot, top = text_grob("Figure 1", 
+                                      color = "black", face = "bold", size = 14))
+
 
 ## save official version
-ggsave("figures/review_figs/Fig1_site_char.tiff", width = 16, height = 10, units = "cm")
+ggsave("figures/final_figs/Fig1_site_char.tiff", width = 16, height = 12, units = "cm")
 
 ## save smaller version for review
-ggsave("figures/review_figs/Fig1_site_char.png", width = 16, height = 10, units = "cm")
-
-
+#ggsave("figures/review_figs/Fig1_site_char.png", width = 16, height = 10, units = "cm")
 
