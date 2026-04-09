@@ -17,6 +17,9 @@ spmods_pred = left_join(sp_mods, site_pred_scaled, by = "site") %>%
 tmpmods_pred = left_join(tmp_mods, site_pred_scaled, by = "site") %>%
   mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
 
+site_pred_scaled = site_pred_scaled %>%
+  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
+
 # Fig 4 (drought) #####
 ## spatial ####
 ### dominance ####
@@ -34,8 +37,8 @@ pD1 = spmods_pred %>%
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
   coord_cartesian(ylim = c(-1, 2.8)) +
-  #annotate("text", x = 0.4, y=2.6, label = "p: 0.236", size = 3.5, parse = TRUE) +
-  annotate("text", x = 0.4, y=2.6, label = "R^2: 0.158", size = 3.5, parse = TRUE)
+  annotate("text", x = 0.47, y=2.6, label = "Slope: 2.97 [-2.96, 8.91]", size = 3.5, parse = FALSE) +
+  annotate("text", x = 0.4, y=2.2, label = "R^2: 0.158", size = 3.5, parse = TRUE)
 
 ### temperature ####
 pT1 = spmods_pred %>%
@@ -72,8 +75,9 @@ pP1 = spmods_pred %>%
         axis.title=element_text(size=13)) +
   coord_cartesian(ylim = c(-1, 2.8)) +
  # annotate("text", x = 375, y=2.6, label = "p: 0.676", size = 3.5, parse = TRUE) +
-  annotate("text", x = 600, y=2.7, label = "Spatial Rarity", size = 4.5) +
-  annotate("text", x = 375, y=2.3, label = "R^2: -0.19", size = 3.5, parse = TRUE)
+  annotate("text", x = 600, y=2.8, label = "Spatial Rarity", size = 4.5) +
+  annotate("text", x = 500, y=2.34, label = "Slope: 0.15 [-0.76, 1.06]", size = 3.5, parse = FALSE) +
+  annotate("text", x = 375, y=2, label = "R^2: -0.19", size = 3.5, parse = TRUE)
 
 ## temporal ####
 ### dominance ####
@@ -93,7 +97,7 @@ pDt = tmpmods_pred %>%
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13)) +
-  annotate("text", x = 0.45, y=2.6, label = "Slope: 2.84 [-0.64, 6.33]", size = 3.5, parse = FALSE) +
+  annotate("text", x = 0.47, y=2.6, label = "Slope: 2.84 [-0.64, 6.33]", size = 3.5, parse = FALSE) +
   annotate("text", x = 0.4, y=2.2, label = "R^2: 0.452", size = 3.5, parse = TRUE)
 
 ### temperature ####
@@ -131,8 +135,9 @@ pPt = tmpmods_pred %>%
   theme(axis.text.x=element_text(size=12)) +
   theme(axis.text.y=element_text(size=12),
         axis.title=element_text(size=13))  +
-  annotate("text", x = 600, y=2.7, label = "Temporal Rarity", size = 4.5) +
-  annotate("text", x = 375, y=2.3, label = "R^2: -0.250", size = 3.5, parse = TRUE)
+  annotate("text", x = 600, y=2.8, label = "Temporal Rarity", size = 4.5) +
+  annotate("text", x = 500, y=2.34, label = "Slope: 0.007 [-0.67, 0.69]", size = 3.5, parse = FALSE) +
+  annotate("text", x = 375, y=2, label = "R^2: -0.250", size = 3.5, parse = TRUE)
 
 ## combine ####
 plot = ggarrange(pP1, pPt,
@@ -151,6 +156,17 @@ ggsave("figures/final_figs/Fig4_site_slopes_predictors_drought_both_rarity.tiff"
 
 #ggsave("figures/review_figs/Fig4_site_slopes_predictors_drought_both_rarity.png",
  #      width = 15, height = 20, units = "cm")
+
+# Figure S4 ####
+ggplot(site_pred_scaled, aes(x=MAP.mm, y=aridity, color = site)) +
+  geom_point(aes(fill = site), colour = "black", size = 3, pch = 21) +
+  scale_fill_manual(values = pal) +
+  xlab("MAP (mm)") +
+  ylab("Aridity Index") +
+  labs(fill = "Site") +
+  theme(axis.text.y=element_text(size=11))
+
+#ggsave("figures/final_figs/supp_figs/FigS4_MAPvsaridity.png", width = 10, height = 8, unit = "cm")
 
 # Figure S12 ####
 sfct = tmpmods_pred %>%

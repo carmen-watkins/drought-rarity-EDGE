@@ -15,8 +15,6 @@ library(parameters)
 library(tidyverse)
 library(car)
 library(lmerTest)
-library(jtools)
-library(xtable)
 library(ggpubr)
 
 ## load data
@@ -118,7 +116,7 @@ edge_RR$site = factor(edge_RR$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL"
 ## Fig S7 ####
 ## test out main pattern
 SR_drought = ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D, color = site)) +
-  geom_point(alpha = 0.9, size = 0.6) +
+  geom_point(alpha = 0.9, size = 1) +
   geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -128,12 +126,13 @@ SR_drought = ggplot(edge_RR, aes(x= spatial_rarity, y=resp.ratio.site_D, color =
   labs(color = "Site") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13)) +
-  coord_cartesian(ylim = c(-1,1.2)) +
-  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.15", size = 3, parse = TRUE) +
-  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.21", size = 3, parse = TRUE)
+  coord_cartesian(ylim = c(-1,1.38)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.15", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.21", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.25, y=1.38, label = "Slope: 0.91 [0.71, 1.11]", size = 3.5, parse = FALSE)
 
 SR_postdrought = ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PD, color = site)) +
-  geom_point(alpha = 0.9, size = 0.6) +
+  geom_point(alpha = 0.9, size = 1) +
   geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -142,12 +141,13 @@ SR_postdrought = ggplot(edge_RR, aes(x=spatial_rarity, y=resp.ratio.site_PD, col
   ylab("Post-drought") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13)) +
-  coord_cartesian(ylim = c(-1,1.2)) +
-  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.15", size = 3, parse = TRUE) +
-  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.18", size = 3, parse = TRUE)
+  coord_cartesian(ylim = c(-1,1.38)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.15", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.18", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.25, y=1.38, label = "Slope: 0.89 [0.70, 1.07]", size = 3.5, parse = FALSE)
 
 TR_drought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D, color = site)) +
-  geom_point(alpha = 0.9, size = 0.6) +
+  geom_point(alpha = 0.9, size = 1) +
   geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -156,12 +156,13 @@ TR_drought = ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_D, color =
   ylab(" ") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13)) +
-  coord_cartesian(ylim = c(-1,1.2)) +
-  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.13", size = 3, parse = TRUE) +
-  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.16", size = 3, parse = TRUE)
+  coord_cartesian(ylim = c(-1,1.38)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.13", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.16", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.25, y=1.38, label = "Slope: 0.66 [0.50, 0.82]", size = 3.5, parse = FALSE)
 
 TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD, color = site)) +
-  geom_point(alpha = 0.9, size = 0.6) +
+  geom_point(alpha = 0.9, size = 1) +
   geom_smooth(aes(color = site), method = "lm", alpha = 0.1, linewidth = 1) +
   geom_smooth(method = "lm", alpha = 0.25, color = "black", linewidth = 1.75) +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -170,16 +171,18 @@ TR_postdrought <- ggplot(edge_RR, aes(x=temporal_rarity, y=resp.ratio.site_PD, c
   ylab("") +
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13)) +
-  coord_cartesian(ylim = c(-1,1.2)) +
-  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.10", size = 3, parse = TRUE) +
-  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.12", size = 3, parse = TRUE)
+  coord_cartesian(ylim = c(-1,1.38)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.10", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.12", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.25, y=1.38, label = "Slope: 0.60 [0.44, 0.76]", size = 3.5, parse = FALSE)
 
 ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = "auto", common.legend = T, legend = "bottom", ncol = 2, nrow=2)
 
 ## ggsave("figures/review_figs/FigS7_RR_v_rarity_keep_unknowns.tiff", width = 18, height = 16, units = "cm")
 
-ggsave("figures/review_figs/supp/FigS7_RR_v_rarity_keep_unknowns.png", width = 18, height = 16, units = "cm")
+ggsave("figures/final_figs/supp_figs/FigS7_RR_v_rarity_keep_unknowns.png",
+       width = 18, height = 16, units = "cm")
 
 # Check Models ####
 ## drought, spatial ####
@@ -187,29 +190,26 @@ mmsd = lmer(resp.ratio.site_D ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsd)
 summary(mmsd) ## supp table
-mmsdA = Anova(mmsd, type = 2, test.statistic = "F")
-mmsdA
+Anova(mmsd, type = 2, test.statistic = "F")
 
 r.squaredGLMM(mmsd)
-eta_squared(mmsdA)
+confint(mmsd)
 
 ## drought, temporal ####
 mmtd = lmer(resp.ratio.site_D ~ temporal_rarity + (1|site), data = edge_RR)
 
 #check_model(mmtd)
 summary(mmtd) ## supp table
-mmtdA = Anova(mmtd, type = 2, test.statistic = "F") ## main table
-mmtdA
-
+Anova(mmtd, type = 2, test.statistic = "F") ## main table
 r.squaredGLMM(mmtd)
-eta_squared(mmtdA)
+confint(mmtd)
 
 ## post-drought spatial ####
 mmsp = lmer(resp.ratio.site_PD ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsp)
 summary(mmsp) ## supp table
-mmspA = Anova(mmsp, type = 2, test.statistic = "F") ## main table
+Anova(mmsp, type = 2, test.statistic = "F") ## main table
 confint(mmsp)
 
 r.squaredGLMM(mmsp)

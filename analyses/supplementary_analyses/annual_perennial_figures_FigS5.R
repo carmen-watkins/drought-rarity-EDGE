@@ -125,7 +125,7 @@ eriog = FG %>%
 lh_sd = edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%
   ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
-  geom_point() +
+  geom_point(size = 1) +
   geom_smooth(method = "lm") +
   #facet_wrap(~Duration) +
   geom_hline(yintercept = 0, linetype = "dashed")  +
@@ -134,9 +134,11 @@ lh_sd = edge_RR2 %>%
   labs(color = "Life History") +
   theme(text = element_text(size = 13)) +
   scale_color_manual(values = pal2) +
-  coord_cartesian(ylim = c(-1,1.2)) +
-  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.17", size = 3, parse = TRUE) +
-  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.24", size = 3, parse = TRUE)
+  coord_cartesian(ylim = c(-1,1.6)) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.17", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.24", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.25, y=1.38, label = "A: 0.27 [-0.13, 0.67]", size = 3.5, parse = FALSE) +
+  annotate("text", x = 0.25, y=1.58, label = "P: 1.06 [0.83, 1.3]", size = 3.5, parse = FALSE) 
 
 lh_td = edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial")) %>%
@@ -186,214 +188,6 @@ lh_tpd = edge_RR2 %>%
 ggarrange(lh_sd, lh_td, lh_spd, lh_tpd, nrow = 2, ncol = 2, common.legend = TRUE, 
           legend = "bottom", labels = c("a", "b", "c", "d"))
 
-#ggsave("figures/review_figs/FigS5_annual_perenn_RR_v_rarity.tiff", width = 6, height = 5.6)
+ggsave("figures/final_figs/supp_figs/FigS5_annual_perenn_RR_v_rarity.png", width = 18, height = 16.5, units = "cm")
 
 #ggsave("figures/review_figs/supp/FigS5_annual_perenn_RR_v_rarity.png", width = 6, height = 5.6)
-
-## Talk Figure ####
-edge_RR2 %>%
-  filter(!Duration %in% c("unknown", "annual/perennial")) %>%
-  ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  facet_wrap(~Duration) +
-  geom_hline(yintercept = 0, linetype = "dashed")  +
-  ylab("Drought Response Ratio") +
-  xlab("Spatial Rarity") +
-  theme(text = element_text(size = 16)) +
-  scale_color_manual(values = pal2) +
-  labs(color = "Life History")
-
-#ggsave("figures/dissertation_talk/duration.png", width = 8, height = 4)
-
-## Old Fig ####
-all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
-  geom_bar(stat = 'identity') +
-  xlab(NULL) +
-  ylab("Proportion") +
-  ggtitle("All Species") +
-  scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#798E87"))
-
-sctc = edge_RR2 %>%
-  filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
-  group_by(site, Duration) %>%
-  summarise(num_dur = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_dur),
-         prop_dur = num_dur / tot) %>%
-  ggplot(aes(x=site, y=prop_dur, fill = Duration)) +
-  geom_bar(stat = 'identity') +
-  xlab(NULL) +
-  ylab("Proportion") +
-  ggtitle("Common & Persistent")  +
-  scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#798E87"))
-
-srtr = edge_RR2 %>%
-  filter(spatial_rarity > 0.25 & temporal_rarity >= 0.5) %>%
-  group_by(site, Duration) %>%
-  summarise(num_dur = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_dur),
-         prop_dur = num_dur / tot) %>%
-  ggplot(aes(x=site, y=prop_dur, fill = Duration)) +
-  geom_bar(stat = 'identity') +
-  xlab(NULL) +
-  ylab("Proportion") +
-  ggtitle("Sparse & Intermittent") +
-  scale_fill_manual(values = c("#541A38", "#94c0c1", "#798E87"))
-
-sctr = edge_RR2 %>%
-  filter(spatial_rarity < 0.25 & temporal_rarity >= 0.5) %>%
-  group_by(site, Duration) %>%
-  summarise(num_dur = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_dur),
-         prop_dur = num_dur / tot) %>% 
-  ggplot(aes(x=site, y=prop_dur, fill = Duration)) +
-  geom_bar(stat = 'identity') +
-  xlab(NULL) +
-  ylab("Proportion") +
-  ggtitle("Common & Intermittent") +
-  scale_fill_manual(values = c("#541A38", "#94c0c1"))
-
-srtc = edge_RR2 %>%
-  filter(spatial_rarity >= 0.25 & temporal_rarity < 0.5) %>%
-  group_by(site, Duration) %>%
-  summarise(num_dur = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_dur),
-         prop_dur = num_dur / tot) %>%
-  ggplot(aes(x=site, y=prop_dur, fill = Duration)) +
-  geom_bar(stat = 'identity') +
-  xlab(NULL) +
-  ylab("Proportion") +
-  ggtitle("Sparse & Persistent") +
-  scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#798E87"))
-
-ggarrange(all, sctc, srtr, srtc, sctr, common.legend = T, labels = c("a", "b", "c", "d", "e"), 
-          legend = "bottom")
-
-#ggsave("figures/review_figs/FigS4_sp_life_history_proportions.tiff", width = 8, height = 5)
-
-## Exploratory C3/C4 Fig ####
-all2 = edge_RR2 %>%
-  filter(FunctionalGroup == "grass") %>%
-  group_by(site, Photo) %>%
-  summarise(num_photo = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_photo),
-         prop_photo = num_photo / tot) %>%
-  
-  ggplot(aes(x=site, y=prop_photo, fill = Photo)) +
-  geom_bar(stat = 'identity') +
-  ylab("Proportion") +
-  xlab("Site") +
-  labs(fill = "Photosynthesis Pathway") +
-  theme(text = element_text(size = 13)) +
-  ggtitle("All Grasses") +
-  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], 
-                               wes_palette("BottleRocket2")[1],
-                               wes_palette("Darjeeling1")[3]))
-
-cpg = edge_RR2 %>%
-  filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
-  filter(FunctionalGroup == "grass") %>%
-  group_by(site, Photo) %>%
-  summarise(num_photo = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_photo),
-         prop_photo = num_photo / tot) %>%
-  ggplot(aes(x=site, y=prop_photo, fill = Photo)) +
-  geom_bar(stat = 'identity') +
-  ylab(" ") +
-  xlab("Site") +
-  theme(text = element_text(size = 13)) +
-  ggtitle("Common, Persistent Grasses") +
-  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], 
-                               wes_palette("BottleRocket2")[1], 
-                               wes_palette("Darjeeling1")[3]))
-
-ggarrange(all2, cpg, common.legend = TRUE, legend = "bottom", labels = "AUTO")
-
-#ggsave("figures/Mar2025/FigS9_sp_duration_proportions.tiff", width = 7, height = 3.5)
-
-edge_RR2 %>%
-  filter(spatial_rarity >= 0.25 & temporal_rarity < 0.5) %>%
-  filter(FunctionalGroup == "grass") %>%
-  group_by(site, Photo) %>%
-  summarise(num_photo = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_photo),
-         prop_photo = num_photo / tot) %>%
-  ggplot(aes(x=site, y=prop_photo, fill = Photo)) +
-  geom_bar(stat = 'identity') +
-  ylab(" ") +
-  xlab("Site") +
-  theme(text = element_text(size = 13)) +
-  ggtitle("Sparse, Persistent Grasses") +
-  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], 
-                               wes_palette("BottleRocket2")[1], 
-                               wes_palette("Darjeeling1")[3]))
-
-
-edge_RR2 %>%
-  filter(spatial_rarity >= 0.25 & temporal_rarity >= 0.5) %>%
-  filter(FunctionalGroup == "grass") %>%
-  group_by(site, Photo) %>%
-  summarise(num_photo = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_photo),
-         prop_photo = num_photo / tot) %>%
-  ggplot(aes(x=site, y=prop_photo, fill = Photo)) +
-  geom_bar(stat = 'identity') +
-  ylab(" ") +
-  xlab("Site") +
-  theme(text = element_text(size = 13)) +
-  ggtitle("Sparse, Intermittent Grasses") +
-  scale_fill_manual(values = c(wes_palette("Darjeeling1")[2], 
-                               wes_palette("BottleRocket2")[1], 
-                               wes_palette("Darjeeling1")[3]))
-
-
-edge_RR2 %>%
-  filter(spatial_rarity < 0.25 & temporal_rarity >= 0.5) %>%
-  filter(FunctionalGroup == "grass") %>%
-  group_by(site, Photo) %>%
-  summarise(num_photo = n())%>%
-  ungroup() %>%
-  group_by(site) %>%
-  mutate(tot = sum(num_photo),
-         prop_photo = num_photo / tot) %>%
-  ggplot(aes(x=site, y=prop_photo, fill = Photo)) +
-  geom_bar(stat = 'identity') +
-  ylab(" ") +
-  xlab("Site") +
-  theme(text = element_text(size = 13)) +
-  ggtitle("Common, Intermittent Grasses") +
-  scale_fill_manual(values = c(wes_palette("BottleRocket2")[1], 
-                               wes_palette("Darjeeling1")[3]))
-
-## Site level ann/perenn ####
-edge_RR2 %>%
-  filter(!Duration %in% c("unknown", "annual/perennial")) %>%
-  ggplot(aes(x=spatial_rarity, y=resp.ratio.site_D4, color = Duration)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  facet_grid(site~Duration) +
-  coord_cartesian(ylim = c(-1, 1)) +
-  geom_hline(yintercept = 0, linetype = "dashed")  +
-  ylab("Drought Response Ratio") +
-  xlab("Spatial Rarity") +
-  theme_bw()  +
-  scale_color_manual(values = pal2)
-#ggsave("figures/Jan2025/duration_RR_v_Srarity_drought_site.png", width = 6, height = 8)
-
- 

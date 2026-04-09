@@ -14,12 +14,8 @@ library(parameters)
 library(tidyverse)
 library(car)
 library(lmerTest)
-library(jtools)
-library(xtable)
 library(lme4)
 library(MuMIn)
-library(effectsize)
-library(afex)
 library(emmeans)
 
 ## read in data
@@ -37,8 +33,7 @@ ms = lmer(resp.ratio.site_D4 ~ spatial_rarity*Duration + (1|site),
 summary(ms)
 #check_model(ms)
 
-Ams2 = Anova(ms, type = 3, test.statistic = "F")
-Ams2
+Anova(ms, type = 3, test.statistic = "F")
 
 #ms2 = lmer(resp.ratio.site_D4 ~ spatial_rarity+Duration + (1|site), 
 #data = edge3)
@@ -50,28 +45,20 @@ Ams2
 ##' based on a species' life history
 
 r.squaredGLMM(ms)
-eta_squared(Ams2, partial = T)
-
-test = emmeans(ms, specs = c('Duration', 'spatial_rarity'))
-
 emtrends(ms, specs = "Duration", var = "spatial_rarity")
-pairs(test)
+pairs(emtrends(ms, specs = "Duration", var = "spatial_rarity"))
+## slopes are significantly different
 
 ### temporal #### 
 mt = lmer(resp.ratio.site_D4 ~ temporal_rarity*Duration + (1|site), 
           data = edge3)
-summary(mt2)
-
-mt2 = lmer(resp.ratio.site_D4 ~ temporal_rarity + Duration + (1|site), 
-          data = edge3)
-
-anova(mt, mt2)
+summary(mt)
 
 r.squaredGLMM(mt)
-Amt = Anova(mt, type = 3, test.statistic = "F")
-eta_squared(Amt)
+Anova(mt, type = 3, test.statistic = "F")
 
 emtrends(mt, specs = "Duration", var = "temporal_rarity")
+pairs(emtrends(mt, specs = "Duration", var = "temporal_rarity"))
 
 ## Post-Drought ####
 ### spatial ####

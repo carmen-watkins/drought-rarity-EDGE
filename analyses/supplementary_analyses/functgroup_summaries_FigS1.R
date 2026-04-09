@@ -176,7 +176,7 @@ ggarrange(grasses, forbs, shrubs, annuals, perennials, common.legend = T,
 
 #ggsave("figures/review_figs/FigSXX_fg_lh_rarity_cat.tiff", width = 10, height = 5)
 
-## Fig Alt version ####
+# Fig S4 ####
 all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
   geom_bar(stat = 'identity') +
   xlab(NULL) +
@@ -184,8 +184,9 @@ all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
   ggtitle("All Species") +
   labs(fill = "Life History") +
   scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#FDDBD8")) +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15))
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
+        axis.text.x = element_text(angle = 45, hjust = 1))
 
 sctc = edge_RR2 %>%
   filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
@@ -201,8 +202,8 @@ sctc = edge_RR2 %>%
   ylab("Proportion") +
   ggtitle("Common; \nPersistent")  +
   scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#FDDBD8")) +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15),
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
 srtr = edge_RR2 %>%
@@ -219,8 +220,8 @@ srtr = edge_RR2 %>%
   ylab(" ") +
   ggtitle("Sparse; \nIntermittent") +
   scale_fill_manual(values = c("#541A38", "#94c0c1", "#FDDBD8")) +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15),
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
 sctr = edge_RR2 %>%
@@ -237,9 +238,10 @@ sctr = edge_RR2 %>%
   ylab("Proportion") +
   ggtitle("Common; \nIntermittent") +
   scale_fill_manual(values = c("#541A38", "#94c0c1")) +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15),
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
         axis.text.x = element_text(angle = 45, hjust = 1))
+
 
 srtc = edge_RR2 %>%
   filter(spatial_rarity >= 0.25 & temporal_rarity < 0.5) %>%
@@ -255,14 +257,13 @@ srtc = edge_RR2 %>%
   ylab(" ") +
   ggtitle("Sparse; \nPersistent") +
   scale_fill_manual(values = c("#541A38", "#D69C4E", "#94c0c1", "#FDDBD8")) +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15),
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
-#ggsave("figures/review_figs/FigS4_sp_life_history_proportions.tiff", width = 8, height = 5)
 
-## Fig S4 ####
 all_fg = edge_RR2_cats %>%
+  filter(!is.na(FunctionalGroup)) %>%
   group_by(site, FunctionalGroup) %>%
   summarise(numpcat = n())%>%
   ungroup() %>%
@@ -276,10 +277,12 @@ all_fg = edge_RR2_cats %>%
   labs(fill = "Functional Group") +
   ggtitle("All Species") +
   scale_fill_manual(values = c("#494E65", "#C6CC62", "#798E87", "#A35B73")) +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15))
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
+        axis.text.x = element_text(angle = 45, hjust = 1))
 
 cspt = edge_RR2_cats %>%
+  filter(!is.na(FunctionalGroup)) %>%
   filter(rarity_cat == "Common (S), Persistent (T)") %>%
   group_by(site, FunctionalGroup) %>%
   summarise(numpcat = n())%>%
@@ -293,11 +296,12 @@ cspt = edge_RR2_cats %>%
   ylab(" ") +
   ggtitle("Common; \nPersistent") +
   scale_fill_manual(values = c("#494E65", "#C6CC62", "#798E87", "#A35B73")) +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15),
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
 sspt = edge_RR2_cats %>%
+  filter(!is.na(FunctionalGroup)) %>%
   filter(rarity_cat == "Sparse (S), Persistent (T)") %>%
   group_by(site, FunctionalGroup) %>%
   summarise(numpcat = n())%>%
@@ -312,11 +316,12 @@ sspt = edge_RR2_cats %>%
   labs(fill = "Functional Group") +
   ggtitle("Sparse; \nPersistent") +
   scale_fill_manual(values = c("#494E65", "#C6CC62", "#798E87", "#A35B73"))  +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15),
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
 csit = edge_RR2_cats %>%
+  filter(!is.na(FunctionalGroup)) %>%
   filter(rarity_cat == "Common (S), Intermittent (T)") %>%
   group_by(site, FunctionalGroup) %>%
   summarise(numpcat = n())%>%
@@ -330,11 +335,12 @@ csit = edge_RR2_cats %>%
   ylab(" ") +
   ggtitle("Common; \nIntermittent") +
   scale_fill_manual(values = c("#494E65", "#C6CC62", "#798E87", "#A35B73")) +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15),
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
 ssit = edge_RR2_cats %>%
+  filter(!is.na(FunctionalGroup)) %>%
   filter(rarity_cat == "Sparse (S), Intermittent (T)") %>%
   group_by(site, FunctionalGroup) %>%
   summarise(numpcat = n())%>%
@@ -349,10 +355,11 @@ ssit = edge_RR2_cats %>%
   labs(fill = "Rarity Categories") +
   ggtitle("Sparse; \nIntermittent") +
   scale_fill_manual(values = c("#494E65", "#C6CC62", "#798E87", "#A35B73")) +
-  theme(text=element_text(size=15),
-        plot.title = element_text(size=15),
+  theme(text=element_text(size=11),
+        plot.title = element_text(size=11),
         axis.text.x = element_text(angle = 45, hjust = 1))
 
+## plot ####
 p1 = ggarrange(all, all_fg, ncol = 2, nrow = 1, 
                labels = c("a", "f"))
 
@@ -367,15 +374,8 @@ p4 = plot_grid(p2, p3)
 
 plot_grid(p1, p4, ncol = 1, rel_heights = c(0.5, 1))
 
-ggsave("figures/review_figs/FigS4_fg_lh_rarity_cat.tiff",
-       width = 10.5, height = 7.5)
-
-
-ggsave("figures/review_figs/supp/FigS4_fg_lh_rarity_cat.png",
-       width = 10.5, height = 7.5)
-
-
-
+ggsave("figures/final_figs/supp_figs/FigS1_fg_lh_rarity_cat.png",
+       width = 18, height = 14, units = "cm")
 
 
 # Explore 'iconic' sp ####
@@ -441,36 +441,36 @@ hys = edge_RR2_cats %>%
   filter(site == "HYS") %>%
   select(site, species, spatial_rarity, temporal_rarity, FunctionalGroup, rarity_cat)
 
-write.csv(hys, "species_lists/hys_sp_list.csv", row.names = F)
+#write.csv(hys, "species_lists/hys_sp_list.csv", row.names = F)
 
 sgs = edge_RR2_cats %>%
   filter(site == "SGS") %>%
   select(site, species, spatial_rarity, temporal_rarity, FunctionalGroup, rarity_cat)
 
-write.csv(sgs, "species_lists/sgs_sp_list.csv", row.names = F)
+#write.csv(sgs, "species_lists/sgs_sp_list.csv", row.names = F)
 
 chy = edge_RR2_cats %>%
   filter(site == "CHY") %>%
   select(site, species, spatial_rarity, temporal_rarity, FunctionalGroup, rarity_cat)
 
-write.csv(chy, "species_lists/chy_sp_list.csv", row.names = F)
+#write.csv(chy, "species_lists/chy_sp_list.csv", row.names = F)
 
 
 knz = edge_RR2_cats %>%
   filter(site == "KNZ") %>%
   select(site, species, spatial_rarity, temporal_rarity, FunctionalGroup, rarity_cat)
 
-write.csv(knz, "species_lists/knz_sp_list.csv", row.names = F)
+#write.csv(knz, "species_lists/knz_sp_list.csv", row.names = F)
 
 
 sbl = edge_RR2_cats %>%
   filter(site == "SBL") %>%
   select(site, species, spatial_rarity, temporal_rarity, FunctionalGroup, rarity_cat)
 
-write.csv(sbl, "species_lists/sbl_sp_list.csv", row.names = F)
+#write.csv(sbl, "species_lists/sbl_sp_list.csv", row.names = F)
 
 sbk = edge_RR2_cats %>%
   filter(site == "SBK") %>%
   select(site, species, spatial_rarity, temporal_rarity, FunctionalGroup, rarity_cat)
 
-write.csv(sbk, "species_lists/sbk_sp_list.csv", row.names = F)
+#write.csv(sbk, "species_lists/sbk_sp_list.csv", row.names = F)

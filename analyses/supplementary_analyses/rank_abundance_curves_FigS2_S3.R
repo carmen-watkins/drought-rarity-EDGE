@@ -30,53 +30,24 @@ edge_cor = edge_RR %>%
 ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
   geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
   geom_vline(xintercept = 0.25, color = "red", linetype = "dashed") +
-  geom_point(size = 1) +
-  facet_wrap(~site, ncol = 6, nrow = 1) +
+  geom_point(size = 0.75) +
+  facet_wrap(~site, ncol = 2, nrow = 3) +
   theme_bw() +
   theme(panel.grid = element_blank()) +
   theme(strip.background =element_rect(fill="white")) +
   xlab("Spatial Rarity")+
   ylab("Temporal Rarity") +
   theme(legend.position = "right") +
-  theme(text = element_text(size = 9)) +
+  theme(text = element_text(size = 11)) +
   geom_text(data = edge_cor, mapping = aes(x = x, y = y, label = rare_corr),
-            size = 3) +
+            size = 3.25) +
   scale_x_continuous(breaks = c(0,1,0.5),
                      labels = c(0, 1, 0.5)) +
   scale_y_continuous(breaks = c(0,1,0.5),
                      labels = c(0, 1, 0.5))
 
-ggsave("figures/review_figs/FigS1_rarity_correlation.tiff", 
-       width = 18, height = 4, units = "cm")
-
-ggsave("figures/review_figs/supp/FigS1_rarity_correlation.png", 
-       width = 18, height = 4, units = "cm")
-
-## Talk Figure
-ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
-  geom_point(size = 1.5) +
-  theme_bw() +
-  theme(panel.grid = element_blank()) +
-  theme(strip.background =element_rect(fill="white")) +
-  xlab("Spatial Rarity")+
-  ylab("Temporal Rarity") +
-  theme(legend.position = "right") +
-  theme(text = element_text(size = 16)) +
-  geom_abline(slope = 1, intercept = 0)
-
-ggplot(edge_RR, aes(x = spatial_rarity, y=temporal_rarity))+
-  geom_hline(yintercept = 0.5, color = "red", linetype = "dashed") +
-  geom_vline(xintercept = 0.25, color = "red", linetype = "dashed") +
-  geom_point(size = 1.5) +
-  theme_bw() +
-  theme(panel.grid = element_blank()) +
-  theme(strip.background =element_rect(fill="white")) +
-  xlab("Spatial Rarity")+
-  ylab("Temporal Rarity") +
-  theme(legend.position = "right") +
-  theme(text = element_text(size = 16)) +
-  geom_abline(slope = 1, intercept = 0)
-
+ggsave("figures/final_figs/supp_figs/FigS1_rarity_correlation.png", 
+       width = 8, height = 10, units = "cm")
 
 # Figure S2 ####
 ## rank abundance curve (spatial rarity functions as rank as it is 
@@ -85,7 +56,6 @@ a = ggplot(edge_RR, aes(x=spatial_rarity, y=mean.ctrl.cov)) +
   geom_point() +
   facet_wrap(~site, ncol = 6, nrow = 1) +
   geom_vline(xintercept = 0.25, linetype = "dashed") +
-  #geom_vline(xintercept = 0.1) +
   geom_vline(xintercept = 0.15, linetype = "dashed", color = "red") +
   geom_vline(xintercept = 0.35, linetype = "dashed", color = "red") +
   xlab("Spatial Rarity") +
@@ -103,6 +73,7 @@ b = ggplot(edge_RR, aes(x=temporal_rarity)) +
   xlab("Temporal Rarity") +
   ylab("Count") +
   facet_wrap(~site, ncol = 6, nrow = 1) +
+  theme(text = element_text(size = 12))  +
   scale_x_continuous(breaks = c(0,1,0.5),
                      labels = c(0, 1, 0.5))
 
@@ -115,35 +86,33 @@ c = ggplot(edge_RR, aes(x=temporal_rarity)) +
   xlab("Temporal Rarity") +
   ylab("Density") +
   facet_wrap(~site, ncol = 6, nrow = 1) +
+  theme(text = element_text(size = 12))  +
   scale_x_continuous(breaks = c(0,1,0.5),
                      labels = c(0, 1, 0.5))
 
 ggarrange(a, b, c, ncol = 1, labels = c("a", "b", "c"))
 
 ## save
-ggsave("figures/review_figs/FigS2_rank_abundance_curve.tiff", 
+ggsave("figures/final_figs/supp_figs/FigS2_rank_abundance_curve.png", 
  width = 18, height = 15, units = "cm")
 
-ggsave("figures/review_figs/supp/FigS2_rank_abundance_curve.png", 
-       width = 18, height = 15, units = "cm")
-
 ## test what temp rarity vs. abundance looks like
-ggplot(edge_RR, aes(x=temporal_rarity, y=mean.ctrl.cov)) +
-  geom_point() +
-  facet_wrap(~site, ncol = 6, nrow = 1) +
-  geom_vline(xintercept = 0.5, linetype = "dashed") +
-  xlab("Temporal Rarity") +
-  ylab("Mean Cover in Control Plots") +
-  theme(text = element_text(size = 12)) +
-  scale_x_continuous(breaks = c(0,1,0.5),
-                     labels = c(0, 1, 0.5))
-ggsave("figures/review_figs/for_response/temp_rarity_v_cover.png", width = 10, 
-       height = 3)  
+#ggplot(edge_RR, aes(x=temporal_rarity, y=mean.ctrl.cov)) +
+ # geom_point() +
+  #facet_wrap(~site, ncol = 6, nrow = 1) +
+#  geom_vline(xintercept = 0.5, linetype = "dashed") +
+ # xlab("Temporal Rarity") +
+  #ylab("Mean Cover in Control Plots") +
+#  theme(text = element_text(size = 12)) +
+ # scale_x_continuous(breaks = c(0,1,0.5),
+  #                   labels = c(0, 1, 0.5))
+#ggsave("figures/review_figs/for_response/temp_rarity_v_cover.png", width = 10, 
+ #      height = 3)  
 
 ## test what histogram of spatial rarity looks like
-ggplot(edge_RR, aes(x=spatial_rarity)) +
-  geom_histogram() +
-  facet_wrap(~site, ncol = 6, nrow = 1)
+#ggplot(edge_RR, aes(x=spatial_rarity)) +
+ # geom_histogram() +
+  #facet_wrap(~site, ncol = 6, nrow = 1)
 ## much more evenly spread, which makes sense as the percent rank function is 
 ## standardizes differences in abundance
 
