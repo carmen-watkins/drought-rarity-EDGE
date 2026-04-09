@@ -116,7 +116,7 @@ sctc = edge_RR2 %>%
   xlab("Site") +
   ylab("Proportion") +
   theme(axis.title=element_text(size=11)) +
-  labs(fill = NULL) +
+  labs(fill = "Life History") +
   theme(plot.title = element_text(size = 11)) +
   scale_fill_manual(values = c("#020202", "white", "#DBDBDB", "#5F615E")) + # "#494949"
   ggtitle("Common, Persistent Species") +
@@ -137,12 +137,13 @@ cpg = edge_RR2 %>%
   geom_bar(stat = 'identity', color = "black") +
   ylab(" ") +
   xlab("Site") +
-  labs(fill = NULL) +
+  labs(fill = "PS Type") +
   theme(plot.title = element_text(size = 11)) +
   theme(axis.title=element_text(size=11)) +
   scale_fill_manual(values = c("#a7a7a7","#f2f2f2")) +
   ggtitle("Common, Persistent Grasses") +
-  theme(axis.text.x = element_text(angle = 45, hjust=1))
+  theme(axis.text.x = element_text(angle = 45, hjust=1))# +
+  #guides(fill = guide_legend(keywidth = 0.5, label.theme = element_text(size = 8), title.theme = element_text(size = 8)))
 
 p1 = ggarrange(ppt, temp, dom, ncol = 3, common.legend = TRUE, legend = "right", 
                labels = c("a", "b", "c"), vjust = 1.1, hjust = 0.1,
