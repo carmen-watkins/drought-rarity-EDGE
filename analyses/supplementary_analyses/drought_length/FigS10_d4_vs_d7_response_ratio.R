@@ -12,13 +12,11 @@ source("analyses/calc_response_ratio.R")
 #source("analyses/color_palettes.R")
 
 ## load packages
-library(broom)
+#library(broom)
 library(performance)
 library(parameters)
 library(tidyverse)
 library(car)
-library(jtools)
-library(xtable)
 library(ggpubr)
 
 theme_set(theme_classic())
@@ -35,11 +33,10 @@ edge_SEV = edge_RR %>%
                names_to = "drought_length", values_to = "response_ratio") %>%
   mutate(drought_length = ifelse(drought_length == "resp.ratio.site_D4", "4 Years", "7 Years"))
 
-# Figure S4 ####
+# Figure S10 ####
 ## R2 vals
 R2vals = data.frame(site = c("SBL", "SBK"), x = rep(-0.8, 2), 
                     y = rep(1.15, 2), R2 = c(0.196, 0.404))
-
 
 SBLS = edge_SEV %>%
   filter(site == "SBL") %>%
@@ -113,10 +110,6 @@ ggarrange(SBLS, SBKS, SBLT, SBKT, nrow = 2, ncol = 2, labels = "auto",
           common.legend = T, legend = "bottom")
 
 #ggsave("figures/review_figs/FigS10_resp_ratio_v_rarity.tiff", width = 18, height = 16, units = "cm")
-
-
-#ggsave("figures/review_figs/supp/FigS10_resp_ratio_v_rarity.png", width = 18, height = 16, units = "cm")
-
 
 # Model ####
 ## sbl, spatial

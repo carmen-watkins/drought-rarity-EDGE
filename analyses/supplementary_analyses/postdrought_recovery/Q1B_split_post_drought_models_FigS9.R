@@ -33,16 +33,18 @@ mmpdss = lmer(resp.ratio ~ spatial_rarity + PD_period + (1|site),
               data = edge_PDlong)
 summary(mmpdss)
 confint(mmpdss)
-Anova(mmpdss, type = 2, test.statistic = "F")
 r.squaredGLMM(mmpdss)
+
+Anova(mmpdss, type = 2, test.statistic = "F")
 
 ## temporal rarity model
 mmpdts = lmer(resp.ratio ~ temporal_rarity + PD_period + (1|site), 
               data = edge_PDlong)
 summary(mmpdts)
 confint(mmpdts)
-Anova(mmpdts, type = 2, test.statistic = "F")
 r.squaredGLMM(mmpdts)
+Anova(mmpdts, type = 2, test.statistic = "F")
+
 
 ## Table ####
 ## put anova outputs into a table

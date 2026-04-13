@@ -18,7 +18,7 @@ library(lmerTest)
 library(ggpubr)
 
 ## load data
-source("analyses/supplementary_analyses/sensitivity_analyses/assumption_1_keep_unknowns/calc_rank_persistence_KEEP_UNKNOWNS.R")
+source("analyses/supplementary_analyses/keep_unknowns/calc_rank_persistence_KEEP_UNKNOWNS.R")
 
 ## set up graphics
 theme_set(theme_classic())
@@ -189,40 +189,42 @@ ggsave("figures/final_figs/supp_figs/FigS7_RR_v_rarity_keep_unknowns.png",
 mmsd = lmer(resp.ratio.site_D ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsd)
-summary(mmsd) ## supp table
-Anova(mmsd, type = 2, test.statistic = "F")
-
-r.squaredGLMM(mmsd)
+summary(mmsd) 
 confint(mmsd)
+r.squaredGLMM(mmsd)
+
+Anova(mmsd, type = 2, test.statistic = "F")
 
 ## drought, temporal ####
 mmtd = lmer(resp.ratio.site_D ~ temporal_rarity + (1|site), data = edge_RR)
 
 #check_model(mmtd)
-summary(mmtd) ## supp table
-Anova(mmtd, type = 2, test.statistic = "F") ## main table
-r.squaredGLMM(mmtd)
+summary(mmtd) 
 confint(mmtd)
+r.squaredGLMM(mmtd)
+
+Anova(mmtd, type = 2, test.statistic = "F") ## main table
+
 
 ## post-drought spatial ####
 mmsp = lmer(resp.ratio.site_PD ~ spatial_rarity + (1|site), data = edge_RR)
 
 #check_model(mmsp)
-summary(mmsp) ## supp table
-Anova(mmsp, type = 2, test.statistic = "F") ## main table
+summary(mmsp)
 confint(mmsp)
-
 r.squaredGLMM(mmsp)
+
+Anova(mmsp, type = 2, test.statistic = "F") ## main table
 
 ## post-drought temporal ####
 mmtp = lmer(resp.ratio.site_PD ~ temporal_rarity + (1|site), data = edge_RR)
 
 #check_model(mmtp)
-summary(mmtp) ## supp table
-Anova(mmtp, type = 3, test.statistic = "F") ## main table
+summary(mmtp) 
 confint(mmtp)
-
 r.squaredGLMM(mmtp)
+
+Anova(mmtp, type = 3, test.statistic = "F") ## main table
 
 # Create Tables ####
 ## Anova ####

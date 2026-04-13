@@ -14,8 +14,6 @@ library(performance)
 #library(parameters)
 library(tidyverse)
 library(car)
-library(jtools)
-library(xtable)
 
 source("analyses/calc_response_ratio.R") 
 source("data-prep/prep_model_predictors.R")
@@ -130,13 +128,31 @@ tmp_mods = rbind(modt_df, modt_dfp) %>%
 
 # Create Table ####
 mods_tab = rbind(sp_mods, tmp_mods) %>%
-  select(period, site, term, estimate, std.error, statistic, p.value) %>%
-  mutate(across(where(is.numeric) & !p.value, ~round(.x, 3))) %>%
+  select(period, site, term, estimate, conf.low, conf.high, std.error, statistic, p.value) %>%
+  mutate(across(where(is.numeric) & !p.value, ~round(.x, 2))) %>%
   mutate(p.value = round(p.value, 10))
 
-write.csv(mods_tab, "tables/review_tabs/TabS7_site_model_output_all.csv",
+write.csv(mods_tab, "tables/final_tables/TabS8_site_model_output_all.csv",
           row.names = F)
 
 # Clean Env ####
 rm(chy_unks, hys_unks, knz_temp, knz_unks, sbk_unks, sgs_unks, virid_sp,
    mod_df, mod_dfp, modt_df, modt_dfp, tmp)
+
+
+# Get F adn R2 values ####
+## spatial ####
+sgs = edge_RR[edge_RR$site == "SGS",] %>% 
+  lm(resp.ratio.site_PDfull ~ spatial_rarity, data = .)
+
+summary(sgs)
+
+
+sbk = edge_RR[edge_RR$site == "SBK",] %>% 
+  lm(resp.ratio.site_D4 ~ temporal_rarity, data = .)
+
+summary(sbk)
+
+
+
+

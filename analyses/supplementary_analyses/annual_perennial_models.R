@@ -26,7 +26,7 @@ edge3 = edge_RR2 %>%
   filter(!Duration %in% c("unknown", "annual/perennial"))
 
 # Mixed Effect Models ####
-## During Drought ####
+## Drought ####
 ### spatial ####
 ms = lmer(resp.ratio.site_D4 ~ spatial_rarity*Duration + (1|site), 
           data = edge3)
@@ -79,9 +79,10 @@ summary(msp)
 r.squaredGLMM(msp)
 Amsp = Anova(msp, type = 3, test.statistic = "F")
 Amsp
-eta_squared(Amsp)
 
 emtrends(msp, specs = "Duration", var = "spatial_rarity")
+
+pairs(emtrends(msp, specs = "Duration", var = "spatial_rarity"))
 
 
 ### temporal ####
@@ -90,11 +91,10 @@ mtp = lmer(resp.ratio.site_PDfull ~ temporal_rarity*Duration + (1|site),
 summary(mtp)
 
 r.squaredGLMM(mtp)
-Amtp = Anova(mtp, type = 3, test.statistic = "F")
-Amtp
-eta_squared(Amtp)
+Anova(mtp, type = 3, test.statistic = "F")
 
 emtrends(mtp, specs = "Duration", var = "temporal_rarity")
+pairs(emtrends(mtp, specs = "Duration", var = "temporal_rarity"))
 
 ## Create Tables ####
 ### Anova table ####

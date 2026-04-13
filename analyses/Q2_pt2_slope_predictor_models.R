@@ -96,6 +96,7 @@ spmsfc = lm(estimate ~ z_soil,
                                spmods_pred$period == "Drought",])
 
 summary(spmsfc)
+confint(spmsfc)
 
 spmsfc_df = as.data.frame(summary(spmsfc)$coeff) %>%
   mutate(rarity = "Spatial", 
@@ -170,13 +171,8 @@ tpmsfc_df = as.data.frame(summary(tpmsfc)$coeff) %>%
 ## Combine ####
 slope_pred_tab = rbind(spm1_df, spm2_df, spm3_df, spm4_df, spmsfc_df, tpm1_df, 
                        tpm2_df,  tpm3_df, tpm4_df, tpmsfc_df) %>%
-#  mutate(signif = ifelse(`Pr(>|t|)` < 0.001, "***", 
- #                        ifelse(`Pr(>|t|)` < 0.01 & `Pr(>|t|)` > 0.001, "**",
-  #                              ifelse(`Pr(>|t|)` > 0.01 & `Pr(>|t|)` < 0.05, "*", 
-   #                                    ifelse(`Pr(>|t|)` < 0.1 & `Pr(>|t|)` > 0.05, 
-    #                                          ".", " "))))) %>%
   rownames_to_column(var = "type") %>%
-  mutate_if(is.numeric, round, digits = 3) %>%
+  mutate(across(where(is.numeric) & !`Pr(>|t|)`, ~round(.x, 2))) %>%
   select(period, rarity, predictor, type, Estimate, `Std. Error`, 
          `t value`, `Pr(>|t|)`)
 
@@ -238,6 +234,7 @@ spm9 = lm(estimate ~ z_soil,
           data = spmods_pred[spmods_pred$term == "spatial_rarity" & 
                                spmods_pred$period == "Post-Drought",])
 summary(spm9)
+confint(spm9)
 
 ## save model outputs as dataframe
 spm9_df = as.data.frame(summary(spm9)$coeff) %>%
@@ -300,7 +297,7 @@ tpm9 = lm(estimate ~ z_soil,
           data = tmpmods_pred[tmpmods_pred$term == "temporal_rarity" & 
                                 tmpmods_pred$period == "Post-Drought",])
 summary(tpm9)
-
+confint(tpm9)
 ## save model outputs as dataframe
 tpm9_df = as.data.frame(summary(tpm9)$coeff) %>%
   mutate(rarity = "Temporal", 
@@ -310,19 +307,14 @@ tpm9_df = as.data.frame(summary(tpm9)$coeff) %>%
 ## Combine ####
 slope_pred_tab_PD = rbind(spm5_df, spm6_df, spm7_df, spm8_df, spm9_df, tpm5_df, 
                           tpm6_df, tpm7_df, tpm8_df, tpm9_df) %>%
-#  mutate(signif = ifelse(`Pr(>|t|)` < 0.001, "***", 
- #                        ifelse(`Pr(>|t|)` < 0.01 & `Pr(>|t|)` > 0.001, "**",
-  #                              ifelse(`Pr(>|t|)` > 0.01 & `Pr(>|t|)` < 0.05, "*", 
-   #                                    ifelse(`Pr(>|t|)` < 0.1 & `Pr(>|t|)` > 0.05, 
-    #                                          ".", " "))))) %>%
   rownames_to_column(var = "type") %>%
-  mutate_if(is.numeric, round, digits = 3) %>%
+  mutate(across(where(is.numeric) & !`Pr(>|t|)`, ~round(.x, 2))) %>%
   select(period, rarity, predictor, type, Estimate, `Std. Error`, 
          `t value`, `Pr(>|t|)`)
 
 all_slope_pred = rbind(slope_pred_tab, slope_pred_tab_PD)
 
-#write.csv(all_slope_pred, "tables/review_tabs/slope_predictor_mod_TabS10.csv", 
+#write.csv(all_slope_pred, "tables/final_tables/slope_predictor_mod_TabS9.csv", 
  #         row.names = F)
 
 # Aridity v Ppt Fig ####

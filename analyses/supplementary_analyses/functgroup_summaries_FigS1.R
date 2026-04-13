@@ -176,7 +176,7 @@ ggarrange(grasses, forbs, shrubs, annuals, perennials, common.legend = T,
 
 #ggsave("figures/review_figs/FigSXX_fg_lh_rarity_cat.tiff", width = 10, height = 5)
 
-# Fig S4 ####
+# Fig S1 ####
 all = ggplot(site_duration_props, aes(x=site, y=prop_dur, fill = Duration)) +
   geom_bar(stat = 'identity') +
   xlab(NULL) +
@@ -376,6 +376,28 @@ plot_grid(p1, p4, ncol = 1, rel_heights = c(0.5, 1))
 
 ggsave("figures/final_figs/supp_figs/FigS1_fg_lh_rarity_cat.png",
        width = 18, height = 14, units = "cm")
+
+
+## Get proportions ####
+## common, persistent ####
+sctc_props = edge_RR2 %>%
+  filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
+  group_by(site, Duration) %>%
+  summarise(num_dur = n())%>%
+  ungroup() %>%
+  group_by(site) %>%
+  mutate(tot = sum(num_dur),
+         prop_dur = num_dur / tot) 
+
+
+srtr_props = edge_RR2 %>%
+  filter(spatial_rarity > 0.25 & temporal_rarity >= 0.5) %>%
+  group_by(site, Duration) %>%
+  summarise(num_dur = n())%>%
+  ungroup() %>%
+  group_by(site) %>%
+  mutate(tot = sum(num_dur),
+         prop_dur = num_dur / tot) 
 
 
 # Explore 'iconic' sp ####

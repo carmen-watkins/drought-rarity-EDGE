@@ -11,15 +11,12 @@
 # Set up ####
 ## load packages
 library(performance)
-#library(parameters)
 library(tidyverse)
 library(car)
 library(lmerTest)
-#library(jtools)
-#library(xtable)
 
 ## load data
-source("analyses/supplementary_analyses/sensitivity_analyses/assumption_4/filter_1s.R")
+source("analyses/supplementary_analyses/remove_transient/filter_1s.R")
 
 theme_set(theme_classic())
 pal = c("#03274E", "#3B5378", "#7F5F70",
@@ -66,7 +63,7 @@ SR_drought = ggplot(filtered_RR, aes(x= spatial_rarity, y=resp.ratio.site_D4,
   guides(color=guide_legend(nrow=1,byrow=TRUE)) +
   theme(text = element_text(size = 13)) +
   coord_cartesian(ylim = c(-1,1.38)) +
-  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.06", size = 3.5, parse = TRUE) +
+  annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.07", size = 3.5, parse = TRUE) +
   annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.13", size = 3.5, parse = TRUE) +
   annotate("text", x = 0.25, y=1.38, label = "Slope: 0.65 [0.39, 0.91]", size = 3.5, parse = FALSE)
 
@@ -100,7 +97,7 @@ TR_drought = ggplot(filtered_RR, aes(x=temporal_rarity, y=resp.ratio.site_D4,
   coord_cartesian(ylim = c(-1,1.38)) +
   annotate("text", x = 0.1, y=1.16, label = "R[m]^2: 0.09", size = 3.5, parse = TRUE) +
   annotate("text", x = 0.4, y=1.16, label = "R[c]^2: 0.14", size = 3.5, parse = TRUE) +
-  annotate("text", x = 0.25, y=1.38, label = "Slope: 0.58 [0.38, 0.77]", size = 3.5, parse = FALSE)
+  annotate("text", x = 0.25, y=1.38, label = "Slope: 0.58 [0.39, 0.77]", size = 3.5, parse = FALSE)
 
 TR_postdrought = ggplot(filtered_RR, aes(x=temporal_rarity, y=resp.ratio.site_PDfull,
                                          color = site)) +
@@ -134,48 +131,41 @@ ggsave("figures/final_figs/supp_figs/FigS8_resp_ratio_v_rarity_no1s.png",
 mmsd = lmer(resp.ratio.site_D4 ~ spatial_rarity + (1|site), data = filtered_RR)
 
 #check_model(mmsd)
-summary(mmsd) ## supp table
+summary(mmsd)
 confint(mmsd)
-
-Anova(mmsd, type = 2, test.statistic = "F") ## main table
 r.squaredGLMM(mmsd)
-#eta_squared()
+
+Anova(mmsd, type = 2, test.statistic = "F") 
 
 ## drought, temporal ####
 mmtd = lmer(resp.ratio.site_D4 ~ temporal_rarity + (1|site), data = filtered_RR)
 
 #check_model(mmtd)
-summary(mmtd) ## supp table
+summary(mmtd) 
 confint(mmtd)
-
-Anova(mmtd, type = 2, test.statistic = "F") ## main table
-confint(mmtd)
-
 r.squaredGLMM(mmtd)
+
+Anova(mmtd, type = 2, test.statistic = "F") 
 
 ## post-drought spatial ####
 mmsp = lmer(resp.ratio.site_PDfull ~ spatial_rarity + (1|site), data = filtered_RR)
 
 #check_model(mmsp)
-summary(mmsp) ## supp table
-confint(mmsp)
-
-Anova(mmsp, type = 2, test.statistic = "F") ## main table
+summary(mmsp) 
 confint(mmsp)
 r.squaredGLMM(mmsp)
 
+Anova(mmsp, type = 2, test.statistic = "F") 
 
 ## post-drought temporal ####
 mmtp = lmer(resp.ratio.site_PDfull ~ temporal_rarity + (1|site), data = filtered_RR)
 
 #check_model(mmtp)
-summary(mmtp) ## supp table
+summary(mmtp)
 confint(mmtp)
+r.squaredGLMM(mmtp)
 
 Anova(mmtp, type = 3, test.statistic = "F") ## main table
-confint(mmtp)
-
-r.squaredGLMM(mmtp)
 
 # Create Tables ####
 ## Anova ####
