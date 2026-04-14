@@ -103,7 +103,7 @@ annotate_figure(plot, top = text_grob("Figure 2",
                                       color = "black", face = "bold", size = 14))
 
 ## save official version
-#ggsave("figures/final_figs/Fig2_resp_ratio_v_rarity.tiff", width = 18, height = 16.5, units = "cm")
+ggsave("figures/final_figs/Fig2_resp_ratio_v_rarity.tiff", width = 18, height = 16.5, units = "cm", bg="white", dpi = 600)
 
 ## save version for review
 # ggsave("figures/review_figs/Fig2_resp_ratio_v_rarity.png", width = 18, height = 16, units = "cm")

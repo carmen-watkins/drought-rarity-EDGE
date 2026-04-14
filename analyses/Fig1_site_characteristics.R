@@ -157,7 +157,7 @@ annotate_figure(plot, top = text_grob("Figure 1",
 
 
 ## save official version
-ggsave("figures/final_figs/Fig1_site_char.tiff", width = 16, height = 12, units = "cm")
+ggsave("figures/final_figs/Fig1_site_char.tiff", width = 16, height = 12, units = "cm", bg="white", dpi = 600)
 
 ## save smaller version for review
 #ggsave("figures/review_figs/Fig1_site_char.png", width = 16, height = 10, units = "cm")

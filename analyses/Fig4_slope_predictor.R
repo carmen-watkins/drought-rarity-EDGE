@@ -164,7 +164,7 @@ annotate_figure(plot, top = text_grob("Figure 4",
 
 ## save
 ggsave("figures/final_figs/Fig4_site_slopes_predictors_drought_both_rarity.tiff", 
-     width = 15, height = 20, units = "cm")
+     width = 15, height = 20, units = "cm", bg="white", dpi = 600)
 
 #ggsave("figures/review_figs/Fig4_site_slopes_predictors_drought_both_rarity.png",
  #      width = 15, height = 20, units = "cm")

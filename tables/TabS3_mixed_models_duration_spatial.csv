@@ -1,9 +1,0 @@
-"period","rarity","type","F","Df","Df.res","Pr(>F)"
-"Drought","Spatial","(Intercept)",0.378,1,36.712,0.542
-"Drought","Spatial","spatial_rarity",1.84,1,386.375,0.176
-"Drought","Spatial","Duration",14.887,1,387.699,0
-"Drought","Spatial","spatial_rarity:Duration",10.822,1,386.482,0.001
-"Post-Drought","Spatial","(Intercept)1",0.166,1,82.437,0.685
-"Post-Drought","Spatial","spatial_rarity1",10.134,1,407.499,0.002
-"Post-Drought","Spatial","Duration1",3.572,1,407.165,0.059
-"Post-Drought","Spatial","spatial_rarity:Duration1",0.741,1,407.491,0.39

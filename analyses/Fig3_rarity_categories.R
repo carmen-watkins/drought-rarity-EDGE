@@ -201,7 +201,7 @@ annotate_figure(plot, top = text_grob("Figure 3",
 
 ## save official version
 ggsave("figures/final_figs/Fig3_DRR_v_PDRR.tiff", width = 13, height = 13.75, 
-      units = "cm")
+      units = "cm", bg="white", dpi = 600)
        
 # Figure S11 ####
 ## narrow ####
