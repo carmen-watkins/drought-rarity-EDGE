@@ -374,8 +374,8 @@ p4 = plot_grid(p2, p3)
 
 plot_grid(p1, p4, ncol = 1, rel_heights = c(0.5, 1))
 
-ggsave("figures/final_figs/supp_figs/FigS1_fg_lh_rarity_cat.png",
-       width = 18, height = 14, units = "cm")
+## ggsave("figures/final_figs/supp_figs/FigS1_fg_lh_rarity_cat.png",
+   ##   width = 18, height = 14, units = "cm")
 
 
 ## Get proportions ####

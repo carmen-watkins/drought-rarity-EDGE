@@ -147,5 +147,5 @@ coeff_df = rbind(ms_coeff, mt_coeff, msp_coeff, mtp_coeff) %>%
   mutate(`Pr(>|t|)` = round(`Pr(>|t|)`, digits = 3))
 
 #xtable(coeff_df)
-write.csv(coeff_df, "tables/review_tabs/annual_perenn_mixed_mod_coeff_TabS3.csv", 
-          row.names = F)
+#write.csv(coeff_df, "tables/review_tabs/annual_perenn_mixed_mod_coeff_TabS3.csv", 
+ #         row.names = F)

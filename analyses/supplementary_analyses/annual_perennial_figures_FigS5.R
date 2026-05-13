@@ -188,6 +188,6 @@ lh_tpd = edge_RR2 %>%
 ggarrange(lh_sd, lh_td, lh_spd, lh_tpd, nrow = 2, ncol = 2, common.legend = TRUE, 
           legend = "bottom", labels = c("a", "b", "c", "d"))
 
-ggsave("figures/final_figs/supp_figs/FigS5_annual_perenn_RR_v_rarity.png", width = 18, height = 16.5, units = "cm")
+#ggsave("figures/final_figs/supp_figs/FigS5_annual_perenn_RR_v_rarity.png", width = 18, height = 16.5, units = "cm")
 
 #ggsave("figures/review_figs/supp/FigS5_annual_perenn_RR_v_rarity.png", width = 6, height = 5.6)

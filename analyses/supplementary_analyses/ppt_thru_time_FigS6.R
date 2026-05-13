@@ -11,11 +11,10 @@ calcSE<-function(x){
 }
 
 ## read in precip data
-precip = read.csv("data/growingseason_precip_totals_allyears.csv")
-sev_ppt = read.csv("data/sev_download/sev298_NPP_edge_biomass.csv")
+precip = read.csv("data/site_and_env_data/growingseason_precip_totals_allyears.csv")
+sev_ppt = read.csv("data/sev_edge_sites/sev298_NPP_edge_biomass.csv")
 
 source("data-prep/clean_spei_data.R")
-#source("analyses/color_palettes.R")
 
 ## set up graphics
 theme_set(theme_classic())
@@ -136,8 +135,8 @@ p2 = plot_grid(spei_hist, labels = c("e"))
 
 plot_grid(p1, p2, ncol = 1, rel_heights = c(1, 0.5))
 
-ggsave("figures/review_figs/precip_year_FigS6.tiff",
-       width = 18, height = 15, units = "cm")  
+#ggsave("figures/review_figs/precip_year_FigS6.tiff",
+ #      width = 18, height = 15, units = "cm")  
 
-ggsave("figures/review_figs/supp/FigS6_precip_year.png",
-       width = 18, height = 15, units = "cm")  
+#ggsave("figures/review_figs/supp/FigS6_precip_year.png",
+ #      width = 18, height = 15, units = "cm")  
