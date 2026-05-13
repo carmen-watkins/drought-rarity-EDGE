@@ -16,11 +16,11 @@
 library(tidyverse)
 library(lubridate)
 
-KNZ = read.csv("data/spei/-96.750000_39.250000.csv")
-HYS = read.csv("data/spei/-99.250000_38.750000.csv")
-CHY = read.csv("data/spei/-104.750000_41.250000.csv")
-SGS = read.csv("data/spei/-104.750000_40.750000.csv")
-SEV = read.csv("data/spei/-106.750000_34.250000.csv")
+KNZ = read.csv("data/site_and_env_data/spei/-96.750000_39.250000.csv")
+HYS = read.csv("data/site_and_env_data/spei/-99.250000_38.750000.csv")
+CHY = read.csv("data/site_and_env_data/spei/-104.750000_41.250000.csv")
+SGS = read.csv("data/site_and_env_data/spei/-104.750000_40.750000.csv")
+SEV = read.csv("data/site_and_env_data/spei/-106.750000_34.250000.csv")
 
 theme_set(theme_classic())
 

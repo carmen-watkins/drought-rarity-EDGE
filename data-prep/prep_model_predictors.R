@@ -15,7 +15,7 @@ source("data-prep/clean_ppt_data.R")
 source("data-prep/clean_aridity_data.R")
 
 ## load site MAP & MAT data
-MAP = read.csv("data/map_data.csv") %>%
+MAP = read.csv("data/site_and_env_data/site_characteristics.csv") %>%
   mutate(site = ifelse(site == "SEV_blue", "SBL", 
                        ifelse(site == "SEV_black", "SBK", site)))
 

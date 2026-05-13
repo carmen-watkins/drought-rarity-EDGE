@@ -18,7 +18,7 @@ calcSE<-function(x){
 }
 
 ## read in precip data
-precip <- read.csv("data/growingseason_precip_totals_allyears.csv")
+precip <- read.csv("data/site_and_env_data/growingseason_precip_totals_allyears.csv")
 sev_ppt <- read.csv("data/sev_download/sev298_NPP_edge_biomass.csv")
 
 # Clean ####
