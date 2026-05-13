@@ -1,11 +1,11 @@
 # Header #### 
 ## Script name: Classify Rank & Persistence with zero filled data
 ##
-## Purpose of script: Classify each species at each site by its rank and persistence at the site using data from control plots in the EDGE experiment.
+## Purpose of script: Classify each species at each site by its rank and
+## persistence at the site using data from control plots in the EDGE experiment.
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
 
 # Set up env ####
 ## read in cleaned cover data
@@ -27,7 +27,8 @@ controls <- edge_all %>%
 ## keep the 0's
 rank_mean <- controls %>%
   group_by(site, species) %>% ## take the mean of a species at a site right away
-  ## this averages over all the subplots, including 0-filled subs; also averages across all years
+  ## this averages over all the subplots, including 0-filled subs; 
+  ## also averages across all years
   summarise(mean.ctrl.cov = mean(max.cover)) %>%
   ungroup() %>%
   group_by(site) %>%
@@ -52,8 +53,9 @@ rm(controls, persist_site, rank_mean)
 
 # Rank abundance curve ####
 ## set site as a factor
-rank_persist$site = factor(rank_persist$site, levels = c("KNZ", "HYS", "CHY", "SGS", "SBL", "SBK"))
-
+rank_persist$site = factor(rank_persist$site, levels = c("KNZ", "HYS", "CHY", 
+                                                         "SGS", "SBL", "SBK"))
+## plot
 ggplot(rank_persist, aes(x=percrank, y=mean.ctrl.cov)) +
   geom_point() +
   facet_wrap(~site, ncol = 2, nrow = 3) +
@@ -63,5 +65,3 @@ ggplot(rank_persist, aes(x=percrank, y=mean.ctrl.cov)) +
   geom_vline(xintercept = 0.75, linetype = "dashed", color = "red") +
   xlab("Percent Rank") +
   ylab("Mean Species Cover")
-
-#ggsave("figures/Nov2024_meeting/updated_RAC.png", width = 8, height = 6)

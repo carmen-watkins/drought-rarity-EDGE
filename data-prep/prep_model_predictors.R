@@ -60,24 +60,7 @@ site_pred_scaled = site_pred_final %>%
          
          mean_soil = mean(soil.field.capacity),
          sd_soil = sd(soil.field.capacity),
-         z_soil = (soil.field.capacity - mean_soil)/sd_soil
-         
-         ## scale ppt intervals
-      #   meanDRR4 = mean(pptDRR4),
-       #  sdDRR4 = sd(pptDRR4),
-        # meanPDRRfull = mean(pptPDRRfull),
-  #       sdPDRRfull = sd(pptPDRRfull),
-   #      meanPDRRfinal = mean(pptPDRRfinal),
-    #     sdPDRRfinal = sd(pptPDRRfinal),
-     #    meanPDRRfirst = mean(pptPDRRfirst),
-      #   sdPDRRfirst = sd(pptPDRRfirst),
-         
-       #  z_precipDRR4 = (pptDRR4 - meanDRR4)/sdDRR4,
-        # z_precipPDRRfull = (pptPDRRfull - meanPDRRfull)/sdPDRRfull,
-         #z_precipPDRRfinal = (pptPDRRfinal - meanPDRRfinal)/sdPDRRfinal,
-         #z_precipPDRRfirst = (pptPDRRfirst - meanPDRRfirst)/sdPDRRfirst
-         
-         ) %>%
+         z_soil = (soil.field.capacity - mean_soil)/sd_soil) %>%
   select(-pptDRR4, -pptDRR7, -pptPDRRfinal, -pptPDRRfirst, -pptPDRRfull)
 
 # Clean Env ####

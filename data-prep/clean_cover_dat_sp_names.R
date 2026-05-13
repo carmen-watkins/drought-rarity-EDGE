@@ -771,12 +771,11 @@ sgs_unks = sgs %>%
 length(unique(sgs_unks$species))
 nrow(sgs_unks)
 
-
 # Clean Env ####
 rm(amaran, artemesia, asclep, astrag, astrag_oxy, chenop, chloris, chy, 
    chy_rm1, chy_temp, chy_unk_epithet, cirsium, croton, eleoch, eriogo, 
    erysim, euphorb, festuca, glandularia, hys, hys_rm1, hys_temp, 
    hys_unk_epithet, knz, knz_rm1, knz_unk_epithet, melilo, oenoth,
-   oroban, panic, paron, penstem, sbk, sbk_unk_epithet, sbl, sbl_unk_epithet, 
-   sgs, sgs_rm1, sgs_temp, sgs_unk_epithet, silene, sphaer, sporob, stipa, 
-   triodan, unkASOX, unkC, unkO, unks, unkSt)
+   oroban, panic, paron, penstem, sbk, sbk_unk_epithet, sbl,
+   sbl_unk_epithet, sgs, sgs_rm1, sgs_temp, sgs_unk_epithet, silene, 
+   sphaer, sporob, stipa, triodan, unkASOX, unkC, unkO, unks, unkSt)

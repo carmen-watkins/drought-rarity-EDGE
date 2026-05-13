@@ -6,7 +6,6 @@
 ##
 ## Author: Carmen Watkins
 ##
-## Email: cebel2@uoregon.edu
 
 # Set up ####
 ## load packages

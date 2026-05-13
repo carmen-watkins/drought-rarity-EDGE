@@ -1,8 +1,10 @@
 ## Header ## 
 ## Script Name: Fig 1: Site Characteristics
 ##
-## Purpose of Script: create a figure of site MAP, temp, average BP dominance, 
-## and annual / perennial and c3/c4
+##' Purpose of Script: Plot site characteristics: mean annual precipitation, 
+##' mean annual temperature, average Berger-Parker dominance, and 
+##' site proportions of annual / perennial and c3/c4 species. Figure 1 in 
+##' Watkins et al. 2026.
 ##
 ## Author: Carmen Watkins
 ##
@@ -14,7 +16,6 @@ library(cowplot)
 ## read in data 
 source("analyses/calc_response_ratio.R") ## response ratio data
 source("data-prep/prep_model_predictors.R") ## site ppt, temp, dominance data
-#source("analyses/color_palettes.R") ## for color palettes
 
 #Read in functional group info
 FG = read.csv(here::here("data","edge_species_info_CP_BA.csv")) 
@@ -22,9 +23,8 @@ FG = read.csv(here::here("data","edge_species_info_CP_BA.csv"))
 ## set up graphics
 global_size = 11
 theme_set(theme_classic(base_size = global_size))
-#theme_set(theme_classic())
 
-## new color palette
+## define color palette
 pal = c("#03274E", "#3B5378", "#7F5F70",
         "#CE685E", "#E5AA7F", "#FCD484")
 
@@ -64,6 +64,7 @@ edge_RR2 = edge_RR %>%
 
 
 # Figure 1 ####
+## plot precip by site
 ppt = site_pred_scaled %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   ggplot(aes(x=site, y=MAP.mm, fill = site)) +
@@ -75,6 +76,7 @@ ppt = site_pred_scaled %>%
   labs(fill = "Site") +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
 
+## plot temp by site
 temp = site_pred_scaled %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   ggplot(aes(x=site, y=MAT.C, fill = site)) +
@@ -86,6 +88,7 @@ temp = site_pred_scaled %>%
   labs(fill = "Site") +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
 
+## plot dominance by site
 dom = site_pred_scaled %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   ggplot(aes(x=site, y=BP.dom.site, fill = site)) +
@@ -99,6 +102,7 @@ dom = site_pred_scaled %>%
   labs(fill = "Site") +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
 
+## plot the proportion of annual / perennial species by site
 sctc = edge_RR2 %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
@@ -118,10 +122,11 @@ sctc = edge_RR2 %>%
   theme(axis.title=element_text(size=11)) +
   labs(fill = "Life History") +
   theme(plot.title = element_text(size = 11)) +
-  scale_fill_manual(values = c("#020202", "white", "#DBDBDB", "#5F615E")) + # "#494949"
+  scale_fill_manual(values = c("#020202", "white", "#DBDBDB", "#5F615E")) +
   ggtitle("Common, Persistent Species") +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
 
+## plot the proportion of c3/c4 species by site
 cpg = edge_RR2 %>%
   mutate(site = fct_relevel(site, "SBK", "SBL", "SGS", "CHY", "HYS", "KNZ")) %>%
   filter(spatial_rarity < 0.25 & temporal_rarity < 0.5) %>%
@@ -142,9 +147,9 @@ cpg = edge_RR2 %>%
   theme(axis.title=element_text(size=11)) +
   scale_fill_manual(values = c("#a7a7a7","#f2f2f2")) +
   ggtitle("Common, Persistent Grasses") +
-  theme(axis.text.x = element_text(angle = 45, hjust=1))# +
-  #guides(fill = guide_legend(keywidth = 0.5, label.theme = element_text(size = 8), title.theme = element_text(size = 8)))
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 
+## arrange ####
 p1 = ggarrange(ppt, temp, dom, ncol = 3, common.legend = TRUE, legend = "right", 
                labels = c("a", "b", "c"), vjust = 1.1, hjust = 0.1,
                font.label=list(color="black",size=12))
@@ -157,8 +162,5 @@ annotate_figure(plot, top = text_grob("Figure 1",
 
 
 ## save official version
-ggsave("figures/final_figs/Fig1_site_char.tiff", width = 16, height = 12, units = "cm", bg="white", dpi = 600)
-
-## save smaller version for review
-#ggsave("figures/review_figs/Fig1_site_char.png", width = 16, height = 10, units = "cm")
-
+#ggsave("figures/final_figs/Fig1_site_char.tiff", width = 16, height = 12, 
+## units = "cm", bg="white", dpi = 600)

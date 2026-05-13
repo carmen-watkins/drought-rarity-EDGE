@@ -14,7 +14,6 @@ library(cowplot)
 
 ## read in data
 source("analyses/Q2_pt1_linear_models_by_site.R")
-#source("analyses/color_palettes.R")
 
 ## set up graphics
 theme_set(theme_classic())
@@ -32,10 +31,8 @@ tmpmods_pred = left_join(tmp_mods, site_pred_scaled, by = c("site"))
 # Mk Site Table ####
 ## make site table as basis of Table S1
 head(site_pred_scaled)
-
 site_tab = site_pred_scaled %>%
   select(site, grassland.type, MAP.mm, MAT.C, aridity, BP.dom.site)
-
 #write.csv(site_tab, "tables/review_tabs/site_info_TabS1.csv", row.names = F)
 
 # Models ####
@@ -179,7 +176,6 @@ slope_pred_tab = rbind(spm1_df, spm2_df, spm3_df, spm4_df, spmsfc_df, tpm1_df,
 ## write.csv(slope_pred_tab, "tables/review_tabs/slope_predictor_mod_TabS14.csv", 
    ##       row.names = F)
 
-
 ## Spatial, Post-Drought ####
 ### precipitation ####
 spm5 = lm(estimate ~ z_precip, 
@@ -316,31 +312,3 @@ all_slope_pred = rbind(slope_pred_tab, slope_pred_tab_PD)
 
 #write.csv(all_slope_pred, "tables/final_tables/slope_predictor_mod_TabS9.csv", 
  #         row.names = F)
-
-# Aridity v Ppt Fig ####
-pa = site_pred_scaled %>%
-  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS",
-                            "SBL", "SBK")) %>%
-ggplot(aes(x=MAP.mm, y=aridity, color = site)) +
-  scale_fill_manual(values = pal) +
-  geom_point(aes(fill = site), colour = "black", size = 2.5, pch = 21) +
-  xlab("Mean Annual Precip (mm)") +
-  ylab("Aridity Index") +
-  labs(fill = "Site")
-  
-
-ta = site_pred_scaled %>%
-  mutate(site = fct_relevel(site, "KNZ", "HYS", "CHY", "SGS",
-                            "SBL", "SBK")) %>%
-  ggplot(aes(x=MAT.C, y=aridity, color = site)) +
-  scale_fill_manual(values = pal) +
-  geom_point(aes(fill = site), colour = "black", size = 2.5, pch = 21) +
-  xlab("Mean Annual Temp (C)") +
-  ylab("Aridity Index") +
-  labs(fill = "Site")
-
-ggarrange(pa, ta, ncol = 2, nrow = 1, labels = "AUTO", common.legend = TRUE, 
-          legend = "right")
-
-## ggsave("figures/review_figs/aridity_MAP_MAT_comp_FigSXX.tiff", width = 6, height = 3)
-
