@@ -8,12 +8,12 @@
 ##
 
 # Set Up ####
+## load packages
 library(ggExtra)
 library(cowplot)
 
-source("analyses/calc_response_ratio.R") 
-
-#Read in functional group info
+## read in data
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
 FG = read.csv(here::here("data","edge_species_info_CP_BA.csv"))
 
 #Join functional group data to species response ratio data

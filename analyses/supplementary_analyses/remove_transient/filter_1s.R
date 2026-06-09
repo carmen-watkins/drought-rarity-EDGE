@@ -10,7 +10,7 @@
 
 # Set Up ####
 ## load response ratio data, so can verify which are 1 or -1
-source("analyses/calc_response_ratio.R") 
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
 
 ## load data with years attached so can filter to 'pre-treatment' species
 source("data-prep/clean_cover_dat_fill_zeros.R")
@@ -143,6 +143,19 @@ sbk_PT = pre_trt %>%
 SKdrop = sbk_PT %>%
   filter(PA < 1)
 
+# Prep Data ####
+## filter out species with response ratio's of 1 or -1 that were not present
+## in the pre-treatment data at a site
+filtered_RR = edge_RR %>%
+  filter(!(species %in% c(Kdrop$species) & site == "KNZ"),
+         !(species %in% c(Hdrop$species) & site == "HYS"),
+         !(species %in% c(Cdrop$species) & site == "CHY"),
+         !(species %in% c(SGdrop$species) & site == "SGS"),
+         !(species %in% c(SLdrop$species) & site == "SBL"),
+         !(species %in% c(SKdrop$species) & site == "SBK"))
+
+#write.csv(filtered_RR, "analyses/supplementary_analyses/remove_transient/edge_RR_filtered.csv",
+ #         row.names = F)
+
 # Clean Up ####
 rm(knz_PT, hys_PT, chy_PT, sgs_PT, sbl_PT, sbk_PT)
-

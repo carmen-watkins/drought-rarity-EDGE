@@ -8,19 +8,18 @@
 ## Author: Carmen Watkins
 
 # Set up ####
-source("analyses/calc_response_ratio.R") 
-#source("analyses/color_palettes.R")
-
 ## load packages
-#library(broom)
 library(performance)
 library(parameters)
 library(tidyverse)
 library(car)
 library(ggpubr)
 
+## read in data
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
+
+## set up graphics
 theme_set(theme_classic())
-#pal <- wes_palette("Royal3")
 pal = c("#03274E", "#3B5378", "#7F5F70",
         "#CE685E", "#E5AA7F", "#FCD484")
 

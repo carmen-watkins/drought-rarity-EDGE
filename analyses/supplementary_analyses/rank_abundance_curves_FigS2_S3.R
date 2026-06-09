@@ -11,7 +11,7 @@
 library(ggpubr)
 
 ## read in data
-source("analyses/calc_response_ratio.R") 
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
 
 ## sort sites into order by precip
 edge_RR$site = factor(edge_RR$site, levels = c("KNZ", "HYS", "CHY", 

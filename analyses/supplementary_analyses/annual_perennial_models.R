@@ -120,8 +120,8 @@ duration_anova_df = rbind(ms_tab, mt_tab, msp_tab, mtp_tab) %>%
   mutate(across(where(is.numeric) & !`Pr(>F)`, ~round(.x, 2))) %>%
   mutate(`Pr(>F)` = round(`Pr(>F)`, digits = 3))
 
-write.csv(duration_anova_df, "tables/review_tabs/annual_perenn_anova_TabS3.csv", 
-          row.names = F)
+## write.csv(duration_anova_df, "tables/review_tabs/annual_perenn_anova_TabS3.csv", 
+   ##       row.names = F)
 
 ### Coeff Table ####
 ms_coeff = as.data.frame(summary(ms)$coefficients) %>% 

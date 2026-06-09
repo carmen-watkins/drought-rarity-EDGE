@@ -9,17 +9,12 @@
 ##
 
 # Set up ####
-source("analyses/calc_response_ratio.R") 
-library(wesanderson)
-
-tmppal2 = wes_palette("Darjeeling2", type = "discrete")
-tmppal3 = wes_palette("Chevalier1")
-#pal2 = c(tmppal2[3], "#94c0c1", tmppal3[1]) #tmppal2[4])
-
-pal2 = c("#541A38", "#94c0c1")
-
-#Read in functional group info
+## read in data
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
 FG = read.csv(here::here("data","edge_species_info_CP_BA.csv"))
+
+## set color palette
+pal2 = c("#541A38", "#94c0c1")
 
 # Prep Data ####
 #Join functional group data to species response ratio data
@@ -64,11 +59,9 @@ photo_unks = edge_RR2 %>%
   filter(FunctionalGroup == "grass", is.na(Photo) | Photo == "unk")
 
 ## NAs are Sporobolus sp from SEV sites; from SEV species list, all 8 
-##Sporobolus sp are C4; so safe to put htese as C4
-
+##Sporobolus sp are C4; so safe to put these as C4
 
 ## Calc percentage annual vs. perennial at a site
-
 ## Calc proportion of annual common vs. annual species at each site?
 site_duration_props = edge_RR2 %>%
   group_by(site, Duration) %>%

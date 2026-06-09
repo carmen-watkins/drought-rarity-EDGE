@@ -8,6 +8,7 @@
 ##
 
 # Set Up ####
+## load packages
 library(performance)
 library(tidyverse)
 library(car)
@@ -16,8 +17,8 @@ library(MuMIn)
 library(ggpubr)
 library(scico)
 
-source("analyses/calc_response_ratio.R") 
-#source("analyses/color_palettes.R")
+## read in data
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
 
 ## reformat data frame
 edge_PDlong = edge_RR %>%
@@ -114,4 +115,4 @@ pdt = edge_PDlong %>%
 ggarrange(pds, pdt, common.legend = T, labels = c("a", "b"), legend = "bottom")
 
 ## save figure
-ggsave("figures/final_figs/supp_figs/FigS9_split_post_drought.png", width = 6, height = 3.5)
+## ggsave("figures/final_figs/supp_figs/FigS9_split_post_drought.png", width = 6, height = 3.5)

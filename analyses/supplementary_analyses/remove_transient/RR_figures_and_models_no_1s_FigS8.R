@@ -16,23 +16,13 @@ library(car)
 library(lmerTest)
 
 ## load data
-source("analyses/supplementary_analyses/remove_transient/filter_1s.R")
+filtered_RR = read.csv("analyses/supplementary_analyses/remove_transient/edge_RR_filtered.csv")
 
 theme_set(theme_classic())
 pal = c("#03274E", "#3B5378", "#7F5F70",
         "#CE685E", "#E5AA7F", "#FCD484")
 
 ## Prep Data ####
-## filter out species with response ratio's of 1 or -1 that were not present
-## in the pre-treatment data at a site
-filtered_RR = edge_RR %>%
-  filter(!(species %in% c(Kdrop$species) & site == "KNZ"),
-         !(species %in% c(Hdrop$species) & site == "HYS"),
-         !(species %in% c(Cdrop$species) & site == "CHY"),
-         !(species %in% c(SGdrop$species) & site == "SGS"),
-         !(species %in% c(SLdrop$species) & site == "SBL"),
-         !(species %in% c(SKdrop$species) & site == "SBK"))
-
 ## order sites by precip
 filtered_RR$site = factor(filtered_RR$site, levels = c("KNZ", "HYS", "CHY", 
                                                        "SGS", "SBL", "SBK"))
@@ -119,8 +109,8 @@ ggarrange(SR_drought, TR_drought, SR_postdrought, TR_postdrought,
           labels = "auto", common.legend = T, legend = "bottom", ncol = 2, 
           nrow=2)
 
-ggsave("figures/final_figs/supp_figs/FigS8_resp_ratio_v_rarity_no1s.png", 
-       width = 18, height = 16.5, units = "cm")
+## ggsave("figures/final_figs/supp_figs/FigS8_resp_ratio_v_rarity_no1s.png", 
+   ##    width = 18, height = 16.5, units = "cm")
 
 # Model ####
 ## model as way of estimating the overall effect of rarity on response ratio 
@@ -218,4 +208,4 @@ coeff_df = rbind(mmsd_coeff, mmtd_coeff, mmsp_coeff, mmtp_coeff) %>%
          `Pr(>|t|)`) %>%
   mutate_if(is.numeric, round, digits = 3)
 
-write.csv(coeff_df, "tables/review_tabs/TabS5_mixed_mod_coeff_table_remove_gainslosses.csv", row.names = F)
+## write.csv(coeff_df, "tables/review_tabs/TabS5_mixed_mod_coeff_table_remove_gainslosses.csv", row.names = F)
