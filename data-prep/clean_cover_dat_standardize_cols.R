@@ -20,7 +20,7 @@ north_edge <- read.csv("../data_NS/north_edge_sites/spcomp_subplot_names.csv")
 north_spkey <- read.csv("../data_NS/north_edge_sites/spnames_code.csv")
 
 ## sev edge 
-sev_edge <- read.csv("data/sev_edge_sites/sev298_NPP_edge_biomass.csv")
+sev_edge <- read.csv("data/raw_data/sev_edge_sites/sev298_NPP_edge_biomass.csv")
 ## the version of SEV data in the sev_download folder was downloaded on 11/5/2024 from EDI 
 ## (https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-sev.298.209677)
 

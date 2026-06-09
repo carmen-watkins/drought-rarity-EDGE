@@ -14,8 +14,9 @@ library(performance)
 library(tidyverse)
 library(car)
 
-source("analyses/calc_response_ratio.R") 
-source("data-prep/prep_model_predictors.R")
+## read in data
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
+site_pred_scaled = read.csv("data/edge_site_predictors_all.csv")
 
 ## set up graphics
 theme_set(theme_classic())
@@ -123,8 +124,7 @@ mods_tab = rbind(sp_mods, tmp_mods) %>%
  #         row.names = F)
 
 # Clean Env ####
-rm(chy_unks, hys_unks, knz_temp, knz_unks, sbk_unks, sgs_unks, virid_sp,
-   mod_df, mod_dfp, modt_df, modt_dfp, tmp)
+rm(mod_df, mod_dfp, modt_df, modt_dfp, tmp)
 
 # Get F and R2 values ####
 ## spatial ####

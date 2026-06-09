@@ -11,7 +11,7 @@
 ## https://doi.org/10.1038/s41597-022-01493-1
 
 ## read in data
-aridity = read.csv("data/site_and_env_data/aridity_index_results.csv")
+aridity = read.csv("data/raw_data/site_and_env_data/aridity_index_results.csv")
 
 ## plot
 ggplot(aridity, aes(x=AI_Actual, y=site_name)) + 

@@ -17,7 +17,7 @@ library(lmerTest)
 library(MuMIn)
 
 ## load data
-source("analyses/calc_response_ratio.R") 
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
 
 # Model ####
 ## Drought, Spatial ####
