@@ -14,10 +14,8 @@
 library(cowplot)
 
 ## read in data 
-source("analyses/calc_response_ratio.R") ## response ratio data
-source("data-prep/prep_model_predictors.R") ## site ppt, temp, dominance data
-
-#Read in functional group info
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
+site_pred_scaled = read.csv("data/edge_site_predictors_all.csv")
 FG = read.csv(here::here("data","edge_species_info_CP_BA.csv")) 
 
 ## set up graphics

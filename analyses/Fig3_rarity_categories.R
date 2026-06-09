@@ -13,7 +13,7 @@
 ## in this script.
 
 # Set up ####
-source("analyses/calc_response_ratio.R") 
+edge_RR = read.csv("data/edge_response_ratio_and_rarity.csv")
 
 ## load packages
 library(tidyverse)
@@ -30,8 +30,8 @@ edge_RR_cats = edge_RR %>%
   mutate(spatial = ifelse(spatial_rarity < 0.25, "Common (S)", "Sparse (S)"),
          temporal = ifelse(temporal_rarity < 0.5, "Persistent (T)", 
                            "Intermittent (T)"),
-         rarity_2 = paste0(temporal, ", ", spatial), 
-        
+         rarity_2 = paste0(spatial, ", ", temporal),
+         
          ## rearrange categories so they fall in a particular order
          rarity_2 = fct_relevel(rarity_2, "Common (S), Persistent (T)", 
                                 "Sparse (S), Persistent (T)",  
@@ -61,8 +61,8 @@ edge_RR_cats_narrow = edge_RR %>%
   mutate(spatial = ifelse(spatial_rarity < 0.15, "Common (S)", "Sparse (S)"),
          temporal = ifelse(temporal_rarity < 0.4, "Persistent (T)", 
                            "Intermittent (T)"),
-         rarity_2 = paste0(temporal, ", ", spatial),
-        
+         rarity_2 = paste0(spatial, ", ", temporal),
+         
          ## rearrange categories so they fall in a particular order
          rarity_2 = fct_relevel(rarity_2, "Common (S), Persistent (T)", 
                                 "Sparse (S), Persistent (T)",  
@@ -90,7 +90,7 @@ edge_RR_cats_broad = edge_RR %>%
   mutate(spatial = ifelse(spatial_rarity < 0.35, "Common (S)", "Sparse (S)"),
          temporal = ifelse(temporal_rarity < 0.6, "Persistent (T)", 
                            "Intermittent (T)"),
-         rarity_2 = paste0(temporal, ", ", spatial), 
+         rarity_2 = paste0(spatial, ", ", temporal),
          
          rarity_2 = fct_relevel(rarity_2, "Common (S), Persistent (T)", 
                                 "Sparse (S), Persistent (T)",  

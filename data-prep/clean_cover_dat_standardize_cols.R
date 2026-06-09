@@ -14,10 +14,10 @@ theme_set(theme_classic())
 
 ## Read in Data ####
 ## northern edge
-north_edge <- read.csv("data/north_edge_sites/spcomp_subplot_names.csv")
+north_edge <- read.csv("../data_NS/north_edge_sites/spcomp_subplot_names.csv")
 ## max cover combines the two seasonal samplings and takes the largest of these, I believe. 
 
-north_spkey <- read.csv("data/north_edge_sites/spnames_code.csv")
+north_spkey <- read.csv("../data_NS/north_edge_sites/spnames_code.csv")
 
 ## sev edge 
 sev_edge <- read.csv("data/sev_edge_sites/sev298_NPP_edge_biomass.csv")

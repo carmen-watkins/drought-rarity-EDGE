@@ -778,4 +778,5 @@ rm(amaran, artemesia, asclep, astrag, astrag_oxy, chenop, chloris, chy,
    hys_unk_epithet, knz, knz_rm1, knz_unk_epithet, melilo, oenoth,
    oroban, panic, paron, penstem, sbk, sbk_unk_epithet, sbl,
    sbl_unk_epithet, sgs, sgs_rm1, sgs_temp, sgs_unk_epithet, silene, 
-   sphaer, sporob, stipa, triodan, unkASOX, unkC, unkO, unks, unkSt)
+   sphaer, sporob, stipa, triodan, unkASOX, unkC, unkO, unks, unkSt, virid_sp,
+   chy_unks, hys_unks, knz_temp, knz_unks, sbk_unks, sgs_unks)

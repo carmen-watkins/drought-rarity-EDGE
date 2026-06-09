@@ -66,3 +66,5 @@ site_pred_scaled = site_pred_final %>%
 # Clean Env ####
 rm(site_pred, site_pred_final, BP_dominance, controls, MAP, site_ppt, 
    edge_all, rank_persist, site_pred2, aridity_clean)
+
+## write.csv(site_pred_scaled, "data/site_predictors_all.csv")
